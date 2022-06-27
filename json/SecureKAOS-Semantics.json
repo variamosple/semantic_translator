@@ -1,0 +1,429 @@
+{
+  "elements": {
+    "Goal": {
+       "minizinc": {
+	"name_property":"Description",
+	"type":"var 0..1",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	},
+
+      }
+     
+    },
+    "Asset": {
+      "solvers": [
+        {
+          "minizinc": "var 0..1:A" 
+        }
+      ]
+    },
+    "Claim": {
+        "minizinc": {
+	"name_property":"Description",
+	"type":"var bool",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+    },
+    "Threat": {
+      "properties": [
+        {
+          "name": "Description",
+          "type": "String",
+          "comment": "Threat"
+        }
+      ]
+    },
+    "Context": {
+        "minizinc": {
+	"name_property":"Description",
+	"type":"enum Contexts",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	},
+       "properties_variables": [
+        {
+	  "name":"FrequencyType",
+          "type":"enum FType"
+        }
+      ]
+      }
+    },
+    "SoftGoal": {
+        "minizinc": {
+	"name_property":"Description",
+	"type":"var 0..4",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+    },
+    "Cardinality": {
+      "properties": [
+        {
+          "name": "From",
+          "type": "String",
+          "comment": "M in M:N"
+        },
+        {
+          "name": "To",
+          "type": "String",
+          "comment": "N in M:N"
+        }
+      ]
+    },
+    "SoftInfluence": {
+        "minizinc": {
+	"name_property":"Description",
+	"type":"var bool",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+    },
+    "Vulnerability": {
+      "properties": [
+        {
+          "name": "Description",
+          "type": "String",
+          "comment": "Vulnerability in the operationalization"
+        }
+      ]
+    },
+    "ContextVariable": {
+      "properties": [
+        {
+          "name": "Description",
+          "type": "String",
+          "comment": "Context Variable"
+        },
+        {
+          "name": "PossibleValues",
+          "type": "String",
+          "comment": "Context Variable Values"
+        }
+      ]
+    },
+    "SecurityMechanism": {
+      "properties": [
+        {
+          "name": "Description",
+          "type": "String",
+          "comment": "Security Mechanism"
+        }
+      ]
+    },
+    "Operationalization": {
+       "minizinc": {
+	"name_property":"Description",
+	"type":"var bool",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+     
+    },
+    "DataCollectionGroup": {
+       "minizinc": {
+	"name_property":"Description",
+	"type":"enum DataCollectionGroups",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+    },
+    "DataCollectionPoint": {
+      "minizinc": {
+	"name_property":"Description",
+	"type":"enum DataCollectionPoints",
+        "value":"",
+	"constraints":[
+        {
+	  "condition": "target(Rel(SubGoal))",
+          "constraint": "G==1"
+        },
+        {
+	  "condition":"Root Goal",
+          "constraint": "G*length(SGs)=sum(SGs)"
+        },
+        {
+	  "condition":"Not Root Goal && Card=1:1",
+          "constraint": "G=sum(OPs)"
+        }],
+	"parameters":{
+		"G":"Goal",
+		"SGs":"Goal",
+                "OPs":"Operationalization",
+		"Card":"Cardinality"
+	}
+      }
+    }
+  },
+  "restrictions": {
+    "parent_child": [
+      {
+        "max": 9999,
+        "min": 1,
+        "description": "Data Collection Groups in the context",
+        "childElement": [
+          "DataCollectionGroup"
+        ],
+        "parentElement": "Context"
+      },
+      {
+        "max": 9999,
+        "min": 1,
+        "childElement": [
+          "DataCollectionPoint"
+        ],
+        "parentElement": "DataCollectionGroup"
+      }
+    ]
+  },
+  "relationships": {
+    "SubGoal": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Goal",
+      "target": [
+        "Goal"
+      ],
+      "properties": []
+    },
+    "Asset_Goal": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Asset",
+      "target": [
+        "Goal"
+      ],
+      "properties": []
+    },
+    "Claim_SoftGoal": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Claim",
+      "target": [
+        "SoftGoal"
+      ],
+      "properties": []
+    },
+    "Cardinality_Goal": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Cardinality",
+      "target": [
+        "Goal"
+      ],
+      "properties": []
+    },
+    "Threat_Vulnerability": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Threat",
+      "target": [
+        "Vulnerability"
+      ],
+      "properties": []
+    },
+    "SoftInfluence_SoftGoal": {
+      "max": 1,
+      "min": 1,
+      "source": "SoftInfluence",
+      "target": [
+        "SoftGoal"
+      ],
+      "properties": [
+        {
+          "name": "SatisfactionLevel",
+          "type": "String",
+          "comment": "Level required",
+          "possibleValues": "--,-,=,+,++"
+        }
+      ]
+    },
+    "Context_ContextVariable": {
+      "max": 1,
+      "min": 1,
+      "source": "Context",
+      "target": [
+        "ContextVariable"
+      ],
+      "properties": [
+        {
+          "name": "AggregationFunction",
+          "type": "String"
+        }
+      ]
+    },
+    "SecurityMechanism_Threat": {
+      "max": 9999999,
+      "min": 1,
+      "source": "SecurityMechanism",
+      "target": [
+        "Threat"
+      ],
+      "properties": []
+    },
+    "ContextVariable_SoftInfluence": {
+      "max": 99999,
+      "min": 1,
+      "source": "ContextVariable",
+      "target": [
+        "SoftInfluence"
+      ],
+      "properties": [
+        {
+          "name": "Value",
+          "type": "String"
+        }
+      ]
+    },
+    "Operationalization_Claim_Goal": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Operationalization",
+      "target": [
+        "Claim",
+        "Cardinality"
+      ],
+      "properties": [
+        {
+          "name": "Value",
+          "type": "String",
+          "possibleValues": " ,--,-,=,+,++"
+        }
+      ]
+    },
+    "Vulnerability_Operationalization": {
+      "max": 9999999,
+      "min": 0,
+      "source": "Vulnerability",
+      "target": [
+        "Operationalization"
+      ],
+      "properties": []
+    }
+  }
+}
