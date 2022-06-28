@@ -1,0 +1,65 @@
+{
+    "elementTypes": [
+        "ConcreteFeature",
+        "RootFeature",
+        "AbstractFeature",
+        "Bundle"
+    ],
+    "elementTranslationRules":[
+        {
+            "lang":"minizinc",
+            "ConcreteFeature":{
+                "param": "F",
+                "constraint": "var 0..1:'uuid_F';"
+            },
+            "AbstractFeature":{
+                "param": "F",
+                "constraint": "var 0..1:'uuid_F';"
+            },
+            "RootFeature":{
+                "param": "F",
+                "constraint": "var 1..1:'uuid_F';"
+            },
+            "Bundle":{
+                "param":["F", "Fs"],
+                "constraint":{
+                    "Range":"constraint :: \"group cardinality Fs\" (F == 1) -> ((F * min <= sum(Fs)) /\\ (sum(Fs) <= F * max))",
+                    "Xor":"constraint :: \"F XOR Fs\" (F == 1) -> (F == sum(Fs))",
+                    "And":"constraint :: \"F AND Fs\" (F == 1) -> (len(Fs) == sum(Fs))",
+                    "Or":"constraint :: \"F OR Fs \" (F == 1) -> (len(Fs) >= sum(Fs))"
+                }
+            }
+        }
+    ],
+    "relationTypes":[
+        "Mandatory",
+        "Optional",
+        "Includes",
+        "Excludes",
+        "Range",
+        "Xor",
+        "And",
+        "Or"
+    ],
+    "relationTranslationRules":[
+        {
+            "lang":"minizinc",
+            "Includes":{
+                "params":["F1","F2"],
+                "constraint":"constraint :: \"F1 includes F2\" (uuid_F1 == 1) -> (uuid_F2 == 1);"
+            },
+            "Optional":{
+                "params":["F1","F2"],
+                "constraint":"constraint :: \"F1 optional F2\" (uuid_F1 >= uuid_F2);"
+            },
+            "Excludes":{
+                "params":["F1","F2"],
+                "constraint":"constraint :: \"F1 excludes F2\" not (uuid_F1 == 1 /\\ uuid_F2 == 1);"
+            },
+            "Mandatory":{
+                "params":["F1","F2"],
+                "constraint":"constraint :: \"F1 mandatory F2\" (uuid_F1 == uuid_F2);"
+            }
+        }
+    ]
+}
