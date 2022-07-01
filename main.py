@@ -1,34 +1,42 @@
 #!/usr/bin/env python3
 
 """
-This is the VariaMos Semantic Translator
+This is the VariaMos Semantic Translator.
 """
 import json
 import re
 from minizinc import Instance, Model, Solver
 
 
-def replaceExpr(cons, p):
-    pass
+def replaceExpr(bundle, elems, rels, cons, p):
+    print(cons)
+    regex = r"\w?" + re.escape(p) + r"\w?"
+    occs = re.findall(regex, cons)
+    f = (r for (k, r) in rels.items() if (r["targetId"] == k))
+    fs = [elem for ((iden, _), elem) in elems.items() if ([rel for (_,rel) in rels.items() if rel["targetId"] == iden])]
 
 
-def mapBundles(elems, rels, rules):
-    bundles = [e for e in elems if e["type"] == "Bundle"]
-    constraints = [bundleCons(b, rules) for b in bundles]
-    pass
-
-
-def bundleCons(bundle, rules):
+def bundleCons(bundle, elems, rels, rules):
     # get constraint rule
     rule = rules["elementTranslationRules"][0]["Bundle"]
     cons = rule["constraint"][bundle["properties"][1]["value"]]
-    [rule := rule.replace(p, replaceExpr(cons, p)) for p in rule["param"]]
+    [cons := cons.replace(p, replaceExpr(bundle, elems, rels, cons, p)) for p in rule["param"]]
+
+
+def mapBundles(elems, rels, rules):
+    return [
+        bundleCons(bs, elems, rels, rules)
+        for bs in [
+            e if e["type"] == "Bundle" else None for ((iden, typ), e) in elems.items()
+        ]
+        if bs is not None
+    ]
 
 
 def mapVar(element, rule):
     # print(element)
     # print(rule)
-    # return (rule)
+    # return rule
     if bool(rule):
         constraint = (
             rule["constraint"].replace(
@@ -36,7 +44,7 @@ def mapVar(element, rule):
             )
             + f'% {element["type"]} -> {element["id"]}'
         )
-        print(constraint)
+        # print(constraint)
         return constraint
     # If not bool(rule) then return None
 
@@ -46,8 +54,9 @@ def mapVars(elems, rules):
         cs
         for cs in [
             mapVar(element, rules["elementTranslationRules"][0][typ])
-            for ((ident, typ), element) in elems.items()
             if (typ in rules["elementTypes"])
+            else None
+            for ((ident, typ), element) in elems.items()
         ]
         if cs is not None
     ]
@@ -55,6 +64,7 @@ def mapVars(elems, rules):
 
 def mapCons(relation, rule):
     if bool(rule):
+        # print(relation)
         acc = rule["constraint"]
         [
             acc := acc.replace(
@@ -65,7 +75,7 @@ def mapCons(relation, rule):
             )
             for p in rule["params"]
         ]
-        print(acc)
+        # print(acc)
         return acc
 
 
@@ -74,15 +84,14 @@ def mapRels(relations, rules):
         rs
         for rs in [
             mapCons(
-                v, rules["relationTranslationRules"][0][
-                    v["properties"][0]["value"]
-                ]
+                v, rules["relationTranslationRules"][0][v["properties"][0]["value"]]
             )
             for (k, v) in [
                 (k, rel) for (k, rel) in relations.items() if rel["properties"]
             ]
             if (v["properties"][0]["value"] in rules["relationTypes"])
-        ] if rs is not None
+        ]
+        if rs is not None
     ]
 
 
@@ -99,18 +108,18 @@ with open(FILE, "r") as f:
     elementsMap = {(e["id"], e["type"]): e for e in fm["elements"]}
     # Get the relationships
     relationsMap = {r["id"]: r for r in fm["relationships"]}
-    print(relationsMap)
+    # print(relationsMap)
     # Create the rules
     with open(RULES, "r") as r:
         rules = json.load(r)
         # Map the constraints for the vars
         constraints = (
-            mapVars(elementsMap, rules) +
-            mapRels(relationsMap, rules) +
-            mapBundles(elementsMap, relationsMap, rules) +
-            ["solve satisfy;"]
+            mapVars(elementsMap, rules)
+            + mapRels(relationsMap, rules)
+            + mapBundles(elementsMap, relationsMap, rules)
+            + ["solve satisfy;"]
         )
-        print(constraints)
+        # print(constraints)
         print("\n".join([c for c in constraints]))
         # Add model and solver
         gecode = Solver.lookup("gecode")

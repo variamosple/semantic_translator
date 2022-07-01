@@ -2,8 +2,7 @@
     "elementTypes": [
         "ConcreteFeature",
         "RootFeature",
-        "AbstractFeature",
-        "Bundle"
+        "AbstractFeature"
     ],
     "elementTranslationRules":[
         {
@@ -21,16 +20,20 @@
                 "constraint": "var 1..1:'uuid_F';"
             },
             "Bundle":{
-                "param":["F", "Fs"],
+                "param":["F", "Xs"],
                 "constraint":{
-                    "Range":"constraint :: \"group cardinality Fs\" (F == 1) -> ((F * min <= sum(Fs)) /\\ (sum(Fs) <= F * max))",
-                    "Xor":"constraint :: \"F XOR Fs\" (F == 1) -> (F == sum(Fs))",
-                    "And":"constraint :: \"F AND Fs\" (F == 1) -> (len(Fs) == sum(Fs))",
-                    "Or":"constraint :: \"F OR Fs \" (F == 1) -> (len(Fs) >= sum(Fs))"
+                    "Range":"constraint :: \"group cardinality Fs\" (F == 1) -> ((F * min <= sum(Xs)) /\\ (sum(Xs) <= F * max));",
+                    "Xor":"constraint :: \"F XOR Xs\" (F == 1) -> (F == sum(Xs));",
+                    "And":"constraint :: \"F AND Xs\" (F == 1) -> (len(Xs) == sum(Xs));",
+                    "Or":"constraint :: \"F OR Xs \" (F == 1) -> (len(Xs) >= sum(Xs));"
                 }
             }
         }
     ],
+    "complexElemTranslations":{
+        "params":["Xs"],
+        "functions":["sum", "len"]
+    },
     "relationTypes":[
         "Mandatory",
         "Optional",
