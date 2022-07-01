@@ -10,8 +10,10 @@ def replaceWithPattern(pattern, string, occ, v):
         print('OK')
         return string
 
-
 def replaceExprs(bundle, elems, rels, cons, params, complexT):
+    """
+    This function replaces the first and second expressions for a bundle's constraint.
+    """
     f = [iden for (k, r) in rels.items() for ((iden,_), _) in elems.items() if (str(r["sourceId"]) == str(iden) and str(r["targetId"]) == str(bundle["id"]))]
     # replace constraint for principal param
     fs = [
@@ -38,6 +40,9 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
 
 
 def bundleCons(bundle, elems, rels, rules):
+    """
+    This is an auxiliary function that builds the request to replaceExprs
+    """
     # get constraint rule
     rule = rules["elementTranslationRules"][0]["Bundle"]
     cons = rule["constraint"][bundle["properties"][1]["value"]]
@@ -46,6 +51,10 @@ def bundleCons(bundle, elems, rels, rules):
 
 
 def mapBundles(elems, rels, rules):
+    """
+    This function collects all the strings related to the bundles
+    (it is the only portion of this module that is custom to feature models)
+    """
     return [
         bundleCons(bs, elems, rels, rules)
         for bs in [
@@ -56,6 +65,7 @@ def mapBundles(elems, rels, rules):
 
 
 def mapVar(element, rule):
+    """Maps an element into a constraint according to the rules"""
     # return rule
     if bool(rule):
         constraint = (
@@ -69,6 +79,7 @@ def mapVar(element, rule):
 
 
 def mapVars(elems, rules):
+    """This function collects all strings related to a set of elements and translation rules"""
     return [
         cs
         for cs in [
@@ -82,6 +93,7 @@ def mapVars(elems, rules):
 
 
 def mapCons(relation, rule):
+    """This function maps a relation into a constraint according to the rules"""
     if bool(rule):
         acc = rule["constraint"]
         [
@@ -97,6 +109,7 @@ def mapCons(relation, rule):
 
 
 def mapRels(relations, rules):
+    """This function collects all strings related to a set of relations and translation rules"""
     return [
         rs
         for rs in [
@@ -112,6 +125,7 @@ def mapRels(relations, rules):
     ]
 
 def run(model, rules, language):
+    """This function takes in a model, a set of rules and a language to translate to and runs the procedure"""
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
     fm = model["productLines"][0]["domainEngineering"]["models"][0]
     # Get the elements
