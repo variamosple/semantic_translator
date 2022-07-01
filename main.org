@@ -172,33 +172,11 @@ def run(model, rules, language):
 # Load file
 with open(FILE, "r") as f:
     # Load json as obj
-    array = json.load(f)
-    # Get the feature model @ /productLines[0]/domainEngineering/models[0]
-    fm = array["productLines"][0]["domainEngineering"]["models"][0]
-    # Get the elements
-    elementsMap = {(e["id"], e["type"]): e for e in fm["elements"]}
-    # Get the relationships
-    relationsMap = {r["id"]: r for r in fm["relationships"]}
+    model = json.load(f)
     # Create the rules
     with open(RULES, "r") as r:
         rules = json.load(r)
-        # Map the constraints for the vars
-        constraints = (
-            mapVars(elementsMap, rules)
-            + mapRels(relationsMap, rules)
-            + mapBundles(elementsMap, relationsMap, rules)
-            + ["solve satisfy;"]
-        )
-        print(constraints)
-        print("-------------------------------------------------------")
-        print("\n".join([c for c in constraints]))
-        # Add model and solver
-        gecode = Solver.lookup("gecode")
-        model = Model()
-        model.add_string("\n".join([c for c in constraints]))
-        instance = Instance(gecode, model)
-        result = instance.solve()
-        print(result)
+        print(run(model, rules, 'minizinc'))
 
 #+end_src
 
