@@ -20,7 +20,7 @@
                 "constraint": "var 1..1:'uuid_F';"
             },
             "Bundle":{
-                "param":["F", "Xs"],
+                "param":["F", "Xs","min", "max"],
                 "constraint":{
                     "Range":"constraint :: \"group cardinality Fs\" (F == 1) -> ((F * min <= sum(Xs)) /\\ (sum(Xs) <= F * max));",
                     "Xor":"constraint :: \"F XOR Xs\" (F == 1) -> (F == sum(Xs));",
@@ -32,7 +32,13 @@
     ],
     "complexElemTranslations":{
         "params":["Xs"],
-        "functions":["sum", "len"]
+        "functions":["sum", "len", "max"]
+    },
+    "complexElemValues":{
+        "params":["max", "min"],
+        "type":{
+            "Bundle":"Range"
+        }
     },
     "relationTypes":[
         "Mandatory",

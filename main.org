@@ -14,8 +14,10 @@ of some type, and, using a set of transformation rules:
 We now turn to defining where we will find our files for processing:
 
 #+begin_src python :session s1 :results none :tangle no
-FILE = "/home/kaiser185/workspace/semantic_translator/json/vmosfm.json"
-RULES = "/home/kaiser185/workspace/semantic_translator/json/fmrules.json"
+FILE = "/Users/ccr185/workspace/semantic_translator/json/vmosfm.json"
+SG = "/Users/ccr185/workspace/semantic_translator/sam/correct_model.json"
+SB = "/Users/ccr185/workspace/semantic_translator/sam/wrong_model.json"
+RULES = "/Users/ccr185/workspace/semantic_translator/json/fmrules.json"
 #+end_src
 
 #+RESULTS:
@@ -65,11 +67,12 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
     ]
     fs = ["uuid_" + ef.replace("-","_") for ef in fs if (ef not in f)]
     # print(fs)
+    # print(bundle)
     pattern = {
         "F": f[0],
         "Xs": {
             "sum":" + ".join(fs),
-            "len": len(fs)
+            "len": str(len(fs))
         }
     }
     cons = str(cons).replace(
@@ -91,6 +94,14 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         )
         for occ in occs
     ]
+    print(bundle["properties"][1]["type"])
+    # handle special range case.
+    if bundle["properties"][1]["value"] == "Range":
+        ranges = {
+         "min": bundle["properties"][2]["value"],
+         "max": bundle["properties"][3]["value"]
+        }
+        [cons := cons.replace(params[i], ranges[params[i]]) for i in range(2,len(params))]
     return cons
 
 
@@ -219,7 +230,7 @@ We also define a function that allows us to test things locally before exposing 
 def test():
     """Test function locally"""
     # Load file
-    with open(FILE, "r") as f:
+    with open(SG, "r") as f:
         # Load json as obj
         model = json.load(f)
         # Create the rules
@@ -235,28 +246,42 @@ test()
 
 #+RESULTS:
 #+begin_example
+String
+String
+String
+String
 -----------------------MODEL--------------------------------
-var 1..1:'uuid_69784178_c589_4447_bbe5_7b51b97f4918';% RootFeature -> 69784178-c589-4447-bbe5-7b51b97f4918
-var 0..1:'uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f';% AbstractFeature -> bf3ab018-6304-4e84-a11f-80f3f5d1d80f
-var 0..1:'uuid_ac0d2916_749b_4146_ad32_37622e2aeef0';% AbstractFeature -> ac0d2916-749b-4146-ad32-37622e2aeef0
-var 0..1:'uuid_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8';% ConcreteFeature -> 9e5a250c-9ee7-4d7b-9486-40563a1e9ab8
-var 0..1:'uuid_43634fef_d816_4cc4_bbde_02cb7865afef';% ConcreteFeature -> 43634fef-d816-4cc4-bbde-02cb7865afef
-var 0..1:'uuid_87b866ef_e358_4797_829c_d3fcac43a21f';% ConcreteFeature -> 87b866ef-e358-4797-829c-d3fcac43a21f
-var 0..1:'uuid_e51771f2_b0cc_433a_bfee_8e106bb8d17e';% AbstractFeature -> e51771f2-b0cc-433a-bfee-8e106bb8d17e
-var 0..1:'uuid_1cb2b338_f05e_4ccb_9df2_2bc76894336a';% ConcreteFeature -> 1cb2b338-f05e-4ccb-9df2-2bc76894336a
-var 0..1:'uuid_b2f0093c_60b1_40a0_98d6_ab392dcc74cc';% ConcreteFeature -> b2f0093c-60b1-40a0-98d6-ab392dcc74cc
-constraint :: "69784178_c589_4447_bbe5_7b51b97f4918 mandatory bf3ab018_6304_4e84_a11f_80f3f5d1d80f" (uuid_69784178_c589_4447_bbe5_7b51b97f4918 == uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f);
-constraint :: "69784178_c589_4447_bbe5_7b51b97f4918 mandatory ac0d2916_749b_4146_ad32_37622e2aeef0" (uuid_69784178_c589_4447_bbe5_7b51b97f4918 == uuid_ac0d2916_749b_4146_ad32_37622e2aeef0);
-constraint :: "bf3ab018_6304_4e84_a11f_80f3f5d1d80f optional 9e5a250c_9ee7_4d7b_9486_40563a1e9ab8" (uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f >= uuid_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8);
-constraint :: "ac0d2916_749b_4146_ad32_37622e2aeef0 mandatory e51771f2_b0cc_433a_bfee_8e106bb8d17e" (uuid_ac0d2916_749b_4146_ad32_37622e2aeef0 == uuid_e51771f2_b0cc_433a_bfee_8e106bb8d17e);
-constraint :: "e51771f2_b0cc_433a_bfee_8e106bb8d17e mandatory 1cb2b338_f05e_4ccb_9df2_2bc76894336a" (uuid_e51771f2_b0cc_433a_bfee_8e106bb8d17e == uuid_1cb2b338_f05e_4ccb_9df2_2bc76894336a);
-constraint :: "e51771f2_b0cc_433a_bfee_8e106bb8d17e optional b2f0093c_60b1_40a0_98d6_ab392dcc74cc" (uuid_e51771f2_b0cc_433a_bfee_8e106bb8d17e >= uuid_b2f0093c_60b1_40a0_98d6_ab392dcc74cc);
-constraint :: "b2f0093c_60b1_40a0_98d6_ab392dcc74cc excludes 87b866ef_e358_4797_829c_d3fcac43a21f" not (uuid_b2f0093c_60b1_40a0_98d6_ab392dcc74cc == 1 /\ uuid_87b866ef_e358_4797_829c_d3fcac43a21f == 1);
-constraint :: "9e5a250c_9ee7_4d7b_9486_40563a1e9ab8 includes 43634fef_d816_4cc4_bbde_02cb7865afef" (uuid_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8 == 1) -> (uuid_43634fef_d816_4cc4_bbde_02cb7865afef == 1);
-constraint :: "uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f XOR Xs" (uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f == 1) -> (uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f == uuid_43634fef_d816_4cc4_bbde_02cb7865afef + uuid_87b866ef_e358_4797_829c_d3fcac43a21f);
+var 1..1:'uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d';% RootFeature -> 7a4982f4-2f18-4a39-bf72-1b445c95d74d
+var 0..1:'uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c';% AbstractFeature -> fbf7f047-4459-4d5b-84e3-bc5f0e4cde6c
+var 0..1:'uuid_da16e281_e363_45fb_b32f_0366332f9288';% AbstractFeature -> da16e281-e363-45fb-b32f-0366332f9288
+var 0..1:'uuid_5903f5df_e901_416b_bf6e_406658fe446f';% ConcreteFeature -> 5903f5df-e901-416b-bf6e-406658fe446f
+var 0..1:'uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d';% ConcreteFeature -> 4e5a3e98-2024-43fc-b41a-4f8d87430a4d
+var 0..1:'uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515';% ConcreteFeature -> 4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515
+var 0..1:'uuid_6b7e57a6_4d49_490c_86d1_5f054614b281';% ConcreteFeature -> 6b7e57a6-4d49-490c-86d1-5f054614b281
+var 0..1:'uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4';% ConcreteFeature -> e033aaac-c460-45d1-999a-38b3ebf7bfa4
+var 0..1:'uuid_76b1b171_81e0_49d8_836e_38b62a893bbf';% ConcreteFeature -> 76b1b171-81e0-49d8-836e-38b62a893bbf
+var 0..1:'uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38';% ConcreteFeature -> 3bf4c5f1-a6b1-4162-902a-8047b8935b38
+var 0..1:'uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3';% ConcreteFeature -> 34ba47c1-4afe-401f-b555-cabc160b7ef3
+var 0..1:'uuid_5d274670_6a3d_4e86_bec0_c55333d74c04';% ConcreteFeature -> 5d274670-6a3d-4e86-bec0-c55333d74c04
+var 0..1:'uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b';% ConcreteFeature -> c3c7c42b-223a-48c9-9ab9-0175ccc8550b
+var 0..1:'uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0';% ConcreteFeature -> 57a12aaf-6684-46c2-a85b-2ba01c200cc0
+var 0..1:'uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef';% ConcreteFeature -> df9eb05a-69ce-4050-b329-d1ce5a7e15ef
+var 0..1:'uuid_b93d709b_1a4a_4898_a8f9_b0207891525a';% ConcreteFeature -> b93d709b-1a4a-4898-a8f9-b0207891525a
+constraint :: "7a4982f4_2f18_4a39_bf72_1b445c95d74d mandatory da16e281_e363_45fb_b32f_0366332f9288" (uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d == uuid_da16e281_e363_45fb_b32f_0366332f9288);
+constraint :: "7a4982f4_2f18_4a39_bf72_1b445c95d74d mandatory fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c" (uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d == uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c);
+constraint :: "5903f5df_e901_416b_bf6e_406658fe446f optional e033aaac_c460_45d1_999a_38b3ebf7bfa4" (uuid_5903f5df_e901_416b_bf6e_406658fe446f >= uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4);
+constraint :: "5903f5df_e901_416b_bf6e_406658fe446f mandatory 76b1b171_81e0_49d8_836e_38b62a893bbf" (uuid_5903f5df_e901_416b_bf6e_406658fe446f == uuid_76b1b171_81e0_49d8_836e_38b62a893bbf);
+constraint :: "4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 optional c3c7c42b_223a_48c9_9ab9_0175ccc8550b" (uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 >= uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b);
+constraint :: "c3c7c42b_223a_48c9_9ab9_0175ccc8550b excludes 57a12aaf_6684_46c2_a85b_2ba01c200cc0" not (uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b == 1 /\ uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0 == 1);
+constraint :: "4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 optional 57a12aaf_6684_46c2_a85b_2ba01c200cc0" (uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 >= uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0);
+constraint :: "3bf4c5f1_a6b1_4162_902a_8047b8935b38 includes 34ba47c1_4afe_401f_b555_cabc160b7ef3" (uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 == 1) -> (uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 == 1);
+constraint :: "uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c AND Xs" (uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c == 1) -> (2 == uuid_5903f5df_e901_416b_bf6e_406658fe446f + uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d);
+constraint :: "uuid_da16e281_e363_45fb_b32f_0366332f9288 OR Xs " (uuid_da16e281_e363_45fb_b32f_0366332f9288 == 1) -> (2 >= uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 + uuid_6b7e57a6_4d49_490c_86d1_5f054614b281);
+constraint :: "group cardinality uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4ds" (uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d == 1) -> ((uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d * 1 <= uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 + uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 + uuid_5d274670_6a3d_4e86_bec0_c55333d74c04) /\ (uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 + uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 + uuid_5d274670_6a3d_4e86_bec0_c55333d74c04 <= uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d * 3));
+constraint :: "uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 XOR Xs" (uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 == 1) -> (uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 == uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef + uuid_b93d709b_1a4a_4898_a8f9_b0207891525a);
 solve satisfy;
 ----------------------/MODEL--------------------------------
 -----------------------RESULTS------------------------------
-Solution(uuid_69784178_c589_4447_bbe5_7b51b97f4918=1, uuid_bf3ab018_6304_4e84_a11f_80f3f5d1d80f=1, uuid_ac0d2916_749b_4146_ad32_37622e2aeef0=1, uuid_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8=0, uuid_43634fef_d816_4cc4_bbde_02cb7865afef=1, uuid_87b866ef_e358_4797_829c_d3fcac43a21f=0, uuid_e51771f2_b0cc_433a_bfee_8e106bb8d17e=1, uuid_1cb2b338_f05e_4ccb_9df2_2bc76894336a=1, uuid_b2f0093c_60b1_40a0_98d6_ab392dcc74cc=0, _checker='')
+Solution(uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d=1, uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c=1, uuid_da16e281_e363_45fb_b32f_0366332f9288=1, uuid_5903f5df_e901_416b_bf6e_406658fe446f=1, uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d=1, uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515=0, uuid_6b7e57a6_4d49_490c_86d1_5f054614b281=0, uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4=0, uuid_76b1b171_81e0_49d8_836e_38b62a893bbf=1, uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38=0, uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3=0, uuid_5d274670_6a3d_4e86_bec0_c55333d74c04=1, uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b=0, uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0=0, uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef=0, uuid_b93d709b_1a4a_4898_a8f9_b0207891525a=0, _checker='')
 ----------------------/RESULTS------------------------------
 #+end_example
