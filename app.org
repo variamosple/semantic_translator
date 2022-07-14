@@ -1,3 +1,10 @@
+#+title: Server App
+#+author: Camilo Correa Restrepo
+#+author: Hiba Hnaini
+
+This is the code for the server that runs the semantic translator for VariaMos.
+
+#+begin_src python :session sr :tangle yes
 #!/usr/bin/env python3
 
 """
@@ -24,3 +31,5 @@ def translate(language):
         rules=content["rules"],
         language=language
     ))})
+
+#+end_src

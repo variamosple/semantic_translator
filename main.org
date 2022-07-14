@@ -30,23 +30,38 @@ from minizinc import Instance, Model, Solver
 
 def replaceWithPattern(pattern, string, occ, v):
     if type(v) is not str and string is not None:
-        print(v.items())
-        print(string)
+        # print(v.items())
+        # print(string)
         [string := string.replace(occ, str(val)) for (k, val) in v.items()]
-        print('OK')
+        # print('OK')
         return string
 
 def replaceExprs(bundle, elems, rels, cons, params, complexT):
     """
     This function replaces the first and second expressions for a bundle's constraint.
     """
-    f = [iden for (k, r) in rels.items() for ((iden,_), _) in elems.items() if (str(r["sourceId"]) == str(iden) and str(r["targetId"]) == str(bundle["id"]))]
+    f = [
+        iden
+        for (k, r) in rels.items()
+        for ((iden,_), _) in elems.items()
+        if (
+            str(r["sourceId"]) == str(iden) and
+            str(r["targetId"]) == str(bundle["id"])
+        )
+    ]
     # replace constraint for principal param
     fs = [
         iden
         for ((iden, _), elem)
         in elems.items()
-        if ([rel for (_,rel) in rels.items() if rel["sourceId"] == bundle["id"] and rel["targetId"] == iden])
+        if (
+            [
+                rel
+                for (_,rel) in rels.items()
+                if rel["sourceId"] == bundle["id"] and
+                    rel["targetId"] == iden
+            ]
+        )
     ]
     fs = ["uuid_" + ef.replace("-","_") for ef in fs if (ef not in f)]
     # print(fs)
@@ -54,13 +69,28 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         "F": f[0],
         "Xs": {
             "sum":" + ".join(fs),
+            "len": len(fs)
         }
     }
-    cons = str(cons).replace(params[0], "uuid_" + pattern[params[0]].replace("-","_"))
+    cons = str(cons).replace(
+        params[0],
+        "uuid_" + pattern[params[0]].replace("-","_")
+    )
     funs = r"(" + r"|".join(complexT["functions"]) + r")"
     regex_paren = funs + r"\(" + re.escape(params[1]) + r"\)"
-    occs = set([oc.group(0) for oc in re.finditer(regex_paren, cons)])
-    [cons := cons.replace(occ, pattern[params[1]][re.compile(regex_paren).search(occ).group(1)]) for occ in occs]
+    occs = set([
+        oc.group(0)
+        for oc in re.finditer(regex_paren, cons)
+    ])
+    [
+        cons := cons.replace(
+            occ,
+            pattern[params[1]][
+                re.compile(regex_paren).search(occ).group(1)
+            ]
+        )
+        for occ in occs
+    ]
     return cons
 
 
@@ -151,8 +181,8 @@ def mapRels(relations, rules):
     ]
 #+end_src
 
-Next we need to construct our result:
-
+Next we need to construct our result; we define therefore a function that takes in the
+model and the rule file and both generates the constraints and gets a solution from the solver:
 
 #+begin_src python :session s1 :results none :exports none :tangle yes
 def run(model, rules, language):
@@ -183,7 +213,9 @@ def run(model, rules, language):
     return result
 #+end_src
 
-#+begin_src python :session s1 :results output :exports both :tangle no
+We also define a function that allows us to test things locally before exposing our code to the server.
+
+#+begin_src python :session s1 :results output :exports both :tangle yes
 def test():
     """Test function locally"""
     # Load file

@@ -14,27 +14,56 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
     """
     This function replaces the first and second expressions for a bundle's constraint.
     """
-    f = [iden for (k, r) in rels.items() for ((iden,_), _) in elems.items() if (str(r["sourceId"]) == str(iden) and str(r["targetId"]) == str(bundle["id"]))]
+    f = [
+        iden
+        for (k, r) in rels.items()
+        for ((iden,_), _) in elems.items()
+        if (
+            str(r["sourceId"]) == str(iden) and
+            str(r["targetId"]) == str(bundle["id"])
+        )
+    ]
     # replace constraint for principal param
     fs = [
         iden
         for ((iden, _), elem)
         in elems.items()
-        if ([rel for (_,rel) in rels.items() if rel["sourceId"] == bundle["id"] and rel["targetId"] == iden])
+        if (
+            [
+                rel
+                for (_,rel) in rels.items()
+                if rel["sourceId"] == bundle["id"] and
+                    rel["targetId"] == iden
+            ]
+        )
     ]
     fs = ["uuid_" + ef.replace("-","_") for ef in fs if (ef not in f)]
-    print(fs)
+    # print(fs)
     pattern = {
         "F": f[0],
         "Xs": {
             "sum":" + ".join(fs),
         }
     }
-    cons = str(cons).replace(params[0], "uuid_" + pattern[params[0]].replace("-","_"))
+    cons = str(cons).replace(
+        params[0],
+        "uuid_" + pattern[params[0]].replace("-","_")
+    )
     funs = r"(" + r"|".join(complexT["functions"]) + r")"
     regex_paren = funs + r"\(" + re.escape(params[1]) + r"\)"
-    occs = set([oc.group(0) for oc in re.finditer(regex_paren, cons)])
-    [cons := cons.replace(occ, pattern[params[1]][re.compile(regex_paren).search(occ).group(1)]) for occ in occs]
+    occs = set([
+        oc.group(0)
+        for oc in re.finditer(regex_paren, cons)
+    ])
+    [
+        cons := cons.replace(
+            occ,
+            pattern[params[1]][
+                re.compile(regex_paren).search(occ).group(1)
+            ]
+        )
+        for occ in occs
+    ]
     return cons
 
 
@@ -139,8 +168,8 @@ def run(model, rules, language):
         + mapBundles(elementsMap, relationsMap, rules)
         + ["solve satisfy;"]
     )
-    print(constraints)
-    print("-------------------------------------------------------")
+    # print(constraints)
+    print("-----------------------MODEL--------------------------------")
     print("\n".join([c for c in constraints]))
     # Add model and solver
     gecode = Solver.lookup("gecode")
@@ -148,4 +177,21 @@ def run(model, rules, language):
     model.add_string("\n".join([c for c in constraints]))
     instance = Instance(gecode, model)
     result = instance.solve()
+    print("----------------------/MODEL--------------------------------")
     return result
+
+def test():
+    """Test function locally"""
+    # Load file
+    with open(FILE, "r") as f:
+        # Load json as obj
+        model = json.load(f)
+        # Create the rules
+        with open(RULES, "r") as r:
+            rules = json.load(r)
+            x = run(model, rules, 'minizinc')
+            print("-----------------------RESULTS------------------------------")
+            print(x)
+            print("----------------------/RESULTS------------------------------")
+
+test()

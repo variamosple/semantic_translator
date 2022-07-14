@@ -9,3 +9,7 @@ build
 htmlcov
 
 _minted-main
+__pycache__
+
+*.tex
+*.pdf
