@@ -1,0 +1,1174 @@
+{
+  "id": "c278e9b1-fddb-4804-80a4-99c1cc7c14cf",
+  "name": "Project Camillo",
+  "enable": true,
+  "productLines": [
+    {
+      "id": "0081069d-d3d4-4209-afd0-701ff030ca65",
+      "name": "Product Line Test",
+      "domainEngineering": {
+        "models": [
+          {
+            "id": "28dec823-aa6b-46f1-9e7b-cea3564f0772",
+            "name": "Features",
+            "elements": [
+              {
+                "id": "7a4982f4-2f18-4a39-bf72-1b445c95d74d",
+                "type": "RootFeature",
+                "name": "RootFeature",
+                "x": 520,
+                "y": 50,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "5aacade9-7ad0-42e2-ace1-deae06b5fe6b",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "571930b2-7a67-4a60-a1c3-cada97fed68a",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "fbf7f047-4459-4d5b-84e3-bc5f0e4cde6c",
+                "type": "AbstractFeature",
+                "name": "AbstractFeature 1",
+                "x": 360,
+                "y": 170,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "5cd35267-cf72-4723-be73-7463bebc21c8",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "aad4d205-4d80-4575-bd49-e80195c35fe7",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "da16e281-e363-45fb-b32f-0366332f9288",
+                "type": "AbstractFeature",
+                "name": "AbstractFeature 2",
+                "x": 650,
+                "y": 170,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "7e9302a1-5211-40d2-849c-31ecc422a925",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "ade6682c-dae6-4ac9-a647-c59f43bd9bd4",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "d4733546-6193-4d82-99b6-3c00e6c5eeb2",
+                "type": "Bundle",
+                "name": "Bundle 1",
+                "x": 350,
+                "y": 260,
+                "width": 100,
+                "height": 50,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "4a0c7f22-5cac-45dd-8d2c-df64e1cbf880",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "b4a40268-c330-43fb-a6c9-6dde65a89414",
+                    "name": "Type",
+                    "value": "And",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "And,Or,Xor,Range"
+                  },
+                  {
+                    "id": "c095fdf3-8069-49d8-85b8-0f7f49f58127",
+                    "name": "RangeMin",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "f3289f50-6f31-4920-89fa-9550fb81600e",
+                    "name": "RangeMax",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "cb9d88e4-f9e7-42e5-90b3-6d705578b291",
+                    "name": "Testing",
+                    "type": "Integer",
+                    "custom": false,
+                    "display": true,
+                    "comment": "prueba",
+                    "possibleValues": "1..10"
+                  }
+                ]
+              },
+              {
+                "id": "5903f5df-e901-416b-bf6e-406658fe446f",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 1",
+                "x": 250,
+                "y": 350,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "cdc0b93b-2446-4ecf-9312-c54f87d54a0c",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "409c1360-e576-4752-ac61-28e5fd13d404",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "4e5a3e98-2024-43fc-b41a-4f8d87430a4d",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 2",
+                "x": 440,
+                "y": 350,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "51464669-6c1d-4655-9260-20ea225da5de",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "4afec6b1-8980-4a7d-b7c3-fe7ee8cadd7c",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "4759f281-9904-44fa-8483-f58bb8ceb846",
+                "type": "Bundle",
+                "name": "Bundle 1",
+                "x": 690,
+                "y": 260,
+                "width": 100,
+                "height": 50,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "a3c9e9c0-e6fb-4d2c-a770-4d4e3882eecf",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "a188b1ab-2ad7-476b-990a-b594e3e11d2a",
+                    "name": "Type",
+                    "value": "Or",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "And,Or,Xor,Range"
+                  },
+                  {
+                    "id": "879ec9e5-9777-42c3-92fa-d7051f1406cd",
+                    "name": "RangeMin",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "c17e2ca2-5f8c-494d-9749-3652925cb488",
+                    "name": "RangeMax",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "75eb43fd-15a7-4f51-b9d3-ea5dd9f2065d",
+                    "name": "Testing",
+                    "type": "Integer",
+                    "custom": false,
+                    "display": true,
+                    "comment": "prueba",
+                    "possibleValues": "1..10"
+                  }
+                ]
+              },
+              {
+                "id": "4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 3",
+                "x": 640,
+                "y": 350,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "d8f9b811-251c-4b4d-a68d-1090239e8283",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "7886bfb0-8e31-4444-afd3-45d905e128fd",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "6b7e57a6-4d49-490c-86d1-5f054614b281",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 4",
+                "x": 800,
+                "y": 350,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "d003fc2c-3cb1-4499-94a8-ba4d207c2fa2",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "7c4a2e52-22aa-4c5f-83f7-700321174d99",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "e033aaac-c460-45d1-999a-38b3ebf7bfa4",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 5",
+                "x": 60,
+                "y": 470,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "a84b2031-0b2a-4ced-8e8c-50842c03c5fb",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "c975e87e-d59e-4686-8f1c-2e38d9729317",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "081594a1-e9b1-438c-b001-9307fed32ea2",
+                "type": "Bundle",
+                "name": "Bundle 1",
+                "x": 440,
+                "y": 460,
+                "width": 100,
+                "height": 50,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "94c6c9dd-bc27-45d2-809d-1fceb935725d",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "344b4cd3-aab4-47cc-9f84-85767750d687",
+                    "name": "Type",
+                    "value": "Range",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "And,Or,Xor,Range"
+                  },
+                  {
+                    "id": "2c05606d-7b9d-4e37-8f55-6eb8dfb2cf7f",
+                    "name": "RangeMin",
+                    "value": "1",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "428087fe-ffa7-4805-bb8f-dd34410b0185",
+                    "name": "RangeMax",
+                    "value": "3",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "a52eeb6b-bbc9-4272-b69b-abf7977da9f7",
+                    "name": "Testing",
+                    "type": "Integer",
+                    "custom": false,
+                    "display": true,
+                    "comment": "prueba",
+                    "possibleValues": "1..10"
+                  }
+                ]
+              },
+              {
+                "id": "76b1b171-81e0-49d8-836e-38b62a893bbf",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 6",
+                "x": 260,
+                "y": 470,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "69899aae-5f04-479d-b82d-6caf8daa5c72",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "bdb79104-64fb-4b18-bf52-cdef30ebfd1e",
+                    "name": "Selected",
+                    "value": "Selected",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "3bf4c5f1-a6b1-4162-902a-8047b8935b38",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 7",
+                "x": 290,
+                "y": 570,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "3c336acc-8698-413e-be87-739d51bfabfe",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "2ed73c62-9733-42d7-b189-847e0e98f5c1",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "34ba47c1-4afe-401f-b555-cabc160b7ef3",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 8",
+                "x": 440,
+                "y": 640,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "56523d3a-931e-4ea0-a930-407b293d578a",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "410e054c-dfde-4e90-b9a5-e14169b070d2",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "5d274670-6a3d-4e86-bec0-c55333d74c04",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 9",
+                "x": 570,
+                "y": 570,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "94815731-203c-4356-9080-0c6e321a5c4f",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "0d744222-ddb1-45dc-8590-baabf8f362d6",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "c3c7c42b-223a-48c9-9ab9-0175ccc8550b",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 10",
+                "x": 560,
+                "y": 460,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "e922aade-fd0a-4b9c-82c9-c2d291531cfd",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "e78fee43-42d8-4cc7-a3ca-98f0c3547b53",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "57a12aaf-6684-46c2-a85b-2ba01c200cc0",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 11",
+                "x": 730,
+                "y": 460,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "81514d33-39e3-4fd6-81be-abf8e713df66",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "bf6984d6-9848-4b89-a0fe-94298954de9c",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "4e0fff87-ba82-41db-8c7b-0f0eb9e2feb6",
+                "type": "Bundle",
+                "name": "Bundle 1",
+                "x": 910,
+                "y": 440,
+                "width": 100,
+                "height": 50,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "23f9c3a2-4beb-43fa-8af5-b19c9f38f7f5",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "a76f6ca1-b6b5-487d-b78f-31ed08cdc300",
+                    "name": "Type",
+                    "value": "Xor",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "And,Or,Xor,Range"
+                  },
+                  {
+                    "id": "ab447412-cc72-4170-be4e-46e0f32a60e9",
+                    "name": "RangeMin",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "59f146b0-9324-408b-88ff-8e13e1221f35",
+                    "name": "RangeMax",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "Range",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "1c37e1dc-8a38-4fab-b475-9519967105b9",
+                    "name": "Testing",
+                    "type": "Integer",
+                    "custom": false,
+                    "display": true,
+                    "comment": "prueba",
+                    "possibleValues": "1..10"
+                  }
+                ]
+              },
+              {
+                "id": "df9eb05a-69ce-4050-b329-d1ce5a7e15ef",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 12",
+                "x": 850,
+                "y": 540,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "94852023-ac91-49d7-8f9d-ac2a02852fd7",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "f19d1a29-acc2-4f83-9c64-141365c4f7ef",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              },
+              {
+                "id": "b93d709b-1a4a-4898-a8f9-b0207891525a",
+                "type": "ConcreteFeature",
+                "name": "ConcreteFeature 13",
+                "x": 1020,
+                "y": 540,
+                "width": 100,
+                "height": 33,
+                "parentId": null,
+                "properties": [
+                  {
+                    "id": "4dd81fa4-4c38-4700-af0a-3097c3c91585",
+                    "name": "Name",
+                    "type": "String",
+                    "custom": false,
+                    "display": true
+                  },
+                  {
+                    "id": "f1074900-5980-4881-9f33-37788eb28b94",
+                    "name": "Selected",
+                    "value": "Undefined",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "comment": "type options",
+                    "possibleValues": "Undefined,Selected,Unselected"
+                  }
+                ]
+              }
+            ],
+            "relationships": [
+              {
+                "id": "9a4dbe47-3ff5-4168-b619-42d1139ec337",
+                "type": "RootFeature_Feature",
+                "name": "RootFeature 1_AbstractFeature 2",
+                "sourceId": "7a4982f4-2f18-4a39-bf72-1b445c95d74d",
+                "targetId": "da16e281-e363-45fb-b32f-0366332f9288",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "d0f468f9-5d3a-40e2-84e9-6b815013ffc4",
+                    "name": "Type",
+                    "value": "Mandatory",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "58c9ccca-ad1f-4e49-9eba-aaa456d39887",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "a829e84c-8229-4af2-87f8-99630a7cd69a",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "b400c84d-dcb0-40a8-a32b-928725fc90fe",
+                "type": "RootFeature_Feature",
+                "name": "RootFeature 1_AbstractFeature 1",
+                "sourceId": "7a4982f4-2f18-4a39-bf72-1b445c95d74d",
+                "targetId": "fbf7f047-4459-4d5b-84e3-bc5f0e4cde6c",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "21c78e33-f4de-4335-b670-1c10d80d3546",
+                    "name": "Type",
+                    "value": "Mandatory",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "5f0ec6b4-6236-4546-adfb-aadc27ceeff6",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "a2e596c2-ccc1-441c-87e2-48c7e55aab23",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "dc794d84-e5bb-4191-b1d1-6261644cf6db",
+                "type": "AbstractFeature_Bundle",
+                "name": "AbstractFeature 1_And",
+                "sourceId": "fbf7f047-4459-4d5b-84e3-bc5f0e4cde6c",
+                "targetId": "d4733546-6193-4d82-99b6-3c00e6c5eeb2",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "82e973c0-fc2c-456e-9e8d-91b97780bc18",
+                "type": "Bundle_Feature",
+                "name": "And_ConcreteFeature 1",
+                "sourceId": "d4733546-6193-4d82-99b6-3c00e6c5eeb2",
+                "targetId": "5903f5df-e901-416b-bf6e-406658fe446f",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "4ed908cb-e337-424f-bb2d-ebe3c706ae2b",
+                "type": "Bundle_Feature",
+                "name": "And_ConcreteFeature 1",
+                "sourceId": "d4733546-6193-4d82-99b6-3c00e6c5eeb2",
+                "targetId": "4e5a3e98-2024-43fc-b41a-4f8d87430a4d",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "e153c22b-b5fb-4c69-bb02-493894d410ab",
+                "type": "AbstractFeature_Bundle",
+                "name": "AbstractFeature 2_Or",
+                "sourceId": "da16e281-e363-45fb-b32f-0366332f9288",
+                "targetId": "4759f281-9904-44fa-8483-f58bb8ceb846",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "4f046479-2f11-4efe-b237-360e63eccaef",
+                "type": "Bundle_Feature",
+                "name": "Or_ConcreteFeature 1",
+                "sourceId": "4759f281-9904-44fa-8483-f58bb8ceb846",
+                "targetId": "4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "e20baa58-b873-49f8-89ba-b4f1364c1bb8",
+                "type": "Bundle_Feature",
+                "name": "Or_ConcreteFeature 1",
+                "sourceId": "4759f281-9904-44fa-8483-f58bb8ceb846",
+                "targetId": "6b7e57a6-4d49-490c-86d1-5f054614b281",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "4cae4685-8651-4328-b73a-092daea49a1e",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 1_ConcreteFeature 1",
+                "sourceId": "5903f5df-e901-416b-bf6e-406658fe446f",
+                "targetId": "e033aaac-c460-45d1-999a-38b3ebf7bfa4",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "5278ccbc-1e4a-4f4a-8ea2-b39093ceb992",
+                    "name": "Type",
+                    "value": "Optional",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "f98a718e-c93e-4884-b5aa-4cbf54e90fb6",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "f119c249-50ca-4f1e-93a5-d140ab5535bf",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "8320cf68-e74e-423b-9aa3-2b059c14f0dc",
+                "type": "ConcreteFeature_Bundle",
+                "name": "ConcreteFeature 2_Range",
+                "sourceId": "4e5a3e98-2024-43fc-b41a-4f8d87430a4d",
+                "targetId": "081594a1-e9b1-438c-b001-9307fed32ea2",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "d672b285-e268-495a-b068-9c7e1bfa4aa3",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 1_ConcreteFeature 1",
+                "sourceId": "5903f5df-e901-416b-bf6e-406658fe446f",
+                "targetId": "76b1b171-81e0-49d8-836e-38b62a893bbf",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "f07b06bd-61aa-47b4-9cfa-4a34e473d9e0",
+                    "name": "Type",
+                    "value": "Mandatory",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "7771eaaf-815f-4e48-a585-7ce4427bc764",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "021b4e5a-19b1-4816-8a69-4b09e0638793",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "2eed3bd6-1fd6-443a-89f1-4e4d48d3a94b",
+                "type": "Bundle_Feature",
+                "name": "Range_ConcreteFeature 7",
+                "sourceId": "081594a1-e9b1-438c-b001-9307fed32ea2",
+                "targetId": "3bf4c5f1-a6b1-4162-902a-8047b8935b38",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "a89c9822-9cf1-46ec-8269-6ca4715d5218",
+                "type": "Bundle_Feature",
+                "name": "Range_ConcreteFeature 8",
+                "sourceId": "081594a1-e9b1-438c-b001-9307fed32ea2",
+                "targetId": "34ba47c1-4afe-401f-b555-cabc160b7ef3",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "1c26b8d8-e6d6-4191-b928-0ac895685cfa",
+                "type": "Bundle_Feature",
+                "name": "Range_ConcreteFeature 9",
+                "sourceId": "081594a1-e9b1-438c-b001-9307fed32ea2",
+                "targetId": "5d274670-6a3d-4e86-bec0-c55333d74c04",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "5b8caeb4-7c97-4cea-b1c9-18cd6476325d",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 3_ConcreteFeature 1",
+                "sourceId": "4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515",
+                "targetId": "c3c7c42b-223a-48c9-9ab9-0175ccc8550b",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "0278b638-6e53-46a2-8ba8-1bf88f199cf7",
+                    "name": "Type",
+                    "value": "Optional",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "7ee54ce1-c25b-4b79-abf5-9b7da90404cc",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "ab16036a-f319-4780-ac62-bfb755f4981b",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "90897e04-c607-4bec-9bf9-0b64fceef79b",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 1_ConcreteFeature 1",
+                "sourceId": "c3c7c42b-223a-48c9-9ab9-0175ccc8550b",
+                "targetId": "57a12aaf-6684-46c2-a85b-2ba01c200cc0",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "021b8b53-26ad-4d58-aa36-6b6ec6aeb2dd",
+                    "name": "Type",
+                    "value": "Excludes",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "a0ff1964-477d-468e-8882-3323924d1863",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "ec3283d7-49a3-4120-8fc1-319c96e61561",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "96feb7d2-4af4-4d61-9d83-05c729ef4539",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 3_ConcreteFeature 11",
+                "sourceId": "4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515",
+                "targetId": "57a12aaf-6684-46c2-a85b-2ba01c200cc0",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "0795c0c8-ac38-47be-912b-d89c04b7b408",
+                    "name": "Type",
+                    "value": "Optional",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "c83a16a6-022e-4c84-9c9e-1134668fef93",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "f2433029-1e94-4e86-9e24-68d3f98af950",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "d9df6ba4-eb95-43fc-95dc-a780197bd65d",
+                "type": "ConcreteFeature_Feature",
+                "name": "ConcreteFeature 7_ConcreteFeature 8",
+                "sourceId": "3bf4c5f1-a6b1-4162-902a-8047b8935b38",
+                "targetId": "34ba47c1-4afe-401f-b555-cabc160b7ef3",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": [
+                  {
+                    "id": "6b406ba4-0360-4ab5-9954-3f17a641de1b",
+                    "name": "Type",
+                    "value": "Includes",
+                    "type": "String",
+                    "custom": false,
+                    "display": true,
+                    "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                  },
+                  {
+                    "id": "7a8dd2ee-d2db-47dd-b718-8ac109ba6ea5",
+                    "name": "MinValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  },
+                  {
+                    "id": "f7cbbd03-30d8-40b2-83e7-6ccea71c6270",
+                    "name": "MaxValue",
+                    "type": "String",
+                    "linked_property": "Type",
+                    "linked_value": "IndividualCardinality",
+                    "custom": false,
+                    "display": false
+                  }
+                ]
+              },
+              {
+                "id": "63af2f96-269a-44af-86c7-ae66cbe8cb63",
+                "type": "ConcreteFeature_Bundle",
+                "name": "ConcreteFeature 4_And",
+                "sourceId": "6b7e57a6-4d49-490c-86d1-5f054614b281",
+                "targetId": "4e0fff87-ba82-41db-8c7b-0f0eb9e2feb6",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "bbc3afde-414b-479f-ac73-2b612b847291",
+                "type": "Bundle_Feature",
+                "name": "Xor_ConcreteFeature 12",
+                "sourceId": "4e0fff87-ba82-41db-8c7b-0f0eb9e2feb6",
+                "targetId": "df9eb05a-69ce-4050-b329-d1ce5a7e15ef",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              },
+              {
+                "id": "07689235-9ad0-4c7b-9d49-5632b82e0ab8",
+                "type": "Bundle_Feature",
+                "name": "Xor_ConcreteFeature 13",
+                "sourceId": "4e0fff87-ba82-41db-8c7b-0f0eb9e2feb6",
+                "targetId": "b93d709b-1a4a-4898-a8f9-b0207891525a",
+                "points": [],
+                "min": 0,
+                "max": 9999999,
+                "properties": []
+              }
+            ]
+          }
+        ],
+        "languagesAllowed": []
+      },
+      "applicationEngineering": {
+        "models": [],
+        "languagesAllowed": [],
+        "applications": []
+      }
+    }
+  ]
+}
