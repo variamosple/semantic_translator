@@ -25,7 +25,7 @@ RULES = "/Users/ccr185/workspace/semantic_translator/json/fmrules.json"
 * Function for transforming the templates
 Now that we have our imports and files, we shall create a set of functions that will perform the transformation of a given constraint template into the necessary text:
 
-#+begin_src python :session s1 :results none :tangle yes
+#+begin_src python :session s1 :results none :tangle main.py
 import json
 import re
 from minizinc import Instance, Model, Solver
@@ -195,7 +195,7 @@ def mapRels(relations, rules):
 Next we need to construct our result; we define therefore a function that takes in the
 model and the rule file and both generates the constraints and gets a solution from the solver:
 
-#+begin_src python :session s1 :results none :exports none :tangle yes
+#+begin_src python :session s1 :results none :exports none :tangle main.py
 def run(model, rules, language):
     """This function takes in a model, a set of rules and a language to translate to and runs the procedure"""
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
@@ -216,21 +216,36 @@ def run(model, rules, language):
     print("\n".join([c for c in constraints]))
     # Add model and solver
     gecode = Solver.lookup("gecode")
-    model = Model()
-    model.add_string("\n".join([c for c in constraints]))
-    instance = Instance(gecode, model)
+    mzn_model = Model()
+    mzn_model.add_string("\n".join([c for c in constraints]))
+    instance = Instance(gecode, mzn_model)
     result = instance.solve()
     print("----------------------/MODEL--------------------------------")
-    return result
+    #return result
+    # Now lets update the model based on the result
+    if result is not None:
+        update_model(fm, rules, result)
+        model["productLines"][0]["domainEngineering"]["models"][0] = fm
+    return model
+#+end_src
+
+In order to have the solver results available within VariaMos we need to make it so the
+solver results are made effective on the JSON exported by VariaMos.
+
+#+begin_src python :session s1 :results none :exports none :tangle main.py
+def update_model(model, rules, result):
+    for e in model["elements"]:
+        if e["type"] in rules["elementTypes"]:
+            e["properties"][1]["value"] = "Selected" if result["uuid_" +  str(e["id"]).replace("-","_")] == 1 else  "Unselected"
 #+end_src
 
 We also define a function that allows us to test things locally before exposing our code to the server.
 
-#+begin_src python :session s1 :results output :exports both :tangle yes
+#+begin_src python :session s1 :results output :exports both :tangle no
 def test():
     """Test function locally"""
     # Load file
-    with open(SG, "r") as f:
+    with open(SB, "r") as f:
         # Load json as obj
         model = json.load(f)
         # Create the rules
@@ -249,39 +264,41 @@ test()
 String
 String
 String
-String
 -----------------------MODEL--------------------------------
-var 1..1:'uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d';% RootFeature -> 7a4982f4-2f18-4a39-bf72-1b445c95d74d
-var 0..1:'uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c';% AbstractFeature -> fbf7f047-4459-4d5b-84e3-bc5f0e4cde6c
-var 0..1:'uuid_da16e281_e363_45fb_b32f_0366332f9288';% AbstractFeature -> da16e281-e363-45fb-b32f-0366332f9288
-var 0..1:'uuid_5903f5df_e901_416b_bf6e_406658fe446f';% ConcreteFeature -> 5903f5df-e901-416b-bf6e-406658fe446f
-var 0..1:'uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d';% ConcreteFeature -> 4e5a3e98-2024-43fc-b41a-4f8d87430a4d
-var 0..1:'uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515';% ConcreteFeature -> 4fb12fc6-2ac0-44c2-9e1a-ec1bb4bd1515
-var 0..1:'uuid_6b7e57a6_4d49_490c_86d1_5f054614b281';% ConcreteFeature -> 6b7e57a6-4d49-490c-86d1-5f054614b281
-var 0..1:'uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4';% ConcreteFeature -> e033aaac-c460-45d1-999a-38b3ebf7bfa4
-var 0..1:'uuid_76b1b171_81e0_49d8_836e_38b62a893bbf';% ConcreteFeature -> 76b1b171-81e0-49d8-836e-38b62a893bbf
-var 0..1:'uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38';% ConcreteFeature -> 3bf4c5f1-a6b1-4162-902a-8047b8935b38
-var 0..1:'uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3';% ConcreteFeature -> 34ba47c1-4afe-401f-b555-cabc160b7ef3
-var 0..1:'uuid_5d274670_6a3d_4e86_bec0_c55333d74c04';% ConcreteFeature -> 5d274670-6a3d-4e86-bec0-c55333d74c04
-var 0..1:'uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b';% ConcreteFeature -> c3c7c42b-223a-48c9-9ab9-0175ccc8550b
-var 0..1:'uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0';% ConcreteFeature -> 57a12aaf-6684-46c2-a85b-2ba01c200cc0
-var 0..1:'uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef';% ConcreteFeature -> df9eb05a-69ce-4050-b329-d1ce5a7e15ef
-var 0..1:'uuid_b93d709b_1a4a_4898_a8f9_b0207891525a';% ConcreteFeature -> b93d709b-1a4a-4898-a8f9-b0207891525a
-constraint :: "7a4982f4_2f18_4a39_bf72_1b445c95d74d mandatory da16e281_e363_45fb_b32f_0366332f9288" (uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d == uuid_da16e281_e363_45fb_b32f_0366332f9288);
-constraint :: "7a4982f4_2f18_4a39_bf72_1b445c95d74d mandatory fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c" (uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d == uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c);
-constraint :: "5903f5df_e901_416b_bf6e_406658fe446f optional e033aaac_c460_45d1_999a_38b3ebf7bfa4" (uuid_5903f5df_e901_416b_bf6e_406658fe446f >= uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4);
-constraint :: "5903f5df_e901_416b_bf6e_406658fe446f mandatory 76b1b171_81e0_49d8_836e_38b62a893bbf" (uuid_5903f5df_e901_416b_bf6e_406658fe446f == uuid_76b1b171_81e0_49d8_836e_38b62a893bbf);
-constraint :: "4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 optional c3c7c42b_223a_48c9_9ab9_0175ccc8550b" (uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 >= uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b);
-constraint :: "c3c7c42b_223a_48c9_9ab9_0175ccc8550b excludes 57a12aaf_6684_46c2_a85b_2ba01c200cc0" not (uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b == 1 /\ uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0 == 1);
-constraint :: "4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 optional 57a12aaf_6684_46c2_a85b_2ba01c200cc0" (uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 >= uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0);
-constraint :: "3bf4c5f1_a6b1_4162_902a_8047b8935b38 includes 34ba47c1_4afe_401f_b555_cabc160b7ef3" (uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 == 1) -> (uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 == 1);
-constraint :: "uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c AND Xs" (uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c == 1) -> (2 == uuid_5903f5df_e901_416b_bf6e_406658fe446f + uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d);
-constraint :: "uuid_da16e281_e363_45fb_b32f_0366332f9288 OR Xs " (uuid_da16e281_e363_45fb_b32f_0366332f9288 == 1) -> (2 >= uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515 + uuid_6b7e57a6_4d49_490c_86d1_5f054614b281);
-constraint :: "group cardinality uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4ds" (uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d == 1) -> ((uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d * 1 <= uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 + uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 + uuid_5d274670_6a3d_4e86_bec0_c55333d74c04) /\ (uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38 + uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3 + uuid_5d274670_6a3d_4e86_bec0_c55333d74c04 <= uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d * 3));
-constraint :: "uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 XOR Xs" (uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 == 1) -> (uuid_6b7e57a6_4d49_490c_86d1_5f054614b281 == uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef + uuid_b93d709b_1a4a_4898_a8f9_b0207891525a);
+var 1..1:'uuid_b53cd688_c5da_41d1_bb51_1ec0ee9b1ac2';% RootFeature -> b53cd688-c5da-41d1-bb51-1ec0ee9b1ac2
+var 0..1:'uuid_f8424aa8_ae79_4209_bf55_b98d63eb2620';% ConcreteFeature -> f8424aa8-ae79-4209-bf55-b98d63eb2620
+var 0..1:'uuid_621b90ff_8a8d_4cbb_b14b_c55ab9c4dc79';% ConcreteFeature -> 621b90ff-8a8d-4cbb-b14b-c55ab9c4dc79
+var 0..1:'uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c';% AbstractFeature -> 211e1ba8-731b-46eb-970b-27f9fe8e0b0c
+var 0..1:'uuid_49144228_b0ee_4c60_93f7_7452c609e38d';% AbstractFeature -> 49144228-b0ee-4c60-93f7-7452c609e38d
+var 0..1:'uuid_e21bf9c3_6e77_4239_8bcc_295bbe3f3de3';% AbstractFeature -> e21bf9c3-6e77-4239-8bcc-295bbe3f3de3
+var 0..1:'uuid_bd320074_1542_4a80_9c28_d86d019d1202';% ConcreteFeature -> bd320074-1542-4a80-9c28-d86d019d1202
+var 0..1:'uuid_7291b9d1_5351_4dd9_acea_8c5bc397b559';% ConcreteFeature -> 7291b9d1-5351-4dd9-acea-8c5bc397b559
+var 0..1:'uuid_bd98a477_24ab_46d8_91fd_50387c5f360a';% ConcreteFeature -> bd98a477-24ab-46d8-91fd-50387c5f360a
+var 0..1:'uuid_6758f906_0a80_4baf_ba7a_92fcf6c8be16';% ConcreteFeature -> 6758f906-0a80-4baf-ba7a-92fcf6c8be16
+var 0..1:'uuid_d0d74bbf_b219_4f9e_8c3c_d47fb3b23861';% ConcreteFeature -> d0d74bbf-b219-4f9e-8c3c-d47fb3b23861
+var 0..1:'uuid_60e092bf_9e99_4156_95f1_1fb321451f95';% ConcreteFeature -> 60e092bf-9e99-4156-95f1-1fb321451f95
+var 0..1:'uuid_e4592c17_1223_4bae_9168_3912ecfabf04';% ConcreteFeature -> e4592c17-1223-4bae-9168-3912ecfabf04
+var 0..1:'uuid_fe41da02_20d2_400f_b47d_88bcd75b85c6';% ConcreteFeature -> fe41da02-20d2-400f-b47d-88bcd75b85c6
+var 0..1:'uuid_2babe7e3_dfbd_432b_8e2a_27c70a53a513';% ConcreteFeature -> 2babe7e3-dfbd-432b-8e2a-27c70a53a513
+var 0..1:'uuid_449305af_22d3_49aa_84fc_cb522cd6b87d';% ConcreteFeature -> 449305af-22d3-49aa-84fc-cb522cd6b87d
+constraint :: "b53cd688_c5da_41d1_bb51_1ec0ee9b1ac2 mandatory f8424aa8_ae79_4209_bf55_b98d63eb2620" (uuid_b53cd688_c5da_41d1_bb51_1ec0ee9b1ac2 == uuid_f8424aa8_ae79_4209_bf55_b98d63eb2620);
+constraint :: "b53cd688_c5da_41d1_bb51_1ec0ee9b1ac2 mandatory 621b90ff_8a8d_4cbb_b14b_c55ab9c4dc79" (uuid_b53cd688_c5da_41d1_bb51_1ec0ee9b1ac2 == uuid_621b90ff_8a8d_4cbb_b14b_c55ab9c4dc79);
+constraint :: "211e1ba8_731b_46eb_970b_27f9fe8e0b0c excludes 49144228_b0ee_4c60_93f7_7452c609e38d" not (uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c == 1 /\ uuid_49144228_b0ee_4c60_93f7_7452c609e38d == 1);
+constraint :: "621b90ff_8a8d_4cbb_b14b_c55ab9c4dc79 mandatory e21bf9c3_6e77_4239_8bcc_295bbe3f3de3" (uuid_621b90ff_8a8d_4cbb_b14b_c55ab9c4dc79 == uuid_e21bf9c3_6e77_4239_8bcc_295bbe3f3de3);
+constraint :: "e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 mandatory bd320074_1542_4a80_9c28_d86d019d1202" (uuid_e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 == uuid_bd320074_1542_4a80_9c28_d86d019d1202);
+constraint :: "e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 optional 7291b9d1_5351_4dd9_acea_8c5bc397b559" (uuid_e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 >= uuid_7291b9d1_5351_4dd9_acea_8c5bc397b559);
+constraint :: "bd320074_1542_4a80_9c28_d86d019d1202 includes 7291b9d1_5351_4dd9_acea_8c5bc397b559" (uuid_bd320074_1542_4a80_9c28_d86d019d1202 == 1) -> (uuid_7291b9d1_5351_4dd9_acea_8c5bc397b559 == 1);
+constraint :: "e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 mandatory bd98a477_24ab_46d8_91fd_50387c5f360a" (uuid_e21bf9c3_6e77_4239_8bcc_295bbe3f3de3 == uuid_bd98a477_24ab_46d8_91fd_50387c5f360a);
+constraint :: "7291b9d1_5351_4dd9_acea_8c5bc397b559 excludes bd98a477_24ab_46d8_91fd_50387c5f360a" not (uuid_7291b9d1_5351_4dd9_acea_8c5bc397b559 == 1 /\ uuid_bd98a477_24ab_46d8_91fd_50387c5f360a == 1);
+constraint :: "d0d74bbf_b219_4f9e_8c3c_d47fb3b23861 includes 6758f906_0a80_4baf_ba7a_92fcf6c8be16" (uuid_d0d74bbf_b219_4f9e_8c3c_d47fb3b23861 == 1) -> (uuid_6758f906_0a80_4baf_ba7a_92fcf6c8be16 == 1);
+constraint :: "49144228_b0ee_4c60_93f7_7452c609e38d mandatory 60e092bf_9e99_4156_95f1_1fb321451f95" (uuid_49144228_b0ee_4c60_93f7_7452c609e38d == uuid_60e092bf_9e99_4156_95f1_1fb321451f95);
+constraint :: "bd320074_1542_4a80_9c28_d86d019d1202 excludes e4592c17_1223_4bae_9168_3912ecfabf04" not (uuid_bd320074_1542_4a80_9c28_d86d019d1202 == 1 /\ uuid_e4592c17_1223_4bae_9168_3912ecfabf04 == 1);
+constraint :: "uuid_f8424aa8_ae79_4209_bf55_b98d63eb2620 AND Xs" (uuid_f8424aa8_ae79_4209_bf55_b98d63eb2620 == 1) -> (2 == uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c + uuid_49144228_b0ee_4c60_93f7_7452c609e38d);
+constraint :: "uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c XOR Xs" (uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c == 1) -> (uuid_211e1ba8_731b_46eb_970b_27f9fe8e0b0c == uuid_6758f906_0a80_4baf_ba7a_92fcf6c8be16 + uuid_d0d74bbf_b219_4f9e_8c3c_d47fb3b23861);
+constraint :: "group cardinality uuid_bd98a477_24ab_46d8_91fd_50387c5f360as" (uuid_bd98a477_24ab_46d8_91fd_50387c5f360a == 1) -> ((uuid_bd98a477_24ab_46d8_91fd_50387c5f360a * 1 <= uuid_e4592c17_1223_4bae_9168_3912ecfabf04 + uuid_fe41da02_20d2_400f_b47d_88bcd75b85c6 + uuid_2babe7e3_dfbd_432b_8e2a_27c70a53a513 + uuid_449305af_22d3_49aa_84fc_cb522cd6b87d) /\ (uuid_e4592c17_1223_4bae_9168_3912ecfabf04 + uuid_fe41da02_20d2_400f_b47d_88bcd75b85c6 + uuid_2babe7e3_dfbd_432b_8e2a_27c70a53a513 + uuid_449305af_22d3_49aa_84fc_cb522cd6b87d <= uuid_bd98a477_24ab_46d8_91fd_50387c5f360a * 3));
 solve satisfy;
 ----------------------/MODEL--------------------------------
 -----------------------RESULTS------------------------------
-Solution(uuid_7a4982f4_2f18_4a39_bf72_1b445c95d74d=1, uuid_fbf7f047_4459_4d5b_84e3_bc5f0e4cde6c=1, uuid_da16e281_e363_45fb_b32f_0366332f9288=1, uuid_5903f5df_e901_416b_bf6e_406658fe446f=1, uuid_4e5a3e98_2024_43fc_b41a_4f8d87430a4d=1, uuid_4fb12fc6_2ac0_44c2_9e1a_ec1bb4bd1515=0, uuid_6b7e57a6_4d49_490c_86d1_5f054614b281=0, uuid_e033aaac_c460_45d1_999a_38b3ebf7bfa4=0, uuid_76b1b171_81e0_49d8_836e_38b62a893bbf=1, uuid_3bf4c5f1_a6b1_4162_902a_8047b8935b38=0, uuid_34ba47c1_4afe_401f_b555_cabc160b7ef3=0, uuid_5d274670_6a3d_4e86_bec0_c55333d74c04=1, uuid_c3c7c42b_223a_48c9_9ab9_0175ccc8550b=0, uuid_57a12aaf_6684_46c2_a85b_2ba01c200cc0=0, uuid_df9eb05a_69ce_4050_b329_d1ce5a7e15ef=0, uuid_b93d709b_1a4a_4898_a8f9_b0207891525a=0, _checker='')
+None
 ----------------------/RESULTS------------------------------
 #+end_example
