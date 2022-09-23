@@ -1,0 +1,172 @@
+{
+  "elementTypes": [
+    "ConcreteFeature",
+    "RootFeature",
+    "AbstractFeature"
+  ],
+  "relationTypes": [
+    "Mandatory",
+    "Optional",
+    "Includes",
+    "Excludes",
+    "Range",
+    "Xor",
+    "And",
+    "Or"
+  ],
+  "complexElemValues": {
+    "type": {
+      "Bundle": "Range"
+    },
+    "params": [
+      "max",
+      "min"
+    ]
+  },
+  "complexElemTranslations": {
+    "params": [
+      "Xs"
+    ],
+    "functions": [
+      "sum",
+      "len",
+      "max"
+    ]
+  },
+  "elementTranslationRules": {
+    "swi": {
+      "lang": "swi",
+      "Bundle": {
+        "param": [
+          "F",
+          "Xs",
+          "min",
+          "max"
+        ],
+        "constraint": {
+          "Or": "F * len(Xs) #>= sum(Xs)",
+          "And": "F * len(Xs) #= sum(Xs)",
+          "Xor": "F #= sum(Xs)",
+          "Range": "F * min #=< sum(Xs) #/\\ sum(Xs) #=< F * max"
+        }
+      },
+      "RootFeature": {
+        "param": "F",
+        "constraint": "UUID_F #= 1",
+        "selected_constraint": "UUID_F #= 1",
+        "deselected_constraint": "false"
+      },
+      "AbstractFeature": {
+        "param": "F",
+        "constraint": "UUID_F in 0..1",
+        "selected_constraint": "UUID_F #= 1",
+        "deselected_constraint": "UUID_F #= 0"
+      },
+      "ConcreteFeature": {
+        "param": "F",
+        "constraint": "UUID_F in 0..1",
+        "selected_constraint": "UUID_F #= 1",
+        "deselected_constraint": "UUID_F #= 0"
+      }
+    },
+    "minizinc": {
+      "lang": "minizinc",
+      "Bundle": {
+        "param": [
+          "F",
+          "Xs",
+          "min",
+          "max"
+        ],
+        "constraint": {
+          "Or": "constraint :: \"F OR Xs \" (F == 1) -> (len(Xs) >= sum(Xs));",
+          "And": "constraint :: \"F AND Xs\" (F == 1) -> (len(Xs) == sum(Xs));",
+          "Xor": "constraint :: \"F XOR Xs\" (F == 1) -> (F == sum(Xs));",
+          "Range": "constraint :: \"group cardinality Fs\" (F == 1) -> ((F * min <= sum(Xs)) /\\ (sum(Xs) <= F * max));"
+        }
+      },
+      "RootFeature": {
+        "param": "F",
+        "constraint": "var 1..1:'UUID_F';",
+        "selected_constraint": "var 1..1:'UUID_F';",
+        "deselected_constraint": "var 0..0:'UUID_F';"
+      },
+      "AbstractFeature": {
+        "param": "F",
+        "constraint": "var 0..1:'UUID_F';",
+        "selected_constraint": "var 1..1:'UUID_F';",
+        "deselected_constraint": "var 0..0:'UUID_F';"
+      },
+      "ConcreteFeature": {
+        "param": "F",
+        "constraint": "var 0..1:'UUID_F';",
+        "selected_constraint": "var 1..1:'UUID_F';",
+        "deselected_constraint": "var 0..0:'UUID_F';"
+      }
+    }
+  },
+  "relationTranslationRules": {
+    "swi": {
+      "lang": "swi",
+      "Excludes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "UUID_F1 + UUID_F2 #=< 1"
+      },
+      "Includes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "UUID_F1 #= 1 #==> UUID_F2 #= 1"
+      },
+      "Optional": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "UUID_F1 #>= UUID_F2"
+      },
+      "Mandatory": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "UUID_F1 #= UUID_F2"
+      }
+    },
+    "minizinc": {
+      "lang": "minizinc",
+      "Excludes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "constraint :: \"F1 excludes F2\" not (UUID_F1 == 1 /\\ UUID_F2 == 1);"
+      },
+      "Includes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "constraint :: \"F1 includes F2\" (UUID_F1 == 1) -> (UUID_F2 == 1);"
+      },
+      "Optional": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "constraint :: \"F1 optional F2\" (UUID_F1 >= UUID_F2);"
+      },
+      "Mandatory": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "constraint :: \"F1 mandatory F2\" (UUID_F1 == UUID_F2);"
+      }
+    }
+  }
+}

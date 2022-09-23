@@ -4,7 +4,7 @@
 
 This is the code for the server that runs the semantic translator for VariaMos.
 
-#+begin_src python :session sr :tangle yes
+#+begin_src python :session sr :tangle app.py
 #!/usr/bin/env python3
 
 """
@@ -15,7 +15,7 @@ By: Hiba Hnaini _@_.fr
 """
 
 from flask import Flask, request, jsonify, make_response
-from main import run
+from main import run, SolverException
 
 app = Flask(__name__)
 
@@ -29,11 +29,19 @@ def translate(language):
         content = request.json
         print(content['data']['project'])
         print(content['data']["rules"])
-        return _corsify_actual_response(jsonify({"data":{ 'content': str(run(
-            model=content['data']["project"],
-            rules=content['data']["rules"],
-            language=language
-        ))}}))
+        dry = request.headers.get('dry') == 'true'
+        try:
+            return _corsify_actual_response(jsonify({"data":{ 'content': run(
+                model=content['data']["project"],
+                rules=content['data']["rules"],
+                language=language,
+                dry=dry
+            )}}))
+        except SolverException as err:
+            return _corsify_actual_response(jsonify({'data': {'error': str(err) } }))
+        except BaseException as err:
+            print(err)
+            return _corsify_actual_response(jsonify({'data': {'error': 'Cannot find configuration' } }))
     else:
        raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
 

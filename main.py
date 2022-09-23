@@ -1,13 +1,15 @@
 import json
 import re
 from minizinc import Instance, Model, Solver
+from prolog_bridge import prolog_solve, prolog_update_model
+from minizinc_bridge import minizinc_solve, minizinc_update_model
 
 def replaceWithPattern(pattern, string, occ, v):
     if type(v) is not str and string is not None:
-        print(v.items())
-        print(string)
+        # print(v.items())
+        # print(string)
         [string := string.replace(occ, str(val)) for (k, val) in v.items()]
-        print('OK')
+        # print('OK')
         return string
 
 def replaceExprs(bundle, elems, rels, cons, params, complexT):
@@ -37,17 +39,19 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
             ]
         )
     ]
-    fs = ["uuid_" + ef.replace("-","_") for ef in fs if (ef not in f)]
+    fs = ["UUID_" + ef.replace("-","_") for ef in fs if (ef not in f)]
     # print(fs)
+    # print(bundle)
     pattern = {
         "F": f[0],
         "Xs": {
             "sum":" + ".join(fs),
+            "len": str(len(fs))
         }
     }
     cons = str(cons).replace(
         params[0],
-        "uuid_" + pattern[params[0]].replace("-","_")
+        "UUID_" + pattern[params[0]].replace("-","_")
     )
     funs = r"(" + r"|".join(complexT["functions"]) + r")"
     regex_paren = funs + r"\(" + re.escape(params[1]) + r"\)"
@@ -64,28 +68,36 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         )
         for occ in occs
     ]
+    print(bundle["properties"][1]["type"])
+    # handle special range case.
+    if bundle["properties"][1]["value"] == "Range":
+        ranges = {
+         "min": bundle["properties"][2]["value"],
+         "max": bundle["properties"][3]["value"]
+        }
+        [cons := cons.replace(params[i], ranges[params[i]]) for i in range(2,len(params))]
     return cons
 
 
 
-def bundleCons(bundle, elems, rels, rules):
+def bundleCons(bundle, elems, rels, language, rules):
     """
     This is an auxiliary function that builds the request to replaceExprs
     """
     # get constraint rule
-    rule = rules["elementTranslationRules"][0]["Bundle"]
+    rule = rules["elementTranslationRules"][language]["Bundle"]
     cons = rule["constraint"][bundle["properties"][1]["value"]]
     complexTrans = rules["complexElemTranslations"]
     return replaceExprs(bundle, elems, rels, cons, rule["param"], complexTrans)
 
 
-def mapBundles(elems, rels, rules):
+def mapBundles(elems, rels, language, rules):
     """
     This function collects all the strings related to the bundles
     (it is the only portion of this module that is custom to feature models)
     """
     return [
-        bundleCons(bs, elems, rels, rules)
+        bundleCons(bs, elems, rels, language, rules)
         for bs in [
             e if e["type"] == "Bundle" else None for ((iden, typ), e) in elems.items()
         ]
@@ -96,23 +108,30 @@ def mapBundles(elems, rels, rules):
 def mapVar(element, rule):
     """Maps an element into a constraint according to the rules"""
     # return rule
+    template = rule['constraint']
     if bool(rule):
+        if 'selected_constraint' in rule and 'deselected_constraint' in rule:
+            if element['properties'][1]['value'] == 'Selected':
+                template = rule['selected_constraint']
+            elif element['properties'][1]['value'] == 'Unselected':
+                template = rule['deselected_constraint']
+
         constraint = (
-            rule["constraint"].replace(
+            template.replace(
                 rule["param"], str(element["id"]).replace("-", "_")
             )
-            + f'% {element["type"]} -> {element["id"]}'
+            #+ f'% {element["type"]} → {element["id"]}'
         )
         return constraint
     # If not bool(rule) then return None
 
 
-def mapVars(elems, rules):
+def mapVars(elems, language, rules):
     """This function collects all strings related to a set of elements and translation rules"""
     return [
         cs
         for cs in [
-            mapVar(element, rules["elementTranslationRules"][0][typ])
+            mapVar(element, rules["elementTranslationRules"][language][typ])
             if (typ in rules["elementTypes"])
             else None
             for ((ident, typ), element) in elems.items()
@@ -137,13 +156,13 @@ def mapCons(relation, rule):
         return acc
 
 
-def mapRels(relations, rules):
+def mapRels(relations, language, rules):
     """This function collects all strings related to a set of relations and translation rules"""
     return [
         rs
         for rs in [
             mapCons(
-                v, rules["relationTranslationRules"][0][v["properties"][0]["value"]]
+                v, rules["relationTranslationRules"][language][v["properties"][0]["value"]]
             )
             for (k, v) in [
                 (k, rel) for (k, rel) in relations.items() if rel["properties"]
@@ -153,7 +172,11 @@ def mapRels(relations, rules):
         if rs is not None
     ]
 
-def run(model, rules, language):
+class SolverException(Exception):
+    pass
+
+
+def run(model, rules, language, dry):
     """This function takes in a model, a set of rules and a language to translate to and runs the procedure"""
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
     fm = model["productLines"][0]["domainEngineering"]["models"][0]
@@ -163,35 +186,51 @@ def run(model, rules, language):
     relationsMap = {r["id"]: r for r in fm["relationships"]}
     # Map the constraints for the vars
     constraints = (
-        mapVars(elementsMap, rules)
-        + mapRels(relationsMap, rules)
-        + mapBundles(elementsMap, relationsMap, rules)
-        + ["solve satisfy;"]
+        mapVars(elementsMap, language, rules)
+        + mapRels(relationsMap, language, rules)
+        + mapBundles(elementsMap, relationsMap, language, rules)
+        # + ["solve satisfy;"]
     )
+    if language == 'minizinc':
+        result = minizinc_solve(constraints)
+        # If no solution is found
+        # the second element of the tuple is
+        # None
+        if not result.status.has_solution():
+            raise SolverException('MZN - Model is UNSAT')
+        elif not dry:
+            minizinc_update_model(fm, rules, result)
+        else:
+            return 'MZN - SAT check OK'
+    elif language == 'swi':
+        result = prolog_solve(constraints)
+        if result is False:
+            raise SolverException('SWI - Model is UNSAT')
+        elif not dry:
+            prolog_update_model(fm, rules, result)
+        else:
+            return 'SWI - SAT check OK'
+    else:
+        raise RuntimeError("Unrecognized Language")
+    print(result)
     # print(constraints)
-    print("-----------------------MODEL--------------------------------")
-    print("\n".join([c for c in constraints]))
-    # Add model and solver
-    gecode = Solver.lookup("gecode")
-    model = Model()
-    model.add_string("\n".join([c for c in constraints]))
-    instance = Instance(gecode, model)
-    result = instance.solve()
-    print("----------------------/MODEL--------------------------------")
-    return result
+    # print("-----------------------MODEL--------------------------------")
+    # print("\n".join([c for c in constraints]))
+    # # Add model and solver
+    # gecode = Solver.lookup("gecode")
+    # mzn_model = Model()
+    # mzn_model.add_string("\n".join([c for c in constraints]))
+    # instance = Instance(gecode, mzn_model)
+    # result = instance.solve()
+    # print("----------------------/MODEL--------------------------------")
+    #return result
+    # Now lets update the model based on the result
 
-def test():
-    """Test function locally"""
-    # Load file
-    with open(FILE, "r") as f:
-        # Load json as obj
-        model = json.load(f)
-        # Create the rules
-        with open(RULES, "r") as r:
-            rules = json.load(r)
-            x = run(model, rules, 'minizinc')
-            print("-----------------------RESULTS------------------------------")
-            print(x)
-            print("----------------------/RESULTS------------------------------")
+    #if not dry:
+    model["productLines"][0]["domainEngineering"]["models"][0] = fm
+    return model
 
-test()
+def update_model(model, rules, result):
+    for e in model["elements"]:
+        if e["type"] in rules["elementTypes"]:
+            e["properties"][1]["value"] = "Selected" if result["UUID_" +  str(e["id"]).replace("-","_")] == 1 else  "Unselected"
