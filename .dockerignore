@@ -1,0 +1,7 @@
+*.org
+*.tex
+*.pdf
+json/
+sam/
+__pycache__/
+_minted-main/

@@ -111,9 +111,9 @@ def mapVar(element, rule):
     template = rule['constraint']
     if bool(rule):
         if 'selected_constraint' in rule and 'deselected_constraint' in rule:
-            if element['properties'][1]['value'] == 'Selected':
+            if 'Selected' in element['properties'][1]['value']:
                 template = rule['selected_constraint']
-            elif element['properties'][1]['value'] == 'Unselected':
+            elif 'Unselected' in element['properties'][1]['value']:
                 template = rule['deselected_constraint']
 
         constraint = (
@@ -176,10 +176,10 @@ class SolverException(Exception):
     pass
 
 
-def run(model, rules, language, dry):
+def run(model, rules, language, dry, selectedModelId):
     """This function takes in a model, a set of rules and a language to translate to and runs the procedure"""
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
-    fm = model["productLines"][0]["domainEngineering"]["models"][0]
+    idx, fm = next(filter(lambda mod: mod[1]['id'] == selectedModelId, enumerate(model["productLines"][0]["domainEngineering"]["models"])))
     # Get the elements
     elementsMap = {(e["id"], e["type"]): e for e in fm["elements"]}
     # Get the relationships
@@ -227,7 +227,7 @@ def run(model, rules, language, dry):
     # Now lets update the model based on the result
 
     #if not dry:
-    model["productLines"][0]["domainEngineering"]["models"][0] = fm
+    model["productLines"][0]["domainEngineering"]["models"][idx] = fm
     return model
 
 def update_model(model, rules, result):

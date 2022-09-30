@@ -22,13 +22,15 @@ def translate(language):
         content = request.json
         print(content['data']['project'])
         print(content['data']["rules"])
+        selectedModel = content['data']['modelSelectedId']
         dry = request.headers.get('dry') == 'true'
         try:
             return _corsify_actual_response(jsonify({"data":{ 'content': run(
                 model=content['data']["project"],
                 rules=content['data']["rules"],
                 language=language,
-                dry=dry
+                dry=dry,
+                selectedModelId=selectedModel
             )}}))
         except SolverException as err:
             return _corsify_actual_response(jsonify({'data': {'error': str(err) } }))
