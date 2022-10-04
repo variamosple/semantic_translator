@@ -1,0 +1,3 @@
+[submodule "solvent"]
+	path = solvent
+	url = git@github.com:fpiedrah/solvent.git
