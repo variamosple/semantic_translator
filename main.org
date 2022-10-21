@@ -31,6 +31,7 @@ import re
 from minizinc import Instance, Model, Solver
 from prolog_bridge import prolog_solve, prolog_update_model
 from minizinc_bridge import minizinc_solve, minizinc_update_model
+from grammars.hlvl import parse_hlvl
 
 def replaceWithPattern(pattern, string, occ, v):
     if type(v) is not str and string is not None:
@@ -243,6 +244,8 @@ def run(model, rules, language, dry, selectedModelId):
             prolog_update_model(fm, rules, result)
         else:
             return 'SWI - SAT check OK'
+    elif language == 'HLVL':
+        pass
     else:
         raise RuntimeError("Unrecognized Language")
     print(result)

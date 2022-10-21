@@ -1,0 +1,42 @@
+model eshop
+options:
+  choice connectionType
+  choice secureConnection
+  choice insecureConnection
+  choice payment
+  choice payPal
+  //symbolic customerType variants: [ 'sporadic' , 'regular' ]
+  //comment: { "This element represents the customer type" }
+  //att integer confidentiality variants: 1 .. 5
+  att integer confBounded is 2
+  choice customerProfile
+  choice SMS
+  choice card
+  choice creditCard
+  choice giftCard choice debitCard
+  choice implementation
+  choice appServer
+  choice machines
+  //att integer certificateType variants: 1 .. 5
+  //symbolic productType variants: [ 'services' , 'products' ]
+relations:
+  com1 : common ( customerType , payment )
+  //constraint expressions
+  exp1 : expression ( 3 <= card . confidentiality AND card . confidentiality <= 5 )
+  //mutex
+  m1 : mutex (creditCard , insecureConnection)
+  m2 : mutex ((customerType = 'sporadic') ,[giftCard , creditCard])
+  //implications
+  imp1 : implies (payPal , secureConnection)
+  imp2 : implies ((customerType = 'regular'), [secureConnection, customerProfile])
+  //decompositions
+  dc1 : decomposition (card, [giftCard ,debitCard] ,[0 , 1])
+  dc2 : decomposition (card, [creditCard] ,[1 , 1])
+  dc3 : decomposition (implementation ,[appServer] ,[1 , 5])
+  dc4 : decomposition (implementation ,[machines] ,[2 , 10])
+  att1 : decomposition (payPal , [confidentiality ,certificateType] ,[ 1 , 1])
+  att3 : decomposition (card , [confidentiality ,certificateType] ,[ 1 , 1 ])
+  //groups
+  g1 : group (payment ,[payPal ,card] ,[1 ,*])
+  //visibility
+  v1 : visibility (productType = 'services' ,[implementation ,appServer ,machines])

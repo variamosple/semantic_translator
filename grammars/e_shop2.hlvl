@@ -1,0 +1,31 @@
+model eshop
+options:
+  choice connectionType
+  choice secureConnection
+  choice insecureConnection
+  choice payment
+  choice payPal
+  att integer confBounded is 2
+  choice customerProfile
+  choice SMS
+  choice card
+  choice creditCard
+  choice giftCard choice debitCard
+  choice implementation
+  choice appServer
+  choice machines
+relations:
+  com1 : common ( customerType , payment )
+  exp1 : expression ( true ) //3 <= card . confidentiality AND card . confidentiality <= 5 )
+  m1 : mutex (creditCard , insecureConnection)
+  m2 : mutex (true ,[giftCard , creditCard])
+  imp1 : implies (payPal , secureConnection)
+  imp2 : implies (true, [secureConnection, customerProfile])
+  dc1 : decomposition (card, [giftCard ,debitCard] ,[0 , 1])
+  dc2 : decomposition (card, [creditCard] ,[1 , 1])
+  dc3 : decomposition (implementation ,[appServer] ,[1 , 5])
+  dc4 : decomposition (implementation ,[machines] ,[2 , 10])
+  att1 : decomposition (payPal , [confidentiality ,certificateType] ,[ 1 , 1])
+  att3 : decomposition (card , [confidentiality ,certificateType] ,[ 1 , 1 ])
+  g1 : group (payment ,[payPal ,card] ,[1 , 100])
+  v1 : visibility (true ,[implementation ,appServer ,machines])

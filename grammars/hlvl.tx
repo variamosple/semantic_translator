@@ -1,0 +1,205 @@
+
+//Grammar
+Model:
+    "model" name=Name
+    ("options:" options+=Option)?
+    ("relations:" relations+=Relation)?
+;
+
+Option:
+    Choice | Enum | Set | Att ;
+
+Choice:
+    "choice"
+    name=Name
+    (multiplicity=Multiplicity)?
+    (comment=CommentExpr)?
+;
+
+Enum:
+    "enum"
+    name=Name
+    (multiplicity=Multiplicity)?
+    "domain" domain=Domain
+    (comment=CommentExpr)?
+;
+
+Set:
+    "set"
+    name=Name
+    (multiplicity=Multiplicity)?
+    "domain" domain=Domain
+    (comment=CommentExpr)?
+;
+
+Att:
+    AttDom | AttIs ;
+
+AttDom:
+    "att"
+    type=Type
+    name=Name
+    "domain" domain=Domain
+    (comment=CommentExpr)?
+;
+
+AttIs:
+    "att"
+    type=Type
+    name=Name
+    "is"
+    literal=Literal
+    (comment=CommentExpr)?
+;
+
+Domain:
+    NumericBounds | EnumeratedDomain ;
+
+NumericBounds:
+    upper=NumericLiteral
+    ".."
+    lower=NumericLiteral
+;
+
+EnumeratedDomain:
+    "[" literals+=Literal[','] "]" ;
+
+Relation:
+    name=Name
+    ":"
+    relation=VariabilityRelation
+;
+
+VariabilityRelation:
+    Common |
+    Mutex |
+    MutexSet |
+    Implies |
+    ImpliesSet |
+    ImpliesQuant |
+    Expression |
+    Decomposition |
+    Group |
+    Visibility
+;
+
+
+Common:
+    "common" "(" choices+=Name[','] ")"
+;
+
+Mutex:
+    "mutex" "(" choices+=Name[','] ")"
+;
+
+MutexSet:
+    "mutex" "(" constraint=Constraint "," "[" choices+=Name[','] "]" ")"
+;
+
+Implies:
+    "implies" "(" choices+=Name[','] ")"
+;
+
+ImpliesSet:
+    "implies" "(" constraint=Constraint "," "[" choices+=Name[','] "]" ")"
+;
+
+ImpliesQuant:
+    mult1=Multiplicity c1=Name "implies" mult2=Multiplicity c2=Name
+;
+
+Expression:
+    "expression" "(" constraint=Constraint ")"
+;
+
+Decomposition:
+    "decomposition"
+    "(" prt=Name ","
+    "[" choices+=Name[','] "]" ","
+    multiplicity=Multiplicity ")"
+    // "[" min=INT "," max=INT "]" ")"
+;
+
+Group:
+    "group"
+    "(" prt=Name ","
+    "[" choices+=Name[','] "]" ","
+    multiplicity=Multiplicity ")"
+;
+
+Visibility:
+    "visibility"
+    "(" constraint=Constraint ","
+    "[" choices+=Name[','] "]" ")"
+;
+
+Constraint:
+    "~" BooleanExpression | BooleanExpression //| RelExpression ;
+;
+
+BooleanExpression:
+    BooleanLiteral | Name //| Constraint LogicOp Constraint
+;
+
+RelExpression:
+    Arithmetic RelOp Arithmetic
+;
+
+Arithmetic:
+    Name |
+    NumericLiteral |
+    Arithmetic ArithmeticOp Arithmetic |
+    UnaryFunction "(" Arithmetic ")" |
+    BinaryFunction "(" Arithmetic "," Arithmetic ")"
+;
+
+LogicOp:
+    "AND" | "OR" | "=>" | "<=>"
+;
+
+RelOp:
+    "=" | "!=" | ">" | "<" | ">=" | "<="
+;
+
+ArithmeticOp:
+    "+" | "-" | "*" | "/" | "mod"
+;
+
+UnaryFunction:
+    "abs" | "sqrt"
+;
+
+BinaryFunction:
+    "pow" | "min" | "max"
+;
+
+//Utility defs according to angela's thesis
+Comment:
+  /\/\/.*$/
+;
+
+Name:
+    ID | ID "." ID
+;
+
+Type: "boolean" | "integer" | "real" | "symbol" ;
+
+Literal:  BooleanLiteral | NumericLiteral | SymbolicLiteral ;
+
+SymbolicLiteral: "'" STRING "'" ;
+
+BooleanLiteral:
+    "true" | "false"
+;
+
+NumericLiteral:
+    INT | FLOAT
+;
+
+Multiplicity:
+    "[" INT "," INT "]"
+;
+
+CommentExpr:
+    "comment:" STRING
+;
