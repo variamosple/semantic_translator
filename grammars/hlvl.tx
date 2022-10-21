@@ -65,8 +65,7 @@ EnumeratedDomain:
     "[" literals+=Literal[','] "]" ;
 
 Relation:
-    name=Name
-    ":"
+    (name=Name ":")?
     relation=VariabilityRelation
 ;
 

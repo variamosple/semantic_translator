@@ -3,6 +3,7 @@ import re
 from minizinc import Instance, Model, Solver
 from prolog_bridge import prolog_solve, prolog_update_model
 from minizinc_bridge import minizinc_solve, minizinc_update_model
+from grammars.hlvl import parse_hlvl
 
 def replaceWithPattern(pattern, string, occ, v):
     if type(v) is not str and string is not None:
@@ -68,7 +69,7 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         )
         for occ in occs
     ]
-    print(bundle["properties"][1]["type"])
+    # print(bundle["pruperties"][1]["type"])
     # handle special range case.
     if bundle["properties"][1]["value"] == "Range":
         ranges = {
@@ -184,9 +185,14 @@ def run(model, rules, language, dry, selectedModelId):
     elementsMap = {(e["id"], e["type"]): e for e in fm["elements"]}
     # Get the relationships
     relationsMap = {r["id"]: r for r in fm["relationships"]}
+    hlvl_header = "model test"
+    hlvl_options = "options:"
+    hlvl_relations = "relations:"
     # Map the constraints for the vars
-    constraints = (
-        mapVars(elementsMap, language, rules)
+    constraints = (([hlvl_header] if language == 'hlvl' else [])
+        + ([hlvl_options] if language == 'hlvl' else [])
+        + mapVars(elementsMap, language, rules)
+        + ([hlvl_relations] if language == 'hlvl' else [])
         + mapRels(relationsMap, language, rules)
         + mapBundles(elementsMap, relationsMap, language, rules)
         # + ["solve satisfy;"]
@@ -210,6 +216,9 @@ def run(model, rules, language, dry, selectedModelId):
             prolog_update_model(fm, rules, result)
         else:
             return 'SWI - SAT check OK'
+    elif language == 'hlvl':
+        result = parse_hlvl(constraints)
+        print(result)
     else:
         raise RuntimeError("Unrecognized Language")
     print(result)

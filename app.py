@@ -20,8 +20,8 @@ def translate(language):
     elif request.method == "POST":
         """Handle a translation request for a given <language>."""
         content = request.json
-        print(content['data']['project'])
-        print(content['data']["rules"])
+        # print(content['data']['project'])
+        # print(content['data']["rules"])
         selectedModel = content['data']['modelSelectedId']
         dry = request.headers.get('dry') == 'true'
         try:
