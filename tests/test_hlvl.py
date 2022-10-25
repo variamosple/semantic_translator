@@ -1,5 +1,5 @@
 import pytest
-from grammars.hlvl import parse_hlvl
+from grammars import hlvl
 
 
 @pytest.fixture
@@ -26,7 +26,8 @@ def model():
         'implies(UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8,UUID_43634fef_d816_4cc4_bbde_02cb7865afef)',
         'group (UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f, [Xs], [1,1])'
     ]
-    return parse_hlvl(strings)
+    return hlvl.parse_hlvl(strings)
+
 
 def test_model_name(model):
-    assert model.name == 'eShop'
+    assert model.name == 'test'

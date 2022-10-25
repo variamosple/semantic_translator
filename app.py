@@ -25,7 +25,7 @@ def translate(language):
         selectedModel = content['data']['modelSelectedId']
         dry = request.headers.get('dry') == 'true'
         try:
-            return _corsify_actual_response(jsonify({"data":{ 'content': run(
+            return _corsify_actual_response(jsonify({"data": {'content': run(
                 model=content['data']["project"],
                 rules=content['data']["rules"],
                 language=language,
@@ -36,9 +36,10 @@ def translate(language):
             return _corsify_actual_response(jsonify({'data': {'error': str(err) } }))
         except BaseException as err:
             print(err)
-            return _corsify_actual_response(jsonify({'data': {'error': 'Cannot find configuration' } }))
+            return _corsify_actual_response(jsonify({'data': {'error': 'Cannot find configuration'}}))
     else:
-       raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+        raise RuntimeError("Weird - don't know how to handle method {}".format(request.method))
+
 
 def _build_cors_preflight_response():
     response = make_response()
@@ -46,6 +47,7 @@ def _build_cors_preflight_response():
     response.headers.add('Access-Control-Allow-Headers', "*")
     response.headers.add('Access-Control-Allow-Methods', "*")
     return response
+
 
 def _corsify_actual_response(response):
     response.headers.add("Access-Control-Allow-Origin", "*")

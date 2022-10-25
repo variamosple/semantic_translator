@@ -5,6 +5,7 @@ from prolog_bridge import prolog_solve, prolog_update_model
 from minizinc_bridge import minizinc_solve, minizinc_update_model
 from grammars.hlvl import parse_hlvl
 
+
 def replaceWithPattern(pattern, string, occ, v):
     if type(v) is not str and string is not None:
         # print(v.items())
@@ -13,6 +14,7 @@ def replaceWithPattern(pattern, string, occ, v):
         # print('OK')
         return string
 
+
 def replaceExprs(bundle, elems, rels, cons, params, complexT):
     """
     This function replaces the first and second expressions for a bundle's constraint.
@@ -20,7 +22,7 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
     f = [
         iden
         for (k, r) in rels.items()
-        for ((iden,_), _) in elems.items()
+        for ((iden, _), _) in elems.items()
         if (
             str(r["sourceId"]) == str(iden) and
             str(r["targetId"]) == str(bundle["id"])
@@ -34,25 +36,25 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         if (
             [
                 rel
-                for (_,rel) in rels.items()
+                for (_, rel) in rels.items()
                 if rel["sourceId"] == bundle["id"] and
-                    rel["targetId"] == iden
+                rel["targetId"] == iden
             ]
         )
     ]
-    fs = ["UUID_" + ef.replace("-","_") for ef in fs if (ef not in f)]
+    fs = ["UUID_" + ef.replace("-", "_") for ef in fs if (ef not in f)]
     # print(fs)
     # print(bundle)
     pattern = {
         "F": f[0],
         "Xs": {
-            "sum":" + ".join(fs),
+            "sum": " + ".join(fs),
             "len": str(len(fs))
         }
     }
     cons = str(cons).replace(
         params[0],
-        "UUID_" + pattern[params[0]].replace("-","_")
+        "UUID_" + pattern[params[0]].replace("-", "_")
     )
     funs = r"(" + r"|".join(complexT["functions"]) + r")"
     regex_paren = funs + r"\(" + re.escape(params[1]) + r"\)"
@@ -78,7 +80,6 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         }
         [cons := cons.replace(params[i], ranges[params[i]]) for i in range(2,len(params))]
     return cons
-
 
 
 def bundleCons(bundle, elems, rels, language, rules):
@@ -121,7 +122,7 @@ def mapVar(element, rule):
             template.replace(
                 rule["param"], str(element["id"]).replace("-", "_")
             )
-            #+ f'% {element["type"]} → {element["id"]}'
+            # + f'% {element["type"]} → {element["id"]}'
         )
         return constraint
     # If not bool(rule) then return None
@@ -173,6 +174,7 @@ def mapRels(relations, language, rules):
         if rs is not None
     ]
 
+
 class SolverException(Exception):
     pass
 
@@ -189,7 +191,8 @@ def run(model, rules, language, dry, selectedModelId):
     hlvl_options = "options:"
     hlvl_relations = "relations:"
     # Map the constraints for the vars
-    constraints = (([hlvl_header] if language == 'hlvl' else [])
+    constraints = (
+        ([hlvl_header] if language == 'hlvl' else [])
         + ([hlvl_options] if language == 'hlvl' else [])
         + mapVars(elementsMap, language, rules)
         + ([hlvl_relations] if language == 'hlvl' else [])
@@ -232,14 +235,15 @@ def run(model, rules, language, dry, selectedModelId):
     # instance = Instance(gecode, mzn_model)
     # result = instance.solve()
     # print("----------------------/MODEL--------------------------------")
-    #return result
+    # return result
     # Now lets update the model based on the result
 
-    #if not dry:
+    # if not dry:
     model["productLines"][0]["domainEngineering"]["models"][idx] = fm
     return model
+
 
 def update_model(model, rules, result):
     for e in model["elements"]:
         if e["type"] in rules["elementTypes"]:
-            e["properties"][1]["value"] = "Selected" if result["UUID_" +  str(e["id"]).replace("-","_")] == 1 else  "Unselected"
+            e["properties"][1]["value"] = "Selected" if result["UUID_" + str(e["id"]).replace("-","_")] == 1 else "Unselected"
