@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 VariaMos semantic translator server.
 
@@ -14,7 +12,8 @@ app = Flask(__name__)
 
 
 @app.route("/translate/<language>", methods=['POST', 'OPTIONS'])
-def translate(language):
+@app.route("/translate/<language>/<solver>", methods=['POST', 'OPTIONS'])
+def translate(language, solver="minizinc"):
     if request.method == 'OPTIONS':
         return _build_cors_preflight_response()
     elif request.method == "POST":
@@ -29,10 +28,12 @@ def translate(language):
                 model=content['data']["project"],
                 rules=content['data']["rules"],
                 language=language,
+                solver=solver,
                 dry=dry,
                 selectedModelId=selectedModel
             )}}))
         except SolverException as err:
+            print(err)
             return _corsify_actual_response(jsonify({'data': {'error': str(err) } }))
         except BaseException as err:
             print(err)

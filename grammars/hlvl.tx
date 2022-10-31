@@ -84,27 +84,27 @@ VariabilityRelation:
 
 
 Common:
-    "common" "(" choices+=Name[','] ")"
+    "common" "(" choices+=[Option][','] ")"
 ;
 
 Mutex:
-    "mutex" "(" choices+=Name[','] ")"
+    "mutex" "(" choices+=[Option][','] ")"
 ;
 
 MutexSet:
-    "mutex" "(" constraint=Constraint "," "[" choices+=Name[','] "]" ")"
+    "mutex" "(" constraint=Constraint "," "[" choices+=[Option][','] "]" ")"
 ;
 
 Implies:
-    "implies" "(" choices+=Name[','] ")"
+    "implies" "(" condition=[Option] "," consequence=[Option] ")"
 ;
 
 ImpliesSet:
-    "implies" "(" constraint=Constraint "," "[" choices+=Name[','] "]" ")"
+    "implies" "(" constraint=Constraint "," "[" choices+=[Option][','] "]" ")"
 ;
 
 ImpliesQuant:
-    mult1=Multiplicity c1=Name "implies" mult2=Multiplicity c2=Name
+    mult1=Multiplicity c1=[Option] "implies" mult2=Multiplicity c2=[Option]
 ;
 
 Expression:
@@ -113,23 +113,23 @@ Expression:
 
 Decomposition:
     "decomposition"
-    "(" prt=Name ","
-    "[" choices+=Name[','] "]" ","
+    "(" prt=[Option] ","
+    "[" choices+=[Option][','] "]" ","
     multiplicity=Multiplicity ")"
     // "[" min=INT "," max=INT "]" ")"
 ;
 
 Group:
     "group"
-    "(" prt=Name ","
-    "[" choices+=Name[','] "]" ","
+    "(" prt=[Option] ","
+    "[" choices+=[Option][','] "]" ","
     multiplicity=Multiplicity ")"
 ;
 
 Visibility:
     "visibility"
     "(" constraint=Constraint ","
-    "[" choices+=Name[','] "]" ")"
+    "[" choices+=[Option][','] "]" ")"
 ;
 
 Constraint:
@@ -196,7 +196,7 @@ NumericLiteral:
 ;
 
 Multiplicity:
-    "[" INT "," INT "]"
+    "[" lower=INT "," upper=INT "]"
 ;
 
 CommentExpr:

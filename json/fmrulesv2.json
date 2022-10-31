@@ -34,6 +34,41 @@
     ]
   },
   "elementTranslationRules": {
+    "hlvl": {
+      "lang": "hlvl",
+      "Bundle": {
+        "param": [
+          "F",
+          "Xs",
+          "min",
+          "max"
+        ],
+        "constraint": {
+          "Or": "group (F, [Xs], [0,len(Xs)])",
+          "And": "group (F, [Xs], [len(Xs),len(Xs)])",
+          "Xor": "group (F, [Xs], [1,1])",
+          "Range": "group (F, [Xs], [min, max])"
+        }
+      }, 
+      "RootFeature": {
+        "param": "F",
+        "constraint": "choice UUID_F [1,1]",
+        "selected_constraint": "choice UUID_F [1,1]",
+        "deselected_constraint": "choice UUID_F [0,0]"
+      },
+      "AbstractFeature": {
+        "param": "F",
+        "constraint": "choice UUID_F [0,1]",
+        "selected_constraint": "choice UUID_F [1,1]",
+        "deselected_constraint": "choice UUID_F [0,0]"
+      },
+      "ConcreteFeature": {
+        "param": "F",
+        "constraint": "choice UUID_F [0,1]",
+        "selected_constraint": "choice UUID_F [1,1]",
+        "deselected_constraint": "choice UUID_F [0,0]"
+      }
+    },
     "swi": {
       "lang": "swi",
       "Bundle": {
@@ -89,7 +124,7 @@
         "param": "F",
         "constraint": "var 1..1:'UUID_F';",
         "selected_constraint": "var 1..1:'UUID_F';",
-        "deselected_constraint": "var 0..0:'UUID_F';"
+        "deselected_constraint": "var 1..1:'UUID_F'; constraint 'UUID_F' == 0;"
       },
       "AbstractFeature": {
         "param": "F",
@@ -106,6 +141,37 @@
     }
   },
   "relationTranslationRules": {
+    "hlvl": {
+      "lang": "hlvl",
+      "Excludes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "mutex(UUID_F1,UUID_F2)"
+      },
+      "Includes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "implies(UUID_F1,UUID_F2)"
+      },
+      "Optional": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "decomposition(UUID_F1, [UUID_F2], [0,1])"
+      },
+      "Mandatory": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "decomposition(UUID_F1, [UUID_F2], [1,1])"
+      }
+    },
     "swi": {
       "lang": "swi",
       "Excludes": {

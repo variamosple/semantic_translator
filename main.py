@@ -48,16 +48,17 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
     pattern = {
         "F": f[0],
         "Xs": {
-            "sum": " + ".join(fs),
-            "len": str(len(fs))
+            "sum(Xs)": " + ".join(fs),
+            "len(Xs)": str(len(fs)),
+            "[Xs]": f"[{','.join(fs)}]"
         }
     }
     cons = str(cons).replace(
         params[0],
         "UUID_" + pattern[params[0]].replace("-", "_")
     )
-    funs = r"(" + r"|".join(complexT["functions"]) + r")"
-    regex_paren = funs + r"\(" + re.escape(params[1]) + r"\)"
+    funs = r"(" + r"|".join(complexT["functions"]) + r")?"
+    regex_paren = funs + r"(\(|\[)" + re.escape(params[1]) + r"(\)|\])"
     occs = set([
         oc.group(0)
         for oc in re.finditer(regex_paren, cons)
@@ -66,7 +67,7 @@ def replaceExprs(bundle, elems, rels, cons, params, complexT):
         cons := cons.replace(
             occ,
             pattern[params[1]][
-                re.compile(regex_paren).search(occ).group(1)
+                re.compile(regex_paren).search(occ).group(0)
             ]
         )
         for occ in occs
@@ -179,7 +180,7 @@ class SolverException(Exception):
     pass
 
 
-def run(model, rules, language, dry, selectedModelId):
+def run(model, rules, language, solver, dry, selectedModelId):
     """This function takes in a model, a set of rules and a language to translate to and runs the procedure"""
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
     idx, fm = next(filter(lambda mod: mod[1]['id'] == selectedModelId, enumerate(model["productLines"][0]["domainEngineering"]["models"])))
@@ -200,6 +201,9 @@ def run(model, rules, language, dry, selectedModelId):
         + mapBundles(elementsMap, relationsMap, language, rules)
         # + ["solve satisfy;"]
     )
+    print(constraints)
+    # These conditions are left for now so that current
+    # functionality doesn't break
     if language == 'minizinc':
         result = minizinc_solve(constraints)
         # If no solution is found
@@ -220,8 +224,24 @@ def run(model, rules, language, dry, selectedModelId):
         else:
             return 'SWI - SAT check OK'
     elif language == 'hlvl':
-        result = parse_hlvl(constraints)
-        print(result)
+        hlvl_solver_constraints = parse_hlvl(constraints, solver)
+        if solver == 'minizinc':
+            result = minizinc_solve(hlvl_solver_constraints)
+            if not result.status.has_solution():
+                raise SolverException('HLVL/MZN - Model is UNSAT')
+            elif not dry:
+                minizinc_update_model(fm, rules, result)
+            else:
+                return 'HLVL/MZN - SAT check OK'
+        elif solver == 'swi':
+            print(hlvl_solver_constraints)
+            result = prolog_solve(hlvl_solver_constraints)
+            if result is False:
+                raise SolverException('SWI - Model is UNSAT')
+            elif not dry:
+                prolog_update_model(fm, rules, result)
+            else:
+                return 'SWI - SAT check OK'
     else:
         raise RuntimeError("Unrecognized Language")
     print(result)
