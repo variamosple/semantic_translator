@@ -1,0 +1,700 @@
+{
+    "id": "9415e1ac-a98d-45cb-96e6-5f67de820ba9",
+    "name": "Test FM",
+    "enable": true,
+    "productLines": [
+        {
+            "id": "75f97097-0c3b-4c79-8c56-15bc91c9a944",
+            "name": "Test FM",
+            "domainEngineering": {
+                "models": [
+                    {
+                        "id": "d3a0d13c-5408-4b2e-a41a-cefa98487baa",
+                        "name": "Features",
+                        "elements": [
+                            {
+                                "id": "69784178-c589-4447-bbe5-7b51b97f4918",
+                                "type": "RootFeature",
+                                "name": "RootFeature 1",
+                                "x": 1300,
+                                "y": 50,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "54912de1-e1da-49cb-834d-6cec9e62a751",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "9a4adb03-6e6a-4938-a084-2139027ce135",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    },
+                                    {
+                                        "id": "db65ac4f-56b9-4f5f-91e1-cd78a09507fe",
+                                        "name": "Options",
+                                        "value": null,
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "A,B,C,J"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "bf3ab018-6304-4e84-a11f-80f3f5d1d80f",
+                                "type": "AbstractFeature",
+                                "name": "F1",
+                                "x": 1140,
+                                "y": 130,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "06a84471-4b6f-4655-80c5-fd0256903f29",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "b49c96e7-3166-4481-8a3e-c11376e77fec",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "ac0d2916-749b-4146-ad32-37622e2aeef0",
+                                "type": "AbstractFeature",
+                                "name": "F2",
+                                "x": 1450,
+                                "y": 120,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "1dca5079-d395-46ef-b1e2-eacd5cd6e77d",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "952ee2a0-7211-4503-b55a-fd68b69b0667",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "9e5a250c-9ee7-4d7b-9486-40563a1e9ab8",
+                                "type": "ConcreteFeature",
+                                "name": "F3",
+                                "x": 980,
+                                "y": 300,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "b3a5bddc-732b-4b3a-9027-5323b93a4f7c",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "0b1ff672-04d2-4685-b5f9-e462c1f92d91",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "43634fef-d816-4cc4-bbde-02cb7865afef",
+                                "type": "ConcreteFeature",
+                                "name": "F4",
+                                "x": 1170,
+                                "y": 310,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "87a42134-290a-459a-b802-dab64eb993b6",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "2f724de1-6de1-4223-9d0a-65407c70dc7a",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "87b866ef-e358-4797-829c-d3fcac43a21f",
+                                "type": "ConcreteFeature",
+                                "name": "F5",
+                                "x": 1330,
+                                "y": 310,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "97fac5aa-cdd6-43d3-b9df-2e91eeaf6ab3",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "6225c04a-d888-4674-8d33-e756ef8a9e43",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "e51771f2-b0cc-433a-bfee-8e106bb8d17e",
+                                "type": "AbstractFeature",
+                                "name": "F7",
+                                "x": 1580,
+                                "y": 300,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "81cdb6ca-d66d-4f11-a3d7-79bb91c5d7cf",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "58b97658-d7e5-437c-a9fe-aa2999e33c43",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "1cb2b338-f05e-4ccb-9df2-2bc76894336a",
+                                "type": "ConcreteFeature",
+                                "name": "F9",
+                                "x": 1710,
+                                "y": 410,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "121700a2-2a6d-4bdc-a7bd-b2cbc8a121a3",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "41ba39e0-6486-4954-9592-668039914bb3",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "b2f0093c-60b1-40a0-98d6-ab392dcc74cc",
+                                "type": "ConcreteFeature",
+                                "name": "F8",
+                                "x": 1480,
+                                "y": 410,
+                                "width": 100,
+                                "height": 33,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "8b725cef-7fc6-4ec6-85ac-26fa093c7dfc",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "345d5ea2-6650-4313-8f5a-904a82a888e7",
+                                        "name": "Selected",
+                                        "value": "Undefined",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "Undefined,Selected,Unselected"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "4f02dab8-6169-4f8d-9488-039a26f4fd44",
+                                "type": "Bundle",
+                                "name": "sssss",
+                                "x": 1240,
+                                "y": 200,
+                                "width": 100,
+                                "height": 50,
+                                "parentId": null,
+                                "properties": [
+                                    {
+                                        "id": "d682d51d-3d4b-4f00-acd9-1bf8d1e3f884",
+                                        "name": "Name",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true
+                                    },
+                                    {
+                                        "id": "1a65b10e-784e-41f2-80e2-3e662f29888c",
+                                        "name": "Type",
+                                        "value": "Xor",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "type options",
+                                        "possibleValues": "And,Or,Xor,Range"
+                                    },
+                                    {
+                                        "id": "748c0229-327b-4303-b238-b31e14e2ee99",
+                                        "name": "RangeMin",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "Range",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "e023c43e-3536-4393-96d4-2c888f8cbaad",
+                                        "name": "RangeMax",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "Range",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "22d1d171-b8fe-47b3-ab2e-297118e59922",
+                                        "name": "Testing",
+                                        "type": "Integer",
+                                        "custom": false,
+                                        "display": true,
+                                        "comment": "prueba",
+                                        "possibleValues": "1..10"
+                                    }
+                                ]
+                            }
+                        ],
+                        "relationships": [
+                            {
+                                "id": "b0e39abe-66aa-4666-bc8c-bc592e5d59a5",
+                                "type": "RootFeature_Feature",
+                                "name": "RootFeature 1_AbstractFeature 1",
+                                "sourceId": "69784178-c589-4447-bbe5-7b51b97f4918",
+                                "targetId": "bf3ab018-6304-4e84-a11f-80f3f5d1d80f",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "31c8e1fe-943a-4849-9114-b5ed11dd972a",
+                                        "name": "Type",
+                                        "value": "Mandatory",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "0cdfdc80-f8d6-4d2c-a31f-d1948c10931f",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "378ab5f4-c2ff-4696-b1e3-b5a57e1b72c6",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "98cb5531-88b9-4b3c-b957-1ed4cdae0f0b",
+                                "type": "RootFeature_Feature",
+                                "name": "RootFeature 1_AbstractFeature 1",
+                                "sourceId": "69784178-c589-4447-bbe5-7b51b97f4918",
+                                "targetId": "ac0d2916-749b-4146-ad32-37622e2aeef0",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "98b57402-034b-48ff-af5d-93b973f3ca21",
+                                        "name": "Type",
+                                        "value": "Mandatory",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "e33b8378-d6ec-4267-995e-9c6ecdb309f6",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "ebd041fd-7be6-4fbc-bc30-8dcb0bc5ef05",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "7274fff6-9eef-456f-a138-79ca592ed942",
+                                "type": "AbstractFeature_Feature",
+                                "name": "AbstractFeature 1_ConcreteFeature 1",
+                                "sourceId": "bf3ab018-6304-4e84-a11f-80f3f5d1d80f",
+                                "targetId": "9e5a250c-9ee7-4d7b-9486-40563a1e9ab8",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "34f345ca-41b0-49da-ba7a-f72881c901c4",
+                                        "name": "Type",
+                                        "value": "Optional",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "0e413051-0c86-4724-95da-770ba52f5d39",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "77599516-e424-4b70-aec3-f9613488b542",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "6a17e0fd-d75e-4b24-9a46-bd5173e97e42",
+                                "type": "AbstractFeature_Bundle",
+                                "name": "AbstractFeature 1_Xor",
+                                "sourceId": "bf3ab018-6304-4e84-a11f-80f3f5d1d80f",
+                                "targetId": "4f02dab8-6169-4f8d-9488-039a26f4fd44",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": []
+                            },
+                            {
+                                "id": "6a2b3b04-1b1d-4305-a66a-cc69a091ef37",
+                                "type": "Bundle_Feature",
+                                "name": "Xor_ConcreteFeature 1",
+                                "sourceId": "4f02dab8-6169-4f8d-9488-039a26f4fd44",
+                                "targetId": "43634fef-d816-4cc4-bbde-02cb7865afef",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": []
+                            },
+                            {
+                                "id": "85ef29e8-fb4d-497d-8b91-e6e0d63f3d1b",
+                                "type": "Bundle_Feature",
+                                "name": "Xor_ConcreteFeature 1",
+                                "sourceId": "4f02dab8-6169-4f8d-9488-039a26f4fd44",
+                                "targetId": "87b866ef-e358-4797-829c-d3fcac43a21f",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": []
+                            },
+                            {
+                                "id": "7debaed6-7431-4b37-bd7e-43ffcece6916",
+                                "type": "AbstractFeature_Feature",
+                                "name": "AbstractFeature 1_AbstractFeature 1",
+                                "sourceId": "ac0d2916-749b-4146-ad32-37622e2aeef0",
+                                "targetId": "e51771f2-b0cc-433a-bfee-8e106bb8d17e",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "c7227695-e6dd-4e74-9014-f8310deeba06",
+                                        "name": "Type",
+                                        "value": "Mandatory",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "9d768039-37ce-4ce1-8a79-0531c9e14ca2",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "7237aedf-f359-4ff4-908e-987c66961234",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "ff17b00a-fef0-4549-94f6-a3f9f5981369",
+                                "type": "AbstractFeature_Feature",
+                                "name": "AbstractFeature 1_ConcreteFeature 1",
+                                "sourceId": "e51771f2-b0cc-433a-bfee-8e106bb8d17e",
+                                "targetId": "1cb2b338-f05e-4ccb-9df2-2bc76894336a",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "4bbdd299-7467-47b1-850f-27941b42c5ef",
+                                        "name": "Type",
+                                        "value": "Mandatory",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "0d71c700-9b37-4509-990c-cbb6fd6b6c61",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "26603f1b-0295-4bc4-affd-f124af3bb9a9",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "e0d3b01f-00a1-4edf-b6f0-7a0837fc189f",
+                                "type": "AbstractFeature_Feature",
+                                "name": "AbstractFeature 1_ConcreteFeature 1",
+                                "sourceId": "e51771f2-b0cc-433a-bfee-8e106bb8d17e",
+                                "targetId": "b2f0093c-60b1-40a0-98d6-ab392dcc74cc",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "ef458fcf-a6f6-4e60-baf5-6a3efb681b33",
+                                        "name": "Type",
+                                        "value": "Optional",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "807346c5-b0ab-4e59-afc7-2464346eb318",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "1674e824-dc8f-42bb-9690-b2daa4e30203",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "495fcf2e-df7b-43f9-9df5-739110521316",
+                                "type": "ConcreteFeature_Feature",
+                                "name": "ConcreteFeature 1_ConcreteFeature 1",
+                                "sourceId": "b2f0093c-60b1-40a0-98d6-ab392dcc74cc",
+                                "targetId": "87b866ef-e358-4797-829c-d3fcac43a21f",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "b8cc9eb5-abbe-46aa-bd3e-619b3eec18bc",
+                                        "name": "Type",
+                                        "value": "Excludes",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "a91fab9a-fb32-44b9-9c8e-0651ec343eff",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "ba650d90-34ed-49cd-b448-cd453db8581e",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "84924b8e-973d-4317-889a-99ee1994cce0",
+                                "type": "ConcreteFeature_Feature",
+                                "name": "ConcreteFeature 1_ConcreteFeature 1",
+                                "sourceId": "9e5a250c-9ee7-4d7b-9486-40563a1e9ab8",
+                                "targetId": "43634fef-d816-4cc4-bbde-02cb7865afef",
+                                "points": [],
+                                "min": 0,
+                                "max": 9999999,
+                                "properties": [
+                                    {
+                                        "id": "d4aa6039-ee0d-47c5-bd08-e7e2fe7f8953",
+                                        "name": "Type",
+                                        "value": "Includes",
+                                        "type": "String",
+                                        "custom": false,
+                                        "display": true,
+                                        "possibleValues": "Mandatory,Optional,Includes,Excludes,IndividualCardinality"
+                                    },
+                                    {
+                                        "id": "bda22802-61db-46c8-bc4c-857dcbb5e582",
+                                        "name": "MinValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    },
+                                    {
+                                        "id": "f56a3659-15cd-4c33-b7de-52374d0e86dd",
+                                        "name": "MaxValue",
+                                        "type": "String",
+                                        "linked_property": "Type",
+                                        "linked_value": "IndividualCardinality",
+                                        "custom": false,
+                                        "display": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "languagesAllowed": []
+            },
+            "applicationEngineering": {
+                "models": [],
+                "languagesAllowed": [],
+                "applications": []
+            }
+        }
+    ]
+}

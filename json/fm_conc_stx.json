@@ -1,0 +1,169 @@
+{
+    "elements": {
+      "Bundle": {
+        "draw": "PHNoYXBlIG5hbWU9ImNvbXBvbmVudCIgYXNwZWN0PSJmaXhlZCIgc3Ryb2tld2lkdGg9IjIiPgoJPGJhY2tncm91bmQ+CgkJPHN0cm9rZWNvbG9yIGNvbG9yPSIjNDQ2ZTc5Ii8+CgkJPGZpbGxjb2xvciBjb2xvcj0iI2ZmZmZmZiIvPgoJCTxwYXRoPiAKCQkJPGVsbGlwc2UgeD0iMCIgeT0iMCIgdz0iMTAwIiBoPSIxMDAiLz4gCgkJPC9wYXRoPgkJCgk8L2JhY2tncm91bmQ+Cgk8Zm9yZWdyb3VuZD4KCQk8ZmlsbHN0cm9rZS8+Cgk8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+",
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAIzSURBVGhD5Zk9jsIwEIUn2/HTUtEhWhqEKCkRFRIlZ+ACnII7cAUqauiADlGCREFDzU/pzbP8VtkCxJKZ1a78SZYhsd8kY2diTxKXIhHzEepo+dUZcDgcZDabyWKxkO12K6fTSe73uxQKBalWq9JoNKTT6Ui/35darRZ6GQMHWLNcLt1gMICjXy5oj37WmDtgNBp9u7HhcOim06nb7Xbucrn4NqjxH8dxPtse/S0xc8B+v3ftdvvrRsbjsTufz+Hsc9AO7dkXOtCzwMQBuNh6ve4vvtlsutVqFc78jPV67ftDB3oWTjBxAEe+2+266/Uajr4H+kOHM0EbdQfwmcfI5b15Ah3OBO2YoOoARG1cJAqmryZ4jKit+XZQdQBfdQhgFjAwwo4Wag5AgOIIvRrtfwp0aUMrIKothbHCA+l7XCqViv+tDXShD2gvL2oOwPIW9Ho9X1tBfdrLi5oDsLYHrVbL11ZQn/byorYZKhaLfmOTLmulVCqFo/qkr0Qpl8t+A3W73cLR91FzQJIkvlaSe4qmLbVHACMCMEKWUJ/28qLmAOznwfF49LUV1Ke9vKg5AMkMsNlsfG0F9WkvL2oOQCYHzOdzX1tBfdrLDYKgBtGvBJHDS9fo/vdkMvG1NtSFHbWcYXCECtnd4LtJkEdgd0ntP7sbBFHnA0jUGSGAAJXNCb6bHMFjxJH/VzlBgIvlTECJKiuchTGBJZrvAlkQtZkue7WgvWa0f0T03wYj/zwu8glDIxnpOM+ykAAAAABJRU5ErkJggg==",
+        "label": "Bundle",
+        "width": 100,
+        "design": "shape=Bundle",
+        "height": 50,
+        "label_property": "Type"
+      },
+      "RootFeature": {
+        "draw": "PHNoYXBlIG5hbWU9IlJvb3RGZWF0dXJlIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iMTEiPg0KCTxiYWNrZ3JvdW5kPg0KCQk8c3Ryb2tlY29sb3IgY29sb3I9IiM0NDZlNzkiLz4NCgkJPGZpbGxjb2xvciBjb2xvcj0iI2ZmZmZmZiIvPg0KCQk8cGF0aD4NCgkJCTxtb3ZlIHg9IjAiIHk9IjAiLz4NCgkJCTxsaW5lIHg9IjEwMCIgeT0iMCIvPg0KCQkJPGxpbmUgeD0iMTAwIiB5PSIxMDAiLz4NCgkJCTxsaW5lIHg9IjAiIHk9IjEwMCIvPg0KCQkJPGxpbmUgeD0iMCIgeT0iMCIvPg0KCQkJPGNsb3NlLz4gDQoJCTwvcGF0aD4JCQ0KCTwvYmFja2dyb3VuZD4NCgk8Zm9yZWdyb3VuZD4NCgkJPGZpbGxzdHJva2UvPg0KCTwvZm9yZWdyb3VuZD4NCjwvc2hhcGU+",
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAAAXNSR0IArs4c6QAAAHxJREFUaEPt2cENwCAMQ9Fm/6HTQwtCVbpA8tjAVmw+JK7hJ179OdSHYIAJeBwQgbMDMnv6ETvxW23dAQwwASLQEgt0gBJc3OcWWA64Bsu3AA7AATgAB3R0AAgBISD0TTYQAkLVpygSRILDSbAjBP1oshmyGrMaGxT4SuoNzk9gIT08aqgAAAAASUVORK5CYII=",
+        "label": "RootFeature",
+        "width": 100,
+        "design": "shape=RootFeature;",
+        "height": 33
+      },
+      "AbstractFeature": {
+        "draw": "PHNoYXBlIG5hbWU9IlJvb3RGZWF0dXJlIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iaW5oZXJpdCI+Cgk8YmFja2dyb3VuZD4KICAgICAgICAgICAgICAgIDxzdHJva2V3aWR0aCB3aWR0aD0iNSIvPgoJCTxzdHJva2Vjb2xvciBjb2xvcj0iIzQ0NmU3OSIvPgoJCTxmaWxsY29sb3IgY29sb3I9IiNmZmZmZmYiLz4KCQk8cGF0aD4KCQkJPG1vdmUgeD0iMCIgeT0iMCIvPgoJCQk8bGluZSB4PSIxMDAiIHk9IjAiLz4KCQkJPGxpbmUgeD0iMTAwIiB5PSIxMDAiLz4KCQkJPGxpbmUgeD0iMCIgeT0iMTAwIi8+CgkJCTxsaW5lIHg9IjAiIHk9IjAiLz4KCQkJPGNsb3NlLz4gCgkJPC9wYXRoPgkKICAgICAgICAgICAgICAgIDxkYXNocGF0dGVybiBwYXR0ZXJuPSIzIDMiLz4KICAgICAgICAgICAgICAgIDxkYXNoZWQgZGFzaGVkPSIxIi8+CQoJPC9iYWNrZ3JvdW5kPgoJPGZvcmVncm91bmQ+CgkJPGZpbGxzdHJva2UvPgoJPC9mb3JlZ3JvdW5kPgo8L3NoYXBlPg==",
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAACNSURBVGhD7ZZBEoAgDAOp//+zwkxErP0AbvYSZ+AUU9I4Ow3MIcXySkBE6OuhCshf7g2cgO5MbQ0EXALGeKwjMg3IBxTwb4ANkGLBGTBKby0+16AUiw2QYsEZ4E0w4RGQYrEBUgzeBBMeASkWGyDF4E0wgR+BWYPr36+asUrHzvfuMyegO/G1CQQ8Aa1dKuhPNgYdDSEAAAAASUVORK5CYII=",
+        "label": "AbstractFeature",
+        "width": 100,
+        "height": 33
+      },
+      "ConcreteFeature": {
+        "draw": "PHNoYXBlIG5hbWU9IlJvb3RGZWF0dXJlIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iNyI+DQoJPGJhY2tncm91bmQ+DQoJCTxzdHJva2Vjb2xvciBjb2xvcj0iIzQ0NmU3OSIvPg0KCQk8ZmlsbGNvbG9yIGNvbG9yPSIjZmZmZmZmIi8+DQoJCTxwYXRoPg0KCQkJPG1vdmUgeD0iMCIgeT0iMCIvPg0KCQkJPGxpbmUgeD0iMTAwIiB5PSIwIi8+DQoJCQk8bGluZSB4PSIxMDAiIHk9IjEwMCIvPg0KCQkJPGxpbmUgeD0iMCIgeT0iMTAwIi8+DQoJCQk8bGluZSB4PSIwIiB5PSIwIi8+DQoJCQk8Y2xvc2UvPiANCgkJPC9wYXRoPgkJDQoJPC9iYWNrZ3JvdW5kPg0KCTxmb3JlZ3JvdW5kPg0KCQk8ZmlsbHN0cm9rZS8+DQoJPC9mb3JlZ3JvdW5kPg0KPC9zaGFwZT4=",
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAABmSURBVGhD7ZkxDsAgAIS0//9z2xjs4BMKDJK4SW5z3i9DzIW1fAuYc64LC3v4LeBcwC7zV8536hdQAKylAFhLAbCWAmAtBcBaCoC1FABrKQDWUgCspQBYSwGwln6G1imm32EsZYwH6mkgKD+7AsEAAAAASUVORK5CYII=",
+        "label": "ConcreteFeature",
+        "width": 100,
+        "design": "shape=ConcreteFeature;",
+        "height": 33
+      }
+    },
+    "relationships": {
+      "Bundle_Feature": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=block;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "RootFeature_Bundle": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=block;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "RootFeature_Feature": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=1;endSize=12;",
+            "linked_value": "Mandatory",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=0;endSize=12;",
+            "linked_value": "Optional",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=open;",
+            "linked_value": "Includes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;startArrow=open;endArrow=open;",
+            "linked_value": "Excludes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=none;",
+            "linked_value": "IndividualCardinality",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "AbstractFeature_Bundle": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=block;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "ConcreteFeature_Bundle": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=block;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "AbstractFeature_Feature": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=1;endSize=12;",
+            "linked_value": "Mandatory",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=0;endSize=12;",
+            "linked_value": "Optional",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=open;",
+            "linked_value": "Includes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;startArrow=open;endArrow=open;",
+            "linked_value": "Excludes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=none;",
+            "linked_value": "IndividualCardinality",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;"
+          }
+        ],
+        "label_property": "Type"
+      },
+      "ConcreteFeature_Feature": {
+        "styles": [
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=1;endSize=12;",
+            "linked_value": "Mandatory",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=oval;endFill=0;endSize=12;",
+            "linked_value": "Optional",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=open;",
+            "linked_value": "Includes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;startArrow=open;endArrow=open;",
+            "linked_value": "Excludes",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;endArrow=none;",
+            "linked_value": "IndividualCardinality",
+            "linked_property": "Type"
+          },
+          {
+            "style": "strokeColor=#446E79;strokeWidth=2;"
+          }
+        ],
+        "label_property": "Type"
+      }
+    }
+  }

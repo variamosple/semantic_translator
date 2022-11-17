@@ -79,9 +79,18 @@ VariabilityRelation:
     Expression |
     Decomposition |
     Group |
-    Visibility
+    Visibility | //Add new rules to express single decomp
+    Mandatory |
+    Optional 
 ;
 
+Mandatory:
+    "mandatory" "(" prt=[Option] "," child=[Option] ")"
+;
+
+Optional:
+    "optional" "(" prt=[Option] "," child=[Option] ")"
+;
 
 Common:
     "common" "(" choices+=[Option][','] ")"
@@ -118,6 +127,8 @@ Decomposition:
     multiplicity=Multiplicity ")"
     // "[" min=INT "," max=INT "]" ")"
 ;
+
+
 
 Group:
     "group"

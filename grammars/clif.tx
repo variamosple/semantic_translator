@@ -1,0 +1,115 @@
+//Grammar for CLIF -> Derived from ISO 24707:2018 (2nd ed)
+//This is a simplified and partially conforming grammar to avoid having
+//to implement the entire standard
+//we restrict ourselves to the FO portion of the language
+//requiring finite and explicitly defined elements to avoid the
+//"sequence" handling set out by the standard
+
+Text:
+    //Let us asume we have a single context
+    constructions=TextConstruction;
+
+TextConstruction:
+    OPEN 'cl:text' sentences+=Sentence CLOSE;
+
+Sentence:   
+    AtomSentence | BoolSentence | QuantSentence;
+
+AtomSentence:
+    //Here go the arithmetic operators
+    eq=Equation | atom=Atom ;
+
+Atom:
+    //To avoid too much indirection we avoid the termseq
+    OPEN pred=Predicate terms+=Term CLOSE;
+
+Predicate:
+    //We need a mechanism to determine the sorts
+    //of the variables
+    TypePred |
+    ArithmeticPred | 
+    !INT Term;
+
+ArithmeticPred:
+    lt?="<" |
+    lte?="=<" |
+    gte?=">=" |
+    gt?=">";
+
+ArithmeticExpr: 
+//src: https://andrewbegel.com/cs164/ll1.html
+    OPEN expr=E CLOSE;
+E: 
+    t=T (ep=EP)?;
+EP: 
+    op=SUMOP t=T (ep=EP)?;
+T: 
+    f=F (tp=TP)?;
+TP:
+    op=MULOP f=F (tp=TP)?;
+F:  
+    OPEN expr=E CLOSE | val=Term;
+
+SUMOP:
+    "+"|"=";
+MULOP:
+    "*"|"/";
+
+
+TypePred:
+    //We need to handle how we declare what are vars can
+    //be bound to, and generally types are expressed in
+    //FOL as unary predicates but we must perhaps treat
+    //things slightly differently when it comes to finite
+    //domains for
+    boolean?="bool" |
+    integer?="int" |
+    enum?="enum" OPEN values+=Term CLOSE;
+
+
+BoolSentence:
+    ( OPEN operator=BOOLOP sentences+=Sentence CLOSE ) | 
+    ( OPEN operator=IMPOP antecedent=Sentence consequent=Sentence CLOSE ) |
+    ( OPEN operator=NEGOP sentence=Sentence CLOSE );
+
+QuantSentence:
+    OPEN operator=QUANTOP boundlist=BoundList sentence=Sentence CLOSE;
+
+BoundList:
+    //Let's keep this very simple for now
+    OPEN vars+=ID CLOSE;
+
+Equation:
+    //Simple for now
+    OPEN '=' lhs=Term rhs=Term CLOSE;
+
+TermSeq:
+    (Term)+;
+
+Term:
+    //We're not quite ready to handle complex functional terms just yet I think
+    !OP ID|
+    INT |
+    ArithmeticExpr;
+
+OP:
+    //Rule that contains all op to prevent term matching with ops
+    QUANTOP | BOOLOP | IMPOP | NEGOP;
+
+QUANTOP:
+    ("forall" | "exists");
+
+BOOLOP:
+    ("and" | "or");
+
+IMPOP:
+    ("if" | "iff");
+
+NEGOP:
+    "not";
+
+//A.2.2.2 Delimiters
+OPEN: 
+    "(";
+CLOSE:
+    ")";  

@@ -24,10 +24,10 @@ def model():
         'decomposition(UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e, [UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc], [0,1])',
         'mutex(UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc,UUID_87b866ef_e358_4797_829c_d3fcac43a21f)',
         'implies(UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8,UUID_43634fef_d816_4cc4_bbde_02cb7865afef)',
-        'group (UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f, [Xs], [1,1])'
+        'group (UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f, [UUID_43634fef_d816_4cc4_bbde_02cb7865afef, UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8], [1,1])'  # noqa: E501
     ]
-    return hlvl.parse_hlvl(strings)
+    return hlvl.parse_hlvl(strings, 'minizinc')
 
-
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_model_name(model):
     assert model.name == 'test'

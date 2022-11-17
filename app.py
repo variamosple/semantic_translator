@@ -21,12 +21,12 @@ def translate(language, solver="minizinc"):
         content = request.json
         # print(content['data']['project'])
         # print(content['data']["rules"])
-        selectedModel = content['data']['modelSelectedId']
+        selectedModel = content['data']['modelSelectedId'] # pyright: ignore
         dry = request.headers.get('dry') == 'true'
         try:
             return _corsify_actual_response(jsonify({"data": {'content': run(
-                model=content['data']["project"],
-                rules=content['data']["rules"],
+                model=content['data']["project"], # pyright: ignore
+                rules=content['data']["rules"], # pyright: ignore
                 language=language,
                 solver=solver,
                 dry=dry,

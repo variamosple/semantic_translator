@@ -1,0 +1,106 @@
+{
+  "elementTypes": [
+    "ConcreteFeature",
+    "RootFeature",
+    "AbstractFeature"
+  ],
+  "relationTypes": [
+    "Mandatory",
+    "Optional",
+    "Includes",
+    "Excludes",
+    "Range",
+    "Xor",
+    "And",
+    "Or"
+  ],
+  "complexElemValues": {
+    "type": {
+      "Bundle": "Range"
+    },
+    "params": [
+      "max",
+      "min"
+    ]
+  },
+  "complexElemTranslations": {
+    "params": [
+      "Xs"
+    ],
+    "functions": [
+      "sum",
+      "len",
+      "max"
+    ]
+  },
+  "elementTranslationRules": {
+    "hlvl": {
+      "lang": "clif",
+      "Bundle": {
+        "param": [
+          "F",
+          "Xs",
+          "min",
+          "max"
+        ],
+        "constraint": {
+          "Or": "(and (=< F (sum(Xs))) (=< (sum(Xs)) (F * len(Xs))) )",
+          "And": "(= (sum(Xs)) (F * len(Xs)))",
+          "Xor": "(= (sum(Xs)) F )",
+          "Range": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
+        }
+      }, 
+      "RootFeature": {
+        "param": "F",
+        "constraint": "(and (bool UUID_F) (= UUID_F 1))",
+        "selected_constraint": "(and (bool UUID_F) (= UUID_F 1))",
+        "deselected_constraint": "(= 0 1)"
+      },
+      "AbstractFeature": {
+        "param": "F",
+        "constraint": "(bool UUID_F)",
+        "selected_constraint": "(and (bool UUID_F) (= UUID_F 1))",
+        "deselected_constraint": "(and (bool UUID_F) (= UUID_F 0))"
+      },
+      "ConcreteFeature": {
+        "param": "F",
+        "constraint": "(bool UUID_F)",
+        "selected_constraint": "(and (bool UUID_F) (= UUID_F 1))",
+        "deselected_constraint": "(and (bool UUID_F) (= UUID_F 0))"
+      }
+    }
+  },
+  "relationTranslationRules": {
+    "hlvl": {
+      "lang": "clif",
+      "Excludes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "(=< (UUID_F1 + UUID_F2) 1)"
+      },
+      "Includes": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "(>= (UUID_F2 + UUID_F1) 1)"
+      },
+      "Optional": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "(>= (UUID_F1 + UUID_F2) 1)"
+      },
+      "Mandatory": {
+        "params": [
+          "F1",
+          "F2"
+        ],
+        "constraint": "(= UUID_F1 UUID_F2)"
+      }
+    }
+  }
+}

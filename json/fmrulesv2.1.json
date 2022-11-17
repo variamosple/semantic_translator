@@ -162,14 +162,14 @@
           "F1",
           "F2"
         ],
-        "constraint": "decomposition(UUID_F1, [UUID_F2], [0,1])"
+        "constraint": "optional(UUID_F1, UUID_F2)"
       },
       "Mandatory": {
         "params": [
           "F1",
           "F2"
         ],
-        "constraint": "decomposition(UUID_F1, [UUID_F2], [1,1])"
+        "constraint": "mandatory(UUID_F1, UUID_F2)"
       }
     },
     "swi": {

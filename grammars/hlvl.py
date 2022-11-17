@@ -11,7 +11,7 @@ def parse_hlvl(constraints_strs, solver):
     t1 = time.time()
     hlvl_meta = metamodel_from_file(
         './grammars/hlvl.tx',
-        classes=[Model, Choice, Relation, Common, Mutex, Implies, Group, Decomposition])
+        classes=[Model, Choice, Relation, Common, Mutex, Implies, Group, Decomposition, Mandatory, Optional])
     t2 = time.time()
     model: Model = hlvl_meta.model_from_str(constraints_str)
     # model = hlvl_meta.model_from_file('e_shop2.hlvl', debug=False)
@@ -118,7 +118,7 @@ class Implies:
 
     def mzn_model(self):
         return f"({self.condition.quoted_name()} == 1) -> ({self.consequence.quoted_name()} == 1)"
-    
+
     def swi_model(self):
         return f"({self.condition.name} #= 1) #==> ({self.consequence.name} #= 1)"
 
@@ -140,6 +140,7 @@ class Group:
 
 
 class Decomposition:
+    # This needs to be fixed so that its semantics match those of hlvl correctly
     def __init__(self, prt, choices, multiplicity, parent):
         self.prt = prt
         self.choices = choices
@@ -153,3 +154,29 @@ class Decomposition:
     def swi_model(self):
         sum_str = " + ".join(c_names(self.choices, False))
         return f"({self.prt.name} * {self.multiplicity.lower} #=< {sum_str}) #/\\ ({sum_str} #=< {self.prt.name} * {self.multiplicity.upper})"
+
+
+class Mandatory:
+    def __init__(self, prt, child, parent) -> None:
+        self.prt = prt
+        self.child = child
+        self.parent = parent
+
+    def mzn_model(self):
+        return f"{self.prt.quoted_name()} == {self.child.quoted_name()}"
+
+    def swi_model(self):
+        return f"{self.prt.name} #= {self.child.name}"
+
+
+class Optional:
+    def __init__(self, prt, child, parent) -> None:
+        self.prt = prt
+        self.child = child
+        self.parent = parent
+
+    def mzn_model(self):
+        return f"{self.prt.quoted_name()} >= {self.child.quoted_name()}"
+
+    def swi_model(self):
+        return f"{self.prt.name} #>= {self.child.name}"
