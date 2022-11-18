@@ -1,10 +1,14 @@
 import re
 
 # from grammars.hlvl import parse_hlvl
-from grammars.clif import clif_meta_model, clif_model
-from minizinc_bridge import minizinc_solve, minizinc_update_model
-from prolog_bridge import prolog_solve, prolog_update_model
+from grammars.clif import clif_meta_model
+from targets.minzinc.minizinc_bridge import (
+    minizinc_solve,
+    minizinc_update_model,
+)
+from targets.swi.prolog_bridge import prolog_solve, prolog_update_model
 from targets.minzinc.minizinc_model import clif_to_MZN_objects
+from targets.swi.swi_model import clif_to_SWI_objects
 
 
 def replaceWithPattern(pattern, string, occ, v):
@@ -272,14 +276,12 @@ def run(model, rules, language, solver, dry, selectedModelId):
     #             return 'SWI - SAT check OK'
     ###############################################################
     elif language == "hlvl":
-        clif_mm = clif_meta_model()
-        mzn = clif_to_MZN_objects(
-            clif_mm.model_from_str("\n".join(constraints))
-        )
-        hlvl_solver_constraints = clif_model(
-            clif_meta_model(), constraints, solver
-        )
+        clif_model = clif_meta_model().model_from_str("\n".join(constraints))
+        # hlvl_solver_constraints = clif_model(
+        #     clif_meta_model(), constraints, solver
+        # )
         if solver == "minizinc":
+            mzn = clif_to_MZN_objects(clif_model)
             result = minizinc_solve(
                 [v.to_string() + ";" for v in mzn.var_decls]
                 + [c.to_string() + ";" for c in mzn.constraint_decls]
@@ -291,8 +293,12 @@ def run(model, rules, language, solver, dry, selectedModelId):
             else:
                 return "CLIF/MZN - SAT check OK"
         elif solver == "swi":
-            print(hlvl_solver_constraints)
-            result = prolog_solve(hlvl_solver_constraints)
+            swi_constraints = [
+                c.to_string()
+                for c in clif_to_SWI_objects(clif_model).constraints
+            ]
+            print(swi_constraints)
+            result = prolog_solve(swi_constraints)
             if result is False:
                 raise SolverException("CLIF/SWI - Model is UNSAT")
             elif not dry:

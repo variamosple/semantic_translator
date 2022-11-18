@@ -27,8 +27,12 @@ class Text:
 
 
 class TextConstruction:
-    def __init__(self, parent: Text, sentences: list[Sentence]) -> None:
+    def __init__(
+        self, parent: Text, model: bool, verif: bool, sentences: list[Sentence]
+    ) -> None:
         self.parent = parent
+        self.model = model
+        self.verif = verif
         self.sentences = sentences
 
     def model_str(self, target: str) -> list[str]:
@@ -81,9 +85,7 @@ class AtomSentence(Sentence):
         if self.eq is not None:
             return top_level_mzn_constraint_header + self.eq.model_str(target)
         elif self.atom is not None:
-            return top_level_mzn_constraint_header + self.atom.model_str(
-                target
-            )
+            return top_level_mzn_constraint_header + self.atom.model_str(target)
         else:
             raise RuntimeError("An atomic sentence cannot be empty")
 
@@ -275,7 +277,7 @@ class F:
                 if target == TargetLang.swi:
                     return self.val
                 else:
-                    return "'"+self.val+"'"
+                    return "'" + self.val + "'"
             elif isinstance(self.val, ArithmeticExpr):
                 return self.val.model_str(target)
             else:

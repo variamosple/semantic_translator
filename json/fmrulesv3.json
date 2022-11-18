@@ -85,14 +85,14 @@
           "F1",
           "F2"
         ],
-        "constraint": "(>= (UUID_F2 + UUID_F1) 1)"
+        "constraint": "(>= UUID_F2 UUID_F1)"
       },
       "Optional": {
         "params": [
           "F1",
           "F2"
         ],
-        "constraint": "(>= (UUID_F1 + UUID_F2) 1)"
+        "constraint": "(>= UUID_F1 UUID_F2)"
       },
       "Mandatory": {
         "params": [

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 from typing import Optional
 from utils.exceptions import SemanticException
 from grammars import clif
@@ -37,8 +38,12 @@ class MZNModel:
         self.constraint_decls.append(constraint_decl)
 
 
-class MZNExpression:
+class MZNExpression(ABC):
     pass
+
+    @abstractmethod
+    def to_string(self) -> str:
+        pass
 
 
 class MZNVarDecl(MZNExpression):
@@ -77,7 +82,7 @@ class MZNConstraintDecl(MZNExpression):
         if isinstance(term, int):
             return str(term)
         elif isinstance(term, str):
-            return "'"+term+"'"
+            return "'" + term + "'"
         elif isinstance(term, clif.ArithmeticExpr):
             return term.model_str("minizinc")
         else:
@@ -116,12 +121,12 @@ def handle_bool_sentence(
         if sentence.operator == "and":
             # conjunction is handled natively by mzn, they are simply additional
             # constraints and/or var decls
-            exprs = []
+            exprs: list[MZNExpression] = []
             for s in sentence.sentences:
                 if isinstance(s, clif.AtomSentence):
                     exprs.append(handle_atom_sentence(s, True))
                 elif isinstance(s, clif.BoolSentence):
-                    exprs.append(handle_bool_sentence(s, True))
+                    exprs.append(*handle_bool_sentence(s, True))
                 elif isinstance(s, clif.QuantSentence):
                     raise NotImplementedError(
                         "No handling for quantification as inner constraint yet"
@@ -139,7 +144,9 @@ def handle_bool_sentence(
     elif sentence.sentence is not None:
         raise NotImplementedError("Negation currently unsupported")
     else:
-        raise SemanticException("the boolean expression must ")
+        raise SemanticException(
+            "invalid boolean expression"
+        )
 
 
 def handle_atom_sentence(

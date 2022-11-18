@@ -10,7 +10,7 @@ Text:
     constructions=TextConstruction;
 
 TextConstruction:
-    OPEN 'cl:text' sentences+=Sentence CLOSE;
+    OPEN (model?='model' | verif?='verif') sentences+=Sentence CLOSE;
 
 Sentence:   
     AtomSentence | BoolSentence | QuantSentence;

@@ -11,7 +11,7 @@ def meta() -> TextXMetaModel:
 
 
 def test_simple_model(meta: TextXMetaModel):
-    test_str = """( cl:text
+    test_str = """( model
     (and (= x y) (= y z))
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
@@ -36,7 +36,7 @@ def test_simple_model(meta: TextXMetaModel):
 
 
 def test_arithm_predicate(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (< x y)
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
@@ -53,7 +53,7 @@ def test_arithm_predicate(meta: TextXMetaModel):
 
 
 def test_type_pred(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (int x)
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
@@ -68,7 +68,7 @@ def test_type_pred(meta: TextXMetaModel):
 
 
 def test_multiple_terms(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (int x)
     (bool y)
     (enum (cat dog) z)
@@ -87,7 +87,7 @@ def test_multiple_terms(meta: TextXMetaModel):
 
 
 def test_quantified_terms(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (forall (x y) (and (int x) (int y) (= x y)))
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
@@ -104,7 +104,7 @@ def test_quantified_terms(meta: TextXMetaModel):
 
 
 def test_fm_optional(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (if (= F2 1) (= F1 1))
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
@@ -118,7 +118,7 @@ def test_fm_optional(meta: TextXMetaModel):
 
 
 def test_disallow_int_as_pred(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (1 (= F2 1) (= F1 1))
 )"""
     with pytest.raises(TextXSyntaxError):
@@ -126,7 +126,7 @@ def test_disallow_int_as_pred(meta: TextXMetaModel):
 
 
 def test_complex_arithm_expr(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (=< (F1 + F2) 1)
 )"""
     mod: clif.Text = meta.model_from_str(test_str, debug=True)
@@ -147,7 +147,7 @@ def test_complex_arithm_expr(meta: TextXMetaModel):
 
 
 def test_arithm_expr_str(meta: TextXMetaModel):
-    test_str = """(cl:text
+    test_str = """(model
     (=< (F1 + F2) 1)
 )"""
     mod: clif.Text = meta.model_from_str(test_str, debug=True)
@@ -164,7 +164,7 @@ def test_arithm_expr_str(meta: TextXMetaModel):
 
 def test_real_model(meta: TextXMetaModel):
     test_strs = [
-        "(cl:text",
+        "(model",
         "(and (bool UUID_69784178_c589_4447_bbe5_7b51b97f4918) (= UUID_69784178_c589_4447_bbe5_7b51b97f4918 1))", # noqa
         "(bool UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f)",
         "(bool UUID_ac0d2916_749b_4146_ad32_37622e2aeef0)",
