@@ -2,7 +2,7 @@ import pydantic
 import typing
 import uuid
 
-import utils
+from variamos import utils
 
 
 class Relationship(pydantic.BaseModel):

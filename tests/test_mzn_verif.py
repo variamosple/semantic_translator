@@ -21,15 +21,15 @@ def real_model(meta: TextXMetaModel):
         "(bool UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e)",
         "(bool UUID_1cb2b338_f05e_4ccb_9df2_2bc76894336a)",
         "(bool UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc)",
-        "(= UUID_69784178_c589_4447_bbe5_7b51b97f4918 UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f)",
-        "(= UUID_69784178_c589_4447_bbe5_7b51b97f4918 UUID_ac0d2916_749b_4146_ad32_37622e2aeef0)",
-        "(>= (UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f + UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8) 1)",
-        "(= UUID_ac0d2916_749b_4146_ad32_37622e2aeef0 UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e)",
-        "(= UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e UUID_1cb2b338_f05e_4ccb_9df2_2bc76894336a)",
-        "(>= (UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e + UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc) 1)",
-        "(=< (UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc + UUID_87b866ef_e358_4797_829c_d3fcac43a21f) 1)",
-        "(>= (UUID_43634fef_d816_4cc4_bbde_02cb7865afef + UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8) 1)",
-        "(= (UUID_43634fef_d816_4cc4_bbde_02cb7865afef + UUID_87b866ef_e358_4797_829c_d3fcac43a21f) UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f )",
+        "(= UUID_69784178_c589_4447_bbe5_7b51b97f4918 UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f)",  # noqa
+        "(= UUID_69784178_c589_4447_bbe5_7b51b97f4918 UUID_ac0d2916_749b_4146_ad32_37622e2aeef0)",  # noqa
+        "(>= (UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f + UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8) 1)",  # noqa
+        "(= UUID_ac0d2916_749b_4146_ad32_37622e2aeef0 UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e)",  # noqa
+        "(= UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e UUID_1cb2b338_f05e_4ccb_9df2_2bc76894336a)",  # noqa
+        "(>= (UUID_e51771f2_b0cc_433a_bfee_8e106bb8d17e + UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc) 1)",  # noqa
+        "(=< (UUID_b2f0093c_60b1_40a0_98d6_ab392dcc74cc + UUID_87b866ef_e358_4797_829c_d3fcac43a21f) 1)",  # noqa
+        "(>= (UUID_43634fef_d816_4cc4_bbde_02cb7865afef + UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8) 1)",  # noqa
+        "(= (UUID_43634fef_d816_4cc4_bbde_02cb7865afef + UUID_87b866ef_e358_4797_829c_d3fcac43a21f) UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f )",  # noqa
         ")",
     ]
     string = "\n".join(test_strs)
@@ -41,8 +41,10 @@ def test_non_void_spec(meta: TextXMetaModel, real_model: clif.Text):
     verif_spec = (
         "(verif"
         " (exists (list_of_sols)"
+        # We considert this sols to be a distinguished predicate for
+        # handling the solver itselfz
         " (and (sols 2 list_of_sols)"
-        " (> list_of_sols 1)"
+        " (> (len list_of_sols) 1)"
         " )"
         " )"
         ")"
@@ -51,3 +53,4 @@ def test_non_void_spec(meta: TextXMetaModel, real_model: clif.Text):
     ver_model: clif.Text = meta.model_from_str(verif_spec)
     assert ver_model.constructions.verif
     
+
