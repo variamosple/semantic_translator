@@ -1,6 +1,8 @@
 import pytest
 from textx.metamodel import TextXMetaModel
 from grammars import clif
+from targets.minzinc.minizinc_bridge import MiniZincBridge
+from verification.solver_control import SolverController
 
 
 @pytest.fixture
@@ -52,5 +54,24 @@ def test_non_void_spec(meta: TextXMetaModel, real_model: clif.Text):
     print(verif_spec)
     ver_model: clif.Text = meta.model_from_str(verif_spec)
     assert ver_model.constructions.verif
-    
 
+
+@pytest.fixture
+def dead_feat_spec():
+    verif_spec = (
+        "(verif"
+        # The question here becomes how do you express multiple calls to
+        # the underlying solver???
+        "   (forall (feat optional)"
+        "       (and"
+        "   )"
+        ")"
+    )
+    return verif_spec
+
+
+def test_controller():
+    cont = SolverController("minizinc")
+    assert cont.target_lang == "minizinc"
+    assert isinstance(cont.bridge, MiniZincBridge)
+    

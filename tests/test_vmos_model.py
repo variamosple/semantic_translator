@@ -13,6 +13,14 @@ def variamos_data():
 
 
 @pytest.fixture
+def variamos_bad_data():
+    with open("json/vmosfm_non_tree.json") as file:
+        v_model = json.loads(file.read())
+        fm_obj = v_model["productLines"][0]["domainEngineering"]["models"][0]
+        return feature_model.FeatureModel(**fm_obj)
+
+
+@pytest.fixture
 def vmos_model_obj(variamos_data):
     return feature_model.FeatureModel(**variamos_data)
 
@@ -38,3 +46,8 @@ def test_graph_construct(vmos_model_obj: feature_model.FeatureModel):
 def test_graph_tree_check(vmos_model_obj: feature_model.FeatureModel):
     G = vmos_model_obj.construct_graph()
     assert vmos_model_obj.check_tree_structure(G) is True
+
+
+def test_graph_tree_check_bad(variamos_bad_data: feature_model.FeatureModel):
+    G = variamos_bad_data.construct_graph()
+    assert variamos_bad_data.check_tree_structure(G) is False
