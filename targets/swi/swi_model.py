@@ -4,6 +4,7 @@ from grammars import clif
 from enum import Enum, unique
 from abc import ABC, abstractmethod
 from utils.exceptions import SemanticException
+from targets.solver_model import SolverModel
 
 
 class StrEnum(str, Enum):
@@ -26,12 +27,35 @@ class ReificationPredicate(StrEnum):
     BIMP = " #<==> "
 
 
-class SWIModel:
-    def __init__(self) -> None:
-        self.constraints: list[SWIConstraint] = []
+class SWIModel(SolverModel):
+    __delimiter = ","
 
-    def add_cons(self, cons: SWIConstraint):
-        self.constraints.append(cons)
+    def __init__(self) -> None:
+        self.var_decls: dict[str, SWIFDVarDomainDec] = dict()
+        self.constraint_decls: list[SWIFDConstraint] = []
+
+    def add_cons(self, cons: SWIConstraint) -> None:
+        match cons:
+            case SWIFDVarDomainDec():
+                assert cons.terms is not None
+                assert isinstance((t := cons.terms[0]), str), "Must be a string"
+                self.var_decls[t] = cons
+            case SWIFDConstraint():
+                self.constraint_decls.append(cons)
+
+    def fix_variable(self, variable: str, value: int):
+        return super().fix_variable(variable, value)
+
+    def generate_program(self) -> list[str]:
+        strs: list[str] = []
+        constraints: list[SWIConstraint] = [
+            *self.var_decls.values(),
+            *self.constraint_decls
+        ]
+        for cons in constraints[:-1]:
+            strs.append(cons.to_string() + self.__delimiter)
+        strs.append(constraints[-1].to_string())
+        return strs
 
 
 class SWIConstraint(ABC):

@@ -1,0 +1,125 @@
+{
+  "elementTypes": [
+    "ConcreteFeature",
+    "RootFeature",
+    "AbstractFeature"
+  ],
+  "elementTranslationRules": {
+    "Bundle": {
+      "param": [
+        "F",
+        "Xs",
+        "min",
+        "max"
+      ],
+      "paramMapping":{
+        "inboundEdges":{
+          "unique": true,
+          "var": "F"
+        },
+        "outboundEdges":{
+          "unique": false,
+          "var": "Xs"
+        }
+      },
+      "constraint": {
+        "Or": "(and (=< F (sum(Xs))) (=< (sum(Xs)) (F * len(Xs))) )",
+        "And": "(= (sum(Xs)) (F * len(Xs)))",
+        "Xor": "(= (sum(Xs)) F )",
+        "Range": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
+      }
+    },
+    "RootFeature": {
+      "param": "F",
+      "constraint": "(and (bool UUID_F) (= UUID_F 1))",
+      "selectedConstraint": "(and (bool UUID_F) (= UUID_F 1))",
+      "deselectedConstraint": "(= 0 1)"
+    },
+    "AbstractFeature": {
+      "param": "F",
+      "constraint": "(bool UUID_F)",
+      "selectedConstraint": "(and (bool UUID_F) (= UUID_F 1))",
+      "deselectedConstraint": "(and (bool UUID_F) (= UUID_F 0))"
+    },
+    "ConcreteFeature": {
+      "param": "F",
+      "constraint": "(bool UUID_F)",
+      "selectedConstraint": "(and (bool UUID_F) (= UUID_F 1))",
+      "deselectedConstraint": "(and (bool UUID_F) (= UUID_F 0))"
+    }
+  },
+  "relationTypes": [
+    "Mandatory",
+    "Optional",
+    "Includes",
+    "Excludes",
+    "Range",
+    "Xor",
+    "And",
+    "Or"
+  ],
+  "relationReificationTypes": [
+    "Bundle"
+  ],
+  "complexElemValues": {
+    "type": {
+      "Bundle": "Range"
+    },
+    "params": [
+      "max",
+      "min"
+    ]
+  },
+  "relationReificationPropertySchema":{
+    "type": {
+      "index": 1,
+      "key": "value"
+    }
+  },
+  "relationReificationExpansions": {
+    "params": [
+      "Xs"
+    ],
+    "functions": [
+      "sum",
+      "len",
+      "max"
+    ]
+  },
+  "relationPropertySchema": {
+    "type": {
+      "index": 0,
+      "key": "value"
+    }
+  },
+  "relationTranslationRules": {
+    "Excludes": {
+      "params": [
+        "F1",
+        "F2"
+      ],
+      "constraint": "(=< (UUID_F1 + UUID_F2) 1)"
+    },
+    "Includes": {
+      "params": [
+        "F1",
+        "F2"
+      ],
+      "constraint": "(>= UUID_F2 UUID_F1)"
+    },
+    "Optional": {
+      "params": [
+        "F1",
+        "F2"
+      ],
+      "constraint": "(>= UUID_F1 UUID_F2)"
+    },
+    "Mandatory": {
+      "params": [
+        "F1",
+        "F2"
+      ],
+      "constraint": "(= UUID_F1 UUID_F2)"
+    }
+  }
+}

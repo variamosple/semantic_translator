@@ -21,8 +21,14 @@ def test_simple_var_decl(meta: TextXMetaModel):
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
     mzn = clif_to_MZN_objects(mod)
     assert len(mzn.var_decls) == 1
-    assert mzn.var_decls[0].type == "bool"
-    assert mzn.var_decls[0].var == "UUID_69784178_c589_4447_bbe5_7b51b97f4918"
+    assert (
+        mzn.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].type
+        == "bool"
+    )
+    assert (
+        mzn.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].var
+        == "UUID_69784178_c589_4447_bbe5_7b51b97f4918"
+    )
 
 
 def test_simple_var_decl_mzn_gen(meta: TextXMetaModel):
@@ -35,7 +41,7 @@ def test_simple_var_decl_mzn_gen(meta: TextXMetaModel):
     mzn = clif_to_MZN_objects(mod)
     assert len(mzn.var_decls) == 1
     assert (
-        mzn.var_decls[0].to_string()
+        mzn.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].to_string()
         == "var 0..1:'UUID_69784178_c589_4447_bbe5_7b51b97f4918'"
     )
 
@@ -83,8 +89,14 @@ def test_conjunction_declaration(meta: TextXMetaModel):
     assert mzn.constraint_decls[0].terms[1] == 1
     # Decl Part
     assert len(mzn.var_decls) == 1
-    assert mzn.var_decls[0].type == "bool"
-    assert mzn.var_decls[0].var == "UUID_69784178_c589_4447_bbe5_7b51b97f4918"
+    assert (
+        mzn.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].type
+        == "bool"
+    )
+    assert (
+        mzn.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].var
+        == "UUID_69784178_c589_4447_bbe5_7b51b97f4918"
+    )
 
 
 def test_complex_constraint(meta: TextXMetaModel):
@@ -130,5 +142,5 @@ def test_complex_constraint_mzn_generation(meta: TextXMetaModel):
     mzn = clif_to_MZN_objects(mod)
     assert (
         mzn.constraint_decls[1].to_string()
-        == "constraint 'UUID_43634fef_d816_4cc4_bbde_02cb7865afef' + 'UUID_87b866ef_e358_4797_829c_d3fcac43a21f' <= 'UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f' * 2" # noqa
+        == "constraint 'UUID_43634fef_d816_4cc4_bbde_02cb7865afef' + 'UUID_87b866ef_e358_4797_829c_d3fcac43a21f' <= 'UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f' * 2"  # noqa
     )

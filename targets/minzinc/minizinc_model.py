@@ -4,6 +4,7 @@ from typing import Optional
 from utils.exceptions import SemanticException
 from grammars import clif
 from enum import Enum, unique
+from targets.solver_model import SolverModel
 
 
 class StrEnum(str, Enum):
@@ -26,16 +27,37 @@ class ReificationPredicate(StrEnum):
     BIMP = " <-> "
 
 
-class MZNModel:
+class MZNModel(SolverModel):
+    __delimiter = ";"
+
     def __init__(self) -> None:
-        self.var_decls: list[MZNVarDecl] = []
+        self.var_decls: dict[str, MZNVarDecl] = dict()
         self.constraint_decls: list[MZNConstraintDecl] = []
 
-    def add_var_decl(self, var_decl: MZNVarDecl):
-        self.var_decls.append(var_decl)
+    def add_var_decl(self, var_decl: MZNVarDecl) -> None:
+        self.var_decls[var_decl.var] = var_decl
 
-    def add_constraint_decl(self, constraint_decl: MZNConstraintDecl):
+    def add_constraint_decl(self, constraint_decl: MZNConstraintDecl) -> None:
         self.constraint_decls.append(constraint_decl)
+
+    def fix_variable(self, variable: str, value: int):
+        try:
+            var_decl = self.var_decls[variable]
+            var_decl.fix_variable(value)
+        except KeyError:
+            raise RuntimeError(
+                "You are trying to set a variable that does not exist"
+            )
+
+    def generate_program(self) -> list[str]:
+        strs: list[str] = []
+        constraints: list[MZNExpression] = [
+            *self.var_decls.values(),
+            *self.constraint_decls,
+        ]
+        for cons in constraints:
+            strs.append(cons.to_string() + self.__delimiter)
+        return strs
 
 
 class MZNExpression(ABC):
@@ -47,10 +69,22 @@ class MZNExpression(ABC):
 
 
 class MZNVarDecl(MZNExpression):
-    def __init__(self, var: str, type: str) -> None:
+    def __init__(
+        self, var: str, type: str, upper: int = 1, lower: int = 0
+    ) -> None:
         super().__init__()
         self.var = var
         self.type = type
+        if self.var != "bool":
+            self.upper, self.lower = upper, lower
+        else:
+            self.upper, self.lower = 1, 0
+
+    def fix_variable(self, value):
+        if self.lower <= value and value <= self.upper:
+            self.lower, self.upper = value, value
+        else:
+            raise SemanticException("This value violates the variable's bounds")
 
     def quote_var(self) -> str:
         return "'" + self.var + "'"
@@ -144,9 +178,7 @@ def handle_bool_sentence(
     elif sentence.sentence is not None:
         raise NotImplementedError("Negation currently unsupported")
     else:
-        raise SemanticException(
-            "invalid boolean expression"
-        )
+        raise SemanticException("invalid boolean expression")
 
 
 def handle_atom_sentence(
@@ -218,7 +250,7 @@ def handle_constraint(
         raise TypeError("Only boolean and atomic senteces are handled")
 
 
-def clif_to_MZN_objects(clif_model: clif.Text):
+def clif_to_MZN_objects(clif_model: clif.Text) -> MZNModel:
     # the sentences in the text construction are the toplevel objects,
     # i.e. they correspond to the high-level constraints
     # that are given by the model itself

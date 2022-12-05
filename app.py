@@ -6,7 +6,8 @@ By: Hiba Hnaini _@_.fr
 """
 
 from flask import Flask, request, jsonify, make_response
-from main import run, SolverException
+from main import run
+from utils.exceptions import SolverException
 
 app = Flask(__name__)
 

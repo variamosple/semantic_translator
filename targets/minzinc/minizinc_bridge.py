@@ -1,18 +1,29 @@
+from dataclasses import dataclass
 from minizinc import Instance, Model, Solver
 from grammars import clif
+from targets.minzinc.minizinc_model import MZNModel
+from targets.solver_model import SolverModel
+from utils.exceptions import SolverException
 
 
+@dataclass
 class MiniZincBridge:
-    def minizinc_solve(self, constraints, n_sols: int = 1):
+    def solve(self, model: SolverModel, n_sols: int = 1):
+        if not isinstance(model, MZNModel):
+            raise TypeError("Must be a mzn model")
+        constraints = model.generate_program()
         # print(constraints)
         gecode = Solver.lookup("gecode")
         mzn_model = Model()
         mzn_model.add_string("\n".join(constraints) + "\n" + "solve satisfy;")
         print("\n".join(constraints) + "\n" + "solve satisfy;")
         instance = Instance(gecode, mzn_model)
-        return instance.solve(nr_solutions=n_sols)
+        result = instance.solve(nr_solutions=n_sols)
+        if not result.status.has_solution():
+            raise SolverException("CLIF/MZN - Model is UNSAT")
+        return result
 
-    def minizinc_update_model(self, model, rules, result):
+    def update_model(self, model, rules, result):
         for e in model["elements"]:
             if e["type"] in rules["elementTypes"] and e["properties"][1][
                 "value"
@@ -22,7 +33,7 @@ class MiniZincBridge:
             ]:  # noqa
                 e["properties"][1]["value"] = (
                     "SelectedForced"
-                    if result["UUID_" + str(e["id"]).replace("-", "_")] == 1
+                    if result[0, "UUID_" + str(e["id"]).replace("-", "_")] == 1
                     else "UnselectedForced"
                 )
 
