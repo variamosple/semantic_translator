@@ -56,6 +56,9 @@ class Rules(pydantic.BaseModel):
     relation_reification_types: list[str]
     relation_reification_expansions: dict[str, list[str]]
     relation_reification_property_schema: dict[str, RelationPropertyLookupRule]
+    relation_reification_type_dependent_expansions: dict[
+        str, dict[str, list[str]]
+    ]
     relation_types: list[str]
     relation_property_schema: dict[str, RelationPropertyLookupRule]
     relation_translation_rules: dict[str, RelationRule]

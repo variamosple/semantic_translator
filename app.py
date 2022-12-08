@@ -12,9 +12,8 @@ from utils.exceptions import SolverException
 app = Flask(__name__)
 
 
-@app.route("/translate/<language>", methods=["POST", "OPTIONS"])
-@app.route("/translate/<language>/<solver>", methods=["POST", "OPTIONS"])
-def translate(language, solver="minizinc"):
+@app.route("/translate/<solver>", methods=["POST", "OPTIONS"])
+def translate(solver: str):
     if request.method == "OPTIONS":
         return _build_cors_preflight_response()
     elif request.method == "POST":
@@ -30,13 +29,12 @@ def translate(language, solver="minizinc"):
                     {
                         "data": {
                             "content": run(
-                                model=content["data"][  # pyright: ignore
+                                project_json=content["data"][  # pyright: ignore
                                     "project"
                                 ],
-                                rules=content["data"][  # pyright: ignore
+                                rules_json=content["data"][  # pyright: ignore
                                     "rules"
                                 ],
-                                language=language,
                                 solver=solver,
                                 dry=dry,
                                 selectedModelId=selectedModel,

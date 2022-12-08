@@ -1,8 +1,13 @@
 import json
 import pytest
+import time
 
 from variamos import model, rules
 from generator import clif_generator
+from grammars import clif
+from targets.minzinc import minizinc_model
+from solvers import solver_control
+
 
 @pytest.fixture
 def variamos_data():
@@ -25,5 +30,43 @@ def vmos_model_obj(variamos_data):
 
 
 def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
+    t0 = time.perf_counter()
     clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)
-    clif = clif_gen.generate_logic_model()
+    clif_str = clif_gen.generate_logic_model()
+    t1 = time.perf_counter()
+    clif_ast: clif.Text = clif.clif_meta_model(False).model_from_str(clif_str)
+    t2 = time.perf_counter()
+    mzn_model = minizinc_model.clif_to_MZN_objects(clif_model=clif_ast)
+    t3 = time.perf_counter()
+    _ = mzn_model.generate_program()
+    t4 = time.perf_counter()
+    assert len(clif_ast.constructions.sentences) == 18
+    print("T Clif Generation", round((t1 - t0) * 1000, 3), "ms")
+    print("T Clif Parsing into AST", round((t2 - t1) * 1000, 3), "ms")
+    print(
+        "T Generate Minizinc Model from AST", round((t3 - t2) * 1000, 3), "ms"
+    )
+    print("T Generate Minizinc strings", round((t4 - t3) * 1000, 3), "ms")
+    print("Total roundtrip T", round((t4 - t0) * 1000, 3), "ms")
+
+
+def test_model_roundtrip(vmos_model_obj: model.Model, rules_data: rules.Rules):
+    t0 = time.perf_counter()
+    clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)
+    clif_str = clif_gen.generate_logic_model()
+    t1 = time.perf_counter()
+    clif_ast: clif.Text = clif.clif_meta_model(False).model_from_str(clif_str)
+    t2 = time.perf_counter()
+    ctlr = solver_control.SolverController(
+        target_lang="minizinc",  # Could also be SWI where T is aprox 2x
+        clif_model=clif_ast,
+    )
+    t3 = time.perf_counter()
+    sat = ctlr.sat()
+    t4 = time.perf_counter()
+    assert sat
+    print("T Clif Generation", round((t1 - t0) * 1000, 3), "ms")
+    print("T Clif Parsing into AST", round((t2 - t1) * 1000, 3), "ms")
+    print("Create Controller (Gen MZN Model)", round((t3 - t2) * 1000, 3), "ms")
+    print("T Run SAT Check", round((t4 - t3) * 1000, 3), "ms")
+    print("Total roundtrip T", round((t4 - t0) * 1000, 3), "ms")

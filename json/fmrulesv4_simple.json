@@ -12,12 +12,12 @@
         "min",
         "max"
       ],
-      "paramMapping":{
-        "inboundEdges":{
+      "paramMapping": {
+        "inboundEdges": {
           "unique": true,
           "var": "F"
         },
-        "outboundEdges":{
+        "outboundEdges": {
           "unique": false,
           "var": "Xs"
         }
@@ -61,18 +61,25 @@
   "relationReificationTypes": [
     "Bundle"
   ],
-  "complexElemValues": {
-    "type": {
-      "Bundle": "Range"
-    },
-    "params": [
-      "max",
-      "min"
-    ]
+  "relationReificationTypeDependentExpansions": {
+    "Bundle": {
+      "Range": [
+        "max",
+        "min"
+      ]
+    }
   },
-  "relationReificationPropertySchema":{
+  "relationReificationPropertySchema": {
     "type": {
       "index": 1,
+      "key": "value"
+    },
+    "min": {
+      "index": 2,
+      "key": "value"
+    },
+    "max": {
+      "index": 2,
       "key": "value"
     }
   },
@@ -82,8 +89,7 @@
     ],
     "functions": [
       "sum",
-      "len",
-      "max"
+      "len"
     ]
   },
   "relationPropertySchema": {
