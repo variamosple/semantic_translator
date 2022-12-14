@@ -12,6 +12,14 @@ from utils.exceptions import SolverException
 app = Flask(__name__)
 
 
+# POST /sat
+# POST /sol
+# POST /nsol/
+
+# POST /query
+# Body: {"operation":"sat","iterate_over":["Abstract","Concrete"],"with_value":1}
+# Body: {"optional":{"target":true,"rel_type": "Optional"},"operation":"sat","iterate_over":["optional"],"with_value":1 }
+
 @app.route("/translate/<solver>", methods=["POST", "OPTIONS"])
 def translate(solver: str):
     if request.method == "OPTIONS":

@@ -6,7 +6,7 @@ from variamos import feature_model
 
 @pytest.fixture
 def variamos_data():
-    with open("json/vmosfmv2.json") as file:
+    with open("json/requests/vmosfmv2.json") as file:
         v_model = json.loads(file.read())
         fm_obj = v_model["productLines"][0]["domainEngineering"]["models"][0]
         return fm_obj
@@ -14,7 +14,7 @@ def variamos_data():
 
 @pytest.fixture
 def variamos_bad_data():
-    with open("json/vmosfm_non_tree.json") as file:
+    with open("json/requests/vmosfm_non_tree.json") as file:
         v_model = json.loads(file.read())
         fm_obj = v_model["productLines"][0]["domainEngineering"]["models"][0]
         return feature_model.FeatureModel(**fm_obj)

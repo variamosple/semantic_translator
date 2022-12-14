@@ -1,11 +1,12 @@
 from grammars.clif import Text
 from targets.minzinc.minizinc_bridge import MiniZincBridge
-from targets.minzinc.minizinc_model import clif_to_MZN_objects
+from targets.minzinc.minizinc_model import clif_to_MZN
 from targets.solver_model import SolverModel
 from targets.swi.prolog_bridge import SWIBridge
-from targets.swi.swi_model import clif_to_SWI_objects
+from targets.swi.swi_model import clif_to_SWI
 from utils.enums import TargetLang
 from utils.exceptions import SolverException
+from variamos import query
 
 
 class SolverController:
@@ -20,13 +21,19 @@ class SolverController:
         self.target_lang = target_lang
         match target_lang:
             case TargetLang.minizinc:
-                self.constraint_model = clif_to_MZN_objects(clif_model)
+                self.constraint_model = clif_to_MZN(clif_model)
                 self.bridge = MiniZincBridge()
             case TargetLang.swi:
-                self.constraint_model = clif_to_SWI_objects(clif_model)
+                self.constraint_model = clif_to_SWI(clif_model)
                 self.bridge = SWIBridge()
             case _:
                 raise TypeError("Language unsupported")
+
+    def set_iteration_parameters(self, iteration_spec: query.IterationSpec):
+        pass
+
+    def set_iteration_variable_fix(self, value):
+        pass
 
     # For now we will work under the assumption that the value is an integer
     def sat_with_value(self, variable: str, value: int):

@@ -2,7 +2,7 @@ import pytest
 from grammars import clif
 from textx.metamodel import TextXMetaModel
 from targets.swi.swi_model import (
-    clif_to_SWI_objects,
+    clif_to_SWI,
     ArithmeticPredicate,
     SWIFDVarDomainDec,
     SWIFDConstraint,
@@ -21,7 +21,7 @@ def test_simple_var_decl(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert len(swi.var_decls) == 1
     assert isinstance(
         swi.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"],
@@ -42,7 +42,7 @@ def test_simple_var_decl_swi_gen(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert len(swi.var_decls) == 1
     assert (
         swi.var_decls["UUID_69784178_c589_4447_bbe5_7b51b97f4918"].to_string()
@@ -57,7 +57,7 @@ def test_simple_equation(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert len(swi.constraint_decls) == 1
     assert isinstance((cons := swi.constraint_decls[0]), SWIFDConstraint)
     assert cons.arithmetic_predicate == ArithmeticPredicate.EQ
@@ -74,7 +74,7 @@ def test_conjunction_declaration(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert len(swi.var_decls) == 1
     assert len(swi.constraint_decls) == 1
     assert isinstance(
@@ -109,7 +109,7 @@ def test_complex_constraint(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert len(swi.constraint_decls) == 2
     assert all(
         map(
@@ -136,7 +136,7 @@ def test_complex_constraint_mzn_generation(meta: TextXMetaModel):
         ")",
     ]
     mod: clif.Text = meta.model_from_str("\n".join(test_strs))
-    swi = clif_to_SWI_objects(mod)
+    swi = clif_to_SWI(mod)
     assert (
         swi.constraint_decls[0].to_string()
         == "UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f * 1 #=< UUID_43634fef_d816_4cc4_bbde_02cb7865afef + UUID_87b866ef_e358_4797_829c_d3fcac43a21f"  # noqa

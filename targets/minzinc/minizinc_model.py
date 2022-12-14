@@ -250,7 +250,7 @@ def handle_constraint(
         raise TypeError("Only boolean and atomic senteces are handled")
 
 
-def clif_to_MZN_objects(clif_model: clif.Text) -> MZNModel:
+def clif_to_MZN(clif_model: clif.Text) -> MZNModel:
     # the sentences in the text construction are the toplevel objects,
     # i.e. they correspond to the high-level constraints
     # that are given by the model itself

@@ -11,7 +11,7 @@ from solvers import solver_control
 
 @pytest.fixture
 def variamos_data():
-    with open("json/vmosfmv2.json") as file:
+    with open("json/requests/vmosfmv2.json") as file:
         v_model = json.loads(file.read())
         fm_obj = v_model["productLines"][0]["domainEngineering"]["models"][0]
         return fm_obj
@@ -36,7 +36,7 @@ def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
     t1 = time.perf_counter()
     clif_ast: clif.Text = clif.clif_meta_model(False).model_from_str(clif_str)
     t2 = time.perf_counter()
-    mzn_model = minizinc_model.clif_to_MZN_objects(clif_model=clif_ast)
+    mzn_model = minizinc_model.clif_to_MZN(clif_model=clif_ast)
     t3 = time.perf_counter()
     _ = mzn_model.generate_program()
     t4 = time.perf_counter()

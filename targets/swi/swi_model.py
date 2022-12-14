@@ -44,7 +44,7 @@ class SWIModel(SolverModel):
                 self.constraint_decls.append(cons)
 
     def fix_variable(self, variable: str, value: int):
-        return super().fix_variable(variable, value)
+        raise NotImplementedError
 
     def generate_program(self) -> list[str]:
         strs: list[str] = []
@@ -226,7 +226,7 @@ def handle_sentence(sentence: clif.Sentence) -> list[SWIConstraint]:
         raise NotImplementedError("No other type of sentence handled yet")
 
 
-def clif_to_SWI_objects(clif_model: clif.Text):
+def clif_to_SWI(clif_model: clif.Text):
     # the sentences in the text construction are the toplevel objects,
     # i.e. they correspond to the high-level constraints
     # that are given by the model itself
