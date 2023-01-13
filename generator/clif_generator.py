@@ -13,11 +13,14 @@ class CLIFGenerator:
     _var_prefix = "UUID_"
 
     def __init__(
-        self, rule_set: rules.Rules, variamos_model: model.Model
+        self,
+        rule_set: rules.Rules,
+        variamos_model: model.Model,
+        variamos_graph: nx.DiGraph,
     ) -> None:
         self.rule_set = rule_set
         self.variamos_model = variamos_model
-        self.variamos_graph = variamos_model.construct_graph()
+        self.variamos_graph = variamos_graph
 
     def generate_logic_model(self):
         """Gen the CLIF string from the VMos Model and translation rules"""

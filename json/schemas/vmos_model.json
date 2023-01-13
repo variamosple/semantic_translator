@@ -1,0 +1,116 @@
+{
+    "title": "Model",
+    "type": "object",
+    "properties": {
+        "id": {
+            "title": "Id",
+            "type": "string",
+            "format": "uuid"
+        },
+        "name": {
+            "title": "Name",
+            "type": "string"
+        },
+        "elements": {
+            "title": "Elements",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Element"
+            }
+        },
+        "relationships": {
+            "title": "Relationships",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Relationship"
+            }
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "elements",
+        "relationships"
+    ],
+    "definitions": {
+        "Element": {
+            "title": "Element",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "type": {
+                    "title": "Type",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "parentId": {
+                    "title": "Parentid",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "properties": {
+                    "title": "Properties",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                }
+            },
+            "required": [
+                "id",
+                "type",
+                "name",
+                "properties"
+            ]
+        },
+        "Relationship": {
+            "title": "Relationship",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "title": "Id",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "type": {
+                    "title": "Type",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "sourceId": {
+                    "title": "Sourceid",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "targetId": {
+                    "title": "Targetid",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "properties": {
+                    "title": "Properties",
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                }
+            },
+            "required": [
+                "id",
+                "type",
+                "name",
+                "properties"
+            ]
+        }
+    }
+}

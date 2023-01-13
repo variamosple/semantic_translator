@@ -11,6 +11,10 @@ class SolverModel(ABC):
     def fix_variable(self, variable: str, value: int):
         pass
 
+    @abstractmethod
+    def reset_fix(self, variable: str):
+        pass
+
     @classmethod
     # @abstractmethod
     def from_clif_text(cls, clif_model: clif.Text):

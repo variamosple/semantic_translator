@@ -49,6 +49,15 @@ class MZNModel(SolverModel):
                 "You are trying to set a variable that does not exist"
             )
 
+    def reset_fix(self, variable: str):
+        try:
+            var_decl = self.var_decls[variable]
+            var_decl.reset_fix()
+        except KeyError:
+            raise RuntimeError(
+                "You are trying to reset a variable that does not exist"
+            )
+
     def generate_program(self) -> list[str]:
         strs: list[str] = []
         constraints: list[MZNExpression] = [
@@ -79,6 +88,7 @@ class MZNVarDecl(MZNExpression):
             self.upper, self.lower = upper, lower
         else:
             self.upper, self.lower = 1, 0
+        self._default_upper, self._default_lower = upper, lower
 
     def fix_variable(self, value):
         if self.lower <= value and value <= self.upper:
@@ -86,13 +96,16 @@ class MZNVarDecl(MZNExpression):
         else:
             raise SemanticException("This value violates the variable's bounds")
 
+    def reset_fix(self):
+        self.upper, self.lower = self._default_upper, self._default_lower
+
     def quote_var(self) -> str:
         return "'" + self.var + "'"
 
     def to_string(self) -> str:
         qvar = self.quote_var()
         if self.type == "bool":
-            return f"var 0..1:{qvar}"
+            return f"var {self.lower}..{self.upper}:{qvar}"
         else:
             return f"var int:{qvar}"
 

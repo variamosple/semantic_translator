@@ -1,0 +1,4 @@
+{
+  "solver": "minizinc",
+  "operation": "solve"
+}

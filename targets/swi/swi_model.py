@@ -43,6 +43,8 @@ class SWIModel(SolverModel):
             case SWIFDConstraint():
                 self.constraint_decls.append(cons)
 
+    # TODO: Implement this method
+    # TODO: add a mechanism to handle the reset of prolog vars
     def fix_variable(self, variable: str, value: int):
         raise NotImplementedError
 

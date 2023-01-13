@@ -1,0 +1,227 @@
+{
+    "title": "Rules",
+    "type": "object",
+    "properties": {
+        "elementTypes": {
+            "title": "Elementtypes",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "elementTranslationRules": {
+            "title": "Elementtranslationrules",
+            "type": "object",
+            "additionalProperties": {
+                "anyOf": [
+                    {
+                        "$ref": "#/definitions/SimpleElementRule"
+                    },
+                    {
+                        "$ref": "#/definitions/ReifiedRelationElementRule"
+                    }
+                ]
+            }
+        },
+        "relationReificationTypes": {
+            "title": "Relationreificationtypes",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "relationReificationExpansions": {
+            "title": "Relationreificationexpansions",
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        },
+        "relationReificationPropertySchema": {
+            "title": "Relationreificationpropertyschema",
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/RelationPropertyLookupRule"
+            }
+        },
+        "relationReificationTypeDependentExpansions": {
+            "title": "Relationreificationtypedependentexpansions",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "relationTypes": {
+            "title": "Relationtypes",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "relationPropertySchema": {
+            "title": "Relationpropertyschema",
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/RelationPropertyLookupRule"
+            }
+        },
+        "relationTranslationRules": {
+            "title": "Relationtranslationrules",
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/RelationRule"
+            }
+        }
+    },
+    "required": [
+        "elementTypes",
+        "elementTranslationRules",
+        "relationReificationTypes",
+        "relationReificationExpansions",
+        "relationReificationPropertySchema",
+        "relationReificationTypeDependentExpansions",
+        "relationTypes",
+        "relationPropertySchema",
+        "relationTranslationRules"
+    ],
+    "definitions": {
+        "SimpleElementRule": {
+            "title": "SimpleElementRule",
+            "type": "object",
+            "properties": {
+                "param": {
+                    "title": "Param",
+                    "type": "string"
+                },
+                "constraint": {
+                    "title": "Constraint",
+                    "type": "string"
+                },
+                "selectedConstraint": {
+                    "title": "Selectedconstraint",
+                    "type": "string"
+                },
+                "deselectedConstraint": {
+                    "title": "Deselectedconstraint",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "param",
+                "constraint",
+                "selectedConstraint",
+                "deselectedConstraint"
+            ]
+        },
+        "MappingConfig": {
+            "title": "MappingConfig",
+            "type": "object",
+            "properties": {
+                "unique": {
+                    "title": "Unique",
+                    "type": "boolean"
+                },
+                "var": {
+                    "title": "Var",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "unique",
+                "var"
+            ]
+        },
+        "ReifiedRelationParameterMapping": {
+            "title": "ReifiedRelationParameterMapping",
+            "type": "object",
+            "properties": {
+                "inboundEdges": {
+                    "$ref": "#/definitions/MappingConfig"
+                },
+                "outboundEdges": {
+                    "$ref": "#/definitions/MappingConfig"
+                }
+            },
+            "required": [
+                "inboundEdges",
+                "outboundEdges"
+            ]
+        },
+        "ReifiedRelationElementRule": {
+            "title": "ReifiedRelationElementRule",
+            "type": "object",
+            "properties": {
+                "param": {
+                    "title": "Param",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "paramMapping": {
+                    "$ref": "#/definitions/ReifiedRelationParameterMapping"
+                },
+                "constraint": {
+                    "title": "Constraint",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "param",
+                "paramMapping",
+                "constraint"
+            ]
+        },
+        "RelationPropertyLookupRule": {
+            "title": "RelationPropertyLookupRule",
+            "type": "object",
+            "properties": {
+                "index": {
+                    "title": "Index",
+                    "type": "integer"
+                },
+                "key": {
+                    "title": "Key",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "index",
+                "key"
+            ]
+        },
+        "RelationRule": {
+            "title": "RelationRule",
+            "type": "object",
+            "properties": {
+                "params": {
+                    "title": "Params",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "constraint": {
+                    "title": "Constraint",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "params",
+                "constraint"
+            ]
+        }
+    }
+}

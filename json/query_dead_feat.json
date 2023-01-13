@@ -1,0 +1,12 @@
+{
+  "solver": "minizinc",
+  "operation": "solve",
+  "iterate_over": [
+    {
+      "model_object": "element",
+      "relationship_element": "target",
+      "object_type": ["AbstractFeature","ConcreteFeature"],
+      "with_value": 1
+    }
+  ]
+}

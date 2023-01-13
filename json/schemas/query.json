@@ -1,0 +1,96 @@
+{
+    "title": "Query",
+    "type": "object",
+    "properties": {
+        "operation": {
+            "$ref": "#/definitions/OperationEnum"
+        },
+        "operation_n": {
+            "title": "Operation N",
+            "exclusiveMinimum": 0,
+            "type": "integer"
+        },
+        "iterate_over": {
+            "title": "Iterate Over",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/ModelSelectorSpec"
+            }
+        },
+        "solver": {
+            "$ref": "#/definitions/TargetLang"
+        }
+    },
+    "required": [
+        "operation",
+        "solver"
+    ],
+    "definitions": {
+        "OperationEnum": {
+            "title": "OperationEnum",
+            "description": "An enumeration.",
+            "enum": [
+                "sat",
+                "solve",
+                "nsolve"
+            ],
+            "type": "string"
+        },
+        "ModelObjectEnum": {
+            "title": "ModelObjectEnum",
+            "description": "An enumeration.",
+            "enum": [
+                "element",
+                "relationship",
+                "relationship_element",
+                "reified"
+            ],
+            "type": "string"
+        },
+        "RelationElementEnum": {
+            "title": "RelationElementEnum",
+            "description": "An enumeration.",
+            "enum": [
+                "target",
+                "source"
+            ],
+            "type": "string"
+        },
+        "ModelSelectorSpec": {
+            "title": "ModelSelectorSpec",
+            "type": "object",
+            "properties": {
+                "model_object": {
+                    "$ref": "#/definitions/ModelObjectEnum"
+                },
+                "relationship_element": {
+                    "$ref": "#/definitions/RelationElementEnum"
+                },
+                "object_type": {
+                    "title": "Object Type",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "with_value": {
+                    "title": "With Value",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "model_object",
+                "object_type"
+            ]
+        },
+        "TargetLang": {
+            "title": "TargetLang",
+            "description": "An enumeration.",
+            "enum": [
+                "minizinc",
+                "swi"
+            ],
+            "type": "string"
+        }
+    }
+}

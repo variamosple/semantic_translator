@@ -9,11 +9,12 @@ import re
 
 @dataclass
 class SWIBridge:
+    # TODO: Handle N solutions
     def solve(self, model: SolverModel, n_sols: int = 1):
         if not isinstance(model, SWIModel):
             raise TypeError("the model must be a swi model")
         constraints = model.generate_program()
-        print(constraints)
+        # print(constraints)
         regex = re.compile(r"(UUID(?:_[a-f0-9]+){5})")
         with tempfile.NamedTemporaryFile(dir="/tmp", delete=True) as tmp:
             program = """:- use_module(library(clpfd)).

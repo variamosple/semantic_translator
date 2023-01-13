@@ -1,0 +1,24 @@
+{
+  "solver": "minizinc",
+  "operation": "solve",
+  "iterate_over": [
+    {
+      "model_object": "relationship_element",
+      "relationship_element": "target",
+      "object_type": [
+        "Optional"
+      ],
+      "with_value": 1
+    },
+    {
+      "model_object": "reified",
+      "relationship_element": "target",
+      "object_type": [
+        "Range",
+        "Xor",
+        "Or"
+      ],
+      "with_value": 1
+    }
+  ]
+}

@@ -20,8 +20,9 @@ app = Flask(__name__)
 # Body: {"operation":"sat","iterate_over":["Abstract","Concrete"],"with_value":1}
 # Body: {"optional":{"target":true,"rel_type": "Optional"},"operation":"sat","iterate_over":["optional"],"with_value":1 }
 
-@app.route("/translate/<solver>", methods=["POST", "OPTIONS"])
-def translate(solver: str):
+
+@app.route("/query", methods=["POST", "OPTIONS"])
+def translate():
     if request.method == "OPTIONS":
         return _build_cors_preflight_response()
     elif request.method == "POST":
@@ -30,7 +31,7 @@ def translate(solver: str):
         # print(content['data']['project'])
         # print(content['data']["rules"])
         selectedModel = content["data"]["modelSelectedId"]  # pyright: ignore
-        dry = request.headers.get("dry") == "true"
+        # dry = request.headers.get("dry") == "true"
         try:
             return _corsify_actual_response(
                 jsonify(
@@ -43,8 +44,9 @@ def translate(solver: str):
                                 rules_json=content["data"][  # pyright: ignore
                                     "rules"
                                 ],
-                                solver=solver,
-                                dry=dry,
+                                query_json=content["data"][  # pyright: ignore
+                                    "query"
+                                ],
                                 selectedModelId=selectedModel,
                             )
                         }
