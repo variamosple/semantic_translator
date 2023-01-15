@@ -1,6 +1,6 @@
 {
   "solver": "minizinc",
-  "operation": "solve",
+  "operation": "sat",
   "iterate_over": [
     {
       "model_object": "element",
