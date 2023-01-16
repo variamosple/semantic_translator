@@ -1,0 +1,5 @@
+{
+  "solver": "minizinc",
+  "operation": "nsolve",
+  "operation_n": 10
+}
