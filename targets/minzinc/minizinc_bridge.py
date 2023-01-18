@@ -37,8 +37,3 @@ class MiniZincBridge:
                     if result[0, "UUID_" + str(e["id"]).replace("-", "_")] == 1
                     else "UnselectedForced"
                 )
-
-    def handle_verifications(
-        self, verif_spec: clif.Text, verif_model: clif.Text
-    ):
-        pass

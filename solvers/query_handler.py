@@ -60,4 +60,4 @@ class QueryHandler:
                     ][idx] = feature_model
                     return project_json
                 case query.OperationEnum.nsolve:
-                    return self.controller.solve_n(self.query_obj.operation_n)
+                    return len(self.controller.solve_n(self.query_obj.operation_n))
