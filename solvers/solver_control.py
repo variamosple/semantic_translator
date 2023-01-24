@@ -1,3 +1,4 @@
+import typing
 import networkx as nx
 from grammars.clif import Text
 from targets.minzinc.minizinc_bridge import MiniZincBridge
@@ -23,11 +24,11 @@ class SolverController:
         self,
         target_lang,
         clif_model: Text,
-        vmos_model: model.Model,
+        # vmos_model: model.Model,
         vmos_graph: nx.DiGraph,
         translation_rules: rules.Rules,
     ) -> None:
-        self.vmos_model = vmos_model
+        # self.vmos_model = vmos_model
         self.vmos_graph = vmos_graph
         self.translation_rules = translation_rules
         self.target_lang = target_lang
@@ -56,10 +57,19 @@ class SolverController:
     def _run_element_iteration(self, elem_sel: query.ModelSelectorSpec):
         # Find all matching elements and iterate over them
         iter_results = []
-        for selected_element in filter(
-            lambda elem: elem.type in elem_sel.object_type,
-            self.vmos_model.elements,
+        # TODO: Find a solution for the type error
+        # PS the type inference for networkx is wrong!
+        for selected_element in (
+            typing.cast(model.Element, e[1])
+            for e in self.vmos_graph.nodes.data("element")
+            if e[1].type in elem_sel.object_type
         ):
+            # for selected_element in filter(
+            #     lambda elem: elem.type in elem_sel.object_type,
+            #     # Iterate over the nodes in the graph
+            #     # self.vmos_model.elements
+            #     (self.vmos_graph.nodes.data("element")),
+            # ):
             var_id = "UUID_" + model.to_underscore_from_uuid(
                 selected_element.id
             )
@@ -84,10 +94,17 @@ class SolverController:
                 # loop over the relationships to get the elements to iterate
                 # over, making sure to only consider those that have
                 # properties to access
-                for rel in filter(
-                    lambda r: len(r.properties) > 0,
-                    self.vmos_model.relationships,
+                # We are refactoring this to iterate over the nx graph instead of
+                # the model to operate on a single structure
+                for rel in (
+                    typing.cast(model.Relationship, r[2])
+                    for r in self.vmos_graph.edges.data("relation")
+                    if len(r[2].properties) > 0
                 ):
+                    # for rel in filter(
+                    #     lambda r: len(r.properties) > 0,
+                    #     self.vmos_model.relationships,
+                    # ):
                     relationship_type = rel.properties[idx][key]
                     if relationship_type in elem_sel.object_type:
                         element_id = "UUID_" + model.to_underscore_from_uuid(
@@ -107,7 +124,12 @@ class SolverController:
                 raise KeyError
         else:
             # TODO: Refactor this to avoid duplication
-            for rel in self.vmos_model.relationships:
+            # TODO: improve the typing characteristics here as well
+            for rel in (
+                typing.cast(model.Relationship, r[2])
+                for r in self.vmos_graph.edges.data("relation")
+            ):
+                # for rel in self.vmos_model.relationships:
                 relationship_type = rel.type
                 if relationship_type in elem_sel.object_type:
                     element_id = "UUID_" + model.to_underscore_from_uuid(
@@ -136,12 +158,20 @@ class SolverController:
                 # Do a complex filter for only the reified elements that
                 # are of a reifying type and that have the right property
                 # derived type for the iteration selector
-                for reif in filter(
-                    lambda elem: elem.type
+                # Here we refactor to remove the filter and use a generator
+                for reif in (
+                    typing.cast(model.Element, e[1])
+                    for e in self.vmos_graph.nodes("element")
+                    if e[1].type
                     in self.translation_rules.relation_reification_types
-                    and elem.properties[idx][key] in elem_sel.object_type,
-                    self.vmos_model.elements,
+                    and e[1].properties[idx][key] in elem_sel.object_type
                 ):
+                    # for reif in filter(
+                    #     lambda elem: elem.type
+                    #     in self.translation_rules.relation_reification_types
+                    #     and elem.properties[idx][key] in elem_sel.object_type,
+                    #     self.vmos_model.elements,
+                    # ):
                     # Now we must loop over the elements that go either in or
                     # out depending on whether we are looking at sources or
                     # targets
@@ -155,7 +185,9 @@ class SolverController:
                     )
                     node_uuids: list[str] = [
                         "UUID_"
-                        + model.to_underscore_from_uuid(edge_tuple[tuple_idx])  # pyright: ignore
+                        + model.to_underscore_from_uuid(
+                            edge_tuple[tuple_idx]
+                        )  # pyright: ignore
                         for edge_tuple in edges
                     ]
                     for id in node_uuids:
@@ -167,12 +199,22 @@ class SolverController:
             except KeyError:
                 raise KeyError
         else:
-            for reif in filter(
-                lambda elem: elem.type
+            # We perform the same refactor as above to handle the less complex
+            # case without as complex a condition and without the attribute lookup
+            # TODO: Fix Line length and consolidate with above portion
+            for reif in (
+                typing.cast(model.Element, e[1])
+                for e in self.vmos_graph.nodes.data("element")
+                if e[1].type
                 in self.translation_rules.relation_reification_types
-                and elem.type in elem_sel.object_type,
-                self.vmos_model.elements,
+                and e[1].type in elem_sel.object_type
             ):
+                # for reif in filter(
+                #     lambda elem: elem.type
+                #     in self.translation_rules.relation_reification_types
+                #     and elem.type in elem_sel.object_type,
+                #     self.vmos_model.elements,
+                # ):
                 # Now we must loop over the elements that go either in or
                 # out depending on whether we are looking at sources or
                 # targets

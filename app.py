@@ -7,6 +7,8 @@ By: Hiba Hnaini _@_.fr
 
 from flask import Flask, request, jsonify, make_response
 from main import run
+from variamos import model, transform
+from solvers import query_handler
 from utils.exceptions import SolverException
 
 app = Flask(__name__)
@@ -32,41 +34,58 @@ def translate():
         # print(content['data']["rules"])
         selectedModel = content["data"]["modelSelectedId"]  # pyright: ignore
         # dry = request.headers.get("dry") == "true"
+        (
+            model,
+            graph,
+            rules,
+            query,
+            model_idx,
+        ) = transform.transform_request_to_python(
+            project_json=content["data"]["project"],  # pyright: ignore
+            rules_json=content["data"]["rules"],  # pyright: ignore
+            query_json=content["data"]["query"],  # pyright: ignore
+            selectedModelId=selectedModel,
+        )
+        qh = query_handler.QueryHandler(
+            nx_graph=graph,
+            query_obj=query,
+            translation_rules=rules,
+            model_idx=model_idx,
+        )
         try:
-            return _corsify_actual_response(
-                jsonify(
-                    {
-                        "data": {
-                            "content": run(
-                                project_json=content["data"][  # pyright: ignore
-                                    "project"
-                                ],
-                                rules_json=content["data"][  # pyright: ignore
-                                    "rules"
-                                ],
-                                query_json=content["data"][  # pyright: ignore
-                                    "query"
-                                ],
-                                selectedModelId=selectedModel,
-                            )
-                        }
-                    }
-                )
-            )
+            return construct_response(qh, content, model_idx, model)
         except SolverException as err:
             print(err)
             return _corsify_actual_response(
                 jsonify({"data": {"error": str(err)}})
             )
-        except BaseException as err:
-            print(err)
-            return _corsify_actual_response(
-                jsonify({"data": {"error": "Cannot find configuration"}})
-            )
+        # except BaseException as err:
+        #     print(err)
+        #     return _corsify_actual_response(
+        #         jsonify({"data": {"error": "Cannot find configuration"}})
+        #     )
     else:
         raise RuntimeError(
             "Weird - don't know how to handle method {}".format(request.method)
         )
+
+
+def construct_response(
+    qh: query_handler.QueryHandler, content, model_idx: int, model: model.Model
+):
+    return _corsify_actual_response(
+        jsonify(
+            {
+                "data": {
+                    "content": qh.run_query(
+                        project_json=content["data"]["project"],
+                        idx=model_idx,
+                        feature_model=model,
+                    )
+                }
+            }
+        )
+    )
 
 
 def _build_cors_preflight_response():

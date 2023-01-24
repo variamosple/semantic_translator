@@ -8,29 +8,28 @@ from utils import exceptions
 @dataclasses.dataclass(init=False)
 class CLIFGenerator:
     rule_set: rules.Rules
-    variamos_model: model.Model
+    # variamos_model: model.Model
     variamos_graph: nx.DiGraph
     _var_prefix = "UUID_"
 
     def __init__(
         self,
         rule_set: rules.Rules,
-        variamos_model: model.Model,
+        # variamos_model: model.Model,
         variamos_graph: nx.DiGraph,
     ) -> None:
         self.rule_set = rule_set
-        self.variamos_model = variamos_model
         self.variamos_graph = variamos_graph
 
     def generate_logic_model(self):
         """Gen the CLIF string from the VMos Model and translation rules"""
         model_header, model_footer = "(model", ")"
         sentence_strings: list[str] = []
-        for element in self.variamos_model.elements:
+        for element_id, element in self.variamos_graph.nodes.data("element"):  # type: ignore
             sentence_strings.append(
-                self.generate_element_sentence(element=element)
+                self.generate_element_sentence(element_id=element_id, element=element)  # type: ignore
             )
-        for relationship in self.variamos_model.relationships:
+        for rel_id_in, rel_id_out, relationship in self.variamos_graph.edges.data("relation"):  # type: ignore
             if (
                 generated_string := self.generate_relationship_sentence(
                     relationship=relationship
@@ -39,18 +38,22 @@ class CLIFGenerator:
                 sentence_strings.append(generated_string)
         return "\n".join([model_header, *sentence_strings, model_footer])
 
-    def generate_element_sentence(self, element: model.Element) -> str:
+    def generate_element_sentence(
+        self, element_id: str, element: model.Element
+    ) -> str:
         # Check if the element is a simple element
         if element.type in self.rule_set.element_types:
             return self.generate_simple_element_sentence(element)
         # Check if the element is a relation reification element
         elif element.type in self.rule_set.relation_reification_types:
-            return self.generate_reified_element_sentence(element)
+            return self.generate_reified_element_sentence(
+                element_id=element_id, element=element
+            )
         else:
             raise exceptions.SemanticException("Unknown element type")
 
     def generate_reified_element_sentence(
-        self, element: model.Element
+        self, element_id: str, element: model.Element
     ) -> str | None:
         element_rule = self.rule_set.element_translation_rules[element.type]
         if not isinstance(element_rule, rules.ReifiedRelationElementRule):
@@ -59,8 +62,8 @@ class CLIFGenerator:
             )
         # get in and out edges
         in_edges, out_edges = (
-            list(self.variamos_graph.in_edges(element.id)),
-            list(self.variamos_graph.out_edges(element.id)),
+            list(self.variamos_graph.in_edges(element_id)),
+            list(self.variamos_graph.out_edges(element_id)),
         )
         self.check_reified_element_relation_cardinality(element, element_rule)
         reified_relationship_type = ""

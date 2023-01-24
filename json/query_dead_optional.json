@@ -8,7 +8,7 @@
       "object_type": [
         "Optional"
       ],
-      "with_value": 1
+      "with_value": 0
     },
     {
       "model_object": "reified",
@@ -18,7 +18,7 @@
         "Xor",
         "Or"
       ],
-      "with_value": 1
+      "with_value": 0
     }
   ]
 }

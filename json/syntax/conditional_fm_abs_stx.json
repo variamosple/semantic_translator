@@ -1,0 +1,251 @@
+{
+    "elements": {
+      "Bundle": {
+        "properties": [
+          {
+            "name": "Name",
+            "type": "String"
+          },
+          {
+            "name": "Type",
+            "type": "String",
+            "comment": "type options",
+            "possibleValues": "And,Or,Xor,Range"
+          },
+          {
+            "name": "RangeMin",
+            "type": "String",
+            "linked_value": "Range",
+            "linked_property": "Type"
+          },
+          {
+            "name": "RangeMax",
+            "type": "String",
+            "linked_value": "Range",
+            "linked_property": "Type"
+          },
+          {
+            "name": "Testing",
+            "type": "Integer",
+            "comment": "prueba",
+            "possibleValues": "1..10"
+          }
+        ]
+      },
+      "RootFeature": {
+        "properties": [
+          {
+            "name": "Name",
+            "type": "String"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "type options",
+            "possibleValues": "Undefined,Selected,Unselected"
+          },
+          {
+            "name": "Options",
+            "type": "String",
+            "possibleValues": "A,B,C,J"
+          }
+        ]
+      },
+      "AbstractFeature": {
+        "properties": [
+          {
+            "name": "Name",
+            "type": "String"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "type options",
+            "possibleValues": "Undefined,Selected,Unselected"
+          }
+        ]
+      },
+      "ConcreteFeature": {
+        "properties": [
+          {
+            "name": "Name",
+            "type": "String"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "type options",
+            "possibleValues": "Undefined,Selected,Unselected"
+          }
+        ]
+      }
+    },
+    "restrictions": {
+      "quantity_element": [
+        {
+          "max": 1,
+          "min": 1,
+          "element": "RootFeature"
+        }
+      ]
+    },
+    "relationships": {
+      "Bundle_Feature": {
+        "max": 9999999,
+        "min": 0,
+        "source": "Bundle",
+        "target": [
+          "AbstractFeature",
+          "ConcreteFeature"
+        ],
+        "properties": []
+      },
+      "RootFeature_Bundle": {
+        "max": 1,
+        "min": 0,
+        "source": "RootFeature",
+        "target": [
+          "Bundle"
+        ],
+        "properties": []
+      },
+      "RootFeature_Feature": {
+        "max": 9999999,
+        "min": 0,
+        "source": "RootFeature",
+        "target": [
+          "AbstractFeature",
+          "ConcreteFeature"
+        ],
+        "properties": [
+          {
+            "name": "Type",
+            "type": "String",
+            "possibleValues": "Mandatory,Optional,Includes,ConditionalIncludes,Excludes,ConditionalExcludes,IndividualCardinality"
+          },
+          {
+            "name": "MinValue",
+            "type": "String",
+            "linked_value": "IndividualCardinality",
+            "linked_property": "Type"
+          },
+          {
+            "name": "MaxValue",
+            "type": "String",
+            "linked_value": "IndividualCardinality",
+            "linked_property": "Type"
+          },
+          {
+            "name": "Condition for Inclusion",
+            "type": "String",
+            "linked_value": "ConditionalIncludes",
+            "linked_property": "Type"
+          },
+          {
+            "name": "Condition for Exclusion",
+            "type": "String",
+            "linked_value": "ConditionalExcludes",
+            "linked_property": "Type"
+          }
+        ]
+      },
+      "AbstractFeature_Bundle": {
+        "max": 1,
+        "min": 0,
+        "source": "AbstractFeature",
+        "target": [
+          "Bundle"
+        ],
+        "properties": []
+      },
+      "ConcreteFeature_Bundle": {
+        "max": 1,
+        "min": 0,
+        "source": "ConcreteFeature",
+        "target": [
+          "Bundle"
+        ],
+        "properties": []
+      },
+      "AbstractFeature_Feature": {
+        "max": 9999999,
+        "min": 0,
+        "source": "AbstractFeature",
+        "target": [
+          "AbstractFeature",
+          "ConcreteFeature"
+        ],
+        "properties": [
+            {
+                "name": "Type",
+                "type": "String",
+                "possibleValues": "Mandatory,Optional,Includes,ConditionalIncludes,Excludes,ConditionalExcludes,IndividualCardinality"
+              },
+              {
+                "name": "MinValue",
+                "type": "String",
+                "linked_value": "IndividualCardinality",
+                "linked_property": "Type"
+              },
+              {
+                "name": "MaxValue",
+                "type": "String",
+                "linked_value": "IndividualCardinality",
+                "linked_property": "Type"
+              },
+              {
+                "name": "Condition for Inclusion",
+                "type": "String",
+                "linked_value": "ConditionalIncludes",
+                "linked_property": "Type"
+              },
+              {
+                "name": "Condition for Exclusion",
+                "type": "String",
+                "linked_value": "ConditionalExcludes",
+                "linked_property": "Type"
+              }
+        ]
+      },
+      "ConcreteFeature_Feature": {
+        "max": 9999999,
+        "min": 0,
+        "source": "ConcreteFeature",
+        "target": [
+          "ConcreteFeature",
+          "AbstractFeature"
+        ],
+        "properties": [
+            {
+                "name": "Type",
+                "type": "String",
+                "possibleValues": "Mandatory,Optional,Includes,ConditionalIncludes,Excludes,ConditionalExcludes,IndividualCardinality"
+              },
+              {
+                "name": "MinValue",
+                "type": "String",
+                "linked_value": "IndividualCardinality",
+                "linked_property": "Type"
+              },
+              {
+                "name": "MaxValue",
+                "type": "String",
+                "linked_value": "IndividualCardinality",
+                "linked_property": "Type"
+              },
+              {
+                "name": "Condition for Inclusion",
+                "type": "String",
+                "linked_value": "ConditionalIncludes",
+                "linked_property": "Type"
+              },
+              {
+                "name": "Condition for Exclusion",
+                "type": "String",
+                "linked_value": "ConditionalExcludes",
+                "linked_property": "Type"
+              }
+        ]
+      }
+    }
+  }

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from minizinc import Instance, Model, Solver
-from grammars import clif
 from targets.minzinc.minizinc_model import MZNModel
 from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
