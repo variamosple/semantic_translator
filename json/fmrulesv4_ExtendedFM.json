@@ -70,7 +70,7 @@
           "key": "value"
         }
       },
-      "constraint":"(and (int (min max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
+      "constraint":"(and (int (0 max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
     }
   },
   "relationTypes": [

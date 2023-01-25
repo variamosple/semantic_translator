@@ -104,7 +104,7 @@ class MZNVarDecl(MZNExpression):
 
     def to_string(self) -> str:
         qvar = self.quote_var()
-        if self.type == "bool":
+        if self.type == "bool" or self.type == "bounded_int":
             return f"var {self.lower}..{self.upper}:{qvar}"
         else:
             return f"var int:{qvar}"
@@ -231,8 +231,16 @@ def handle_atom_sentence(
                     "Type declarations must be of a valid type"
                 )
             else:
-                var_type = "bool" if pred.boolean else "int"
-                return MZNVarDecl(atom.terms[0], var_type)
+                if pred.boolean:
+                    return MZNVarDecl(atom.terms[0], "bool")
+                elif pred.bounded_integer:
+                    return MZNVarDecl(
+                        atom.terms[0], "bounded_int", upper=pred.upper, lower=pred.lower
+                    )
+                elif pred.integer:
+                    return MZNVarDecl(atom.terms[0], "int")
+                else:
+                    raise RuntimeError("oops")
                 # var_decl = MZNVarDecl(atom.terms[0], var_type)
                 # model.add_var_decl(var_decl)
         else:

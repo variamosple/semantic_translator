@@ -1,5 +1,5 @@
 {
-  "transactionId": "cb7b7c67-2ced-4374-8bda-ec51b92aa4c3",
+  "transactionId": "38a6ce66-e4f2-4ac7-9174-59ba93daed50",
   "data": {
     "modelSelectedId": "789b8272-1597-4166-a9ef-65e3f80a8633",
     "project": {
@@ -138,6 +138,19 @@
                         "display": true,
                         "comment": "type options",
                         "possibleValues": "Undefined,Selected,Unselected"
+                      },
+                      {
+                        "id": "dd1a62a0-a0a5-4e71-a5db-74bcb4d7e3f7",
+                        "name": "Version",
+                        "value": null,
+                        "type": "Integer",
+                        "options": null,
+                        "linked_property": null,
+                        "linked_value": null,
+                        "custom": true,
+                        "display": true,
+                        "comment": "",
+                        "possibleValues": ""
                       }
                     ]
                   },
@@ -374,7 +387,7 @@
                   {
                     "id": "12d5792e-4ffc-40a8-964b-3c0a4ee2fd51",
                     "type": "ConcreteFeature",
-                    "name": "ConcreteFeature 1",
+                    "name": "Advanced",
                     "x": 1290,
                     "y": 340,
                     "width": 100,
@@ -684,22 +697,6 @@
         "RootFeature",
         "AbstractFeature"
       ],
-      "relationTypes": [
-        "Mandatory",
-        "Optional",
-        "Includes",
-        "Excludes",
-        "Range",
-        "Xor",
-        "And",
-        "Or"
-      ],
-      "relationPropertySchema": {
-        "type": {
-          "key": "value",
-          "index": 0
-        }
-      },
       "elementTranslationRules": {
         "Bundle": {
           "param": [
@@ -708,21 +705,21 @@
             "min",
             "max"
           ],
+          "paramMapping": {
+            "inboundEdges": {
+              "unique": true,
+              "var": "F"
+            },
+            "outboundEdges": {
+              "unique": false,
+              "var": "Xs"
+            }
+          },
           "constraint": {
             "Or": "(and (=< F (sum(Xs))) (=< (sum(Xs)) (F * len(Xs))) )",
             "And": "(= (sum(Xs)) (F * len(Xs)))",
             "Xor": "(= (sum(Xs)) F )",
             "Range": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
-          },
-          "paramMapping": {
-            "inboundEdges": {
-              "var": "F",
-              "unique": true
-            },
-            "outboundEdges": {
-              "var": "Xs",
-              "unique": false
-            }
           }
         },
         "RootFeature": {
@@ -744,9 +741,81 @@
           "deselectedConstraint": "(and (bool UUID_F) (= UUID_F 0))"
         }
       },
+      "typingRelationTypes": [
+        "IndividualCardinality"
+      ],
+      "typingRelationTranslationRules": {
+        "IndividualCardinality": {
+          "derivingRelationInbound": true,
+          "param": [
+            "F1",
+            "F2",
+            "min",
+            "max"
+          ],
+          "relationLookupSchema": {
+            "min": {
+              "index": 1,
+              "key": "value"
+            },
+            "max": {
+              "index": 2,
+              "key": "value"
+            }
+          },
+          "constraint":"(and (int (0 max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
+        }
+      },
+      "relationTypes": [
+        "Mandatory",
+        "Optional",
+        "Includes",
+        "Excludes",
+        "Range",
+        "Xor",
+        "And",
+        "Or"
+      ],
       "relationReificationTypes": [
         "Bundle"
       ],
+      "relationReificationTypeDependentExpansions": {
+        "Bundle": {
+          "Range": [
+            "max",
+            "min"
+          ]
+        }
+      },
+      "relationReificationPropertySchema": {
+        "type": {
+          "index": 1,
+          "key": "value"
+        },
+        "min": {
+          "index": 2,
+          "key": "value"
+        },
+        "max": {
+          "index": 3,
+          "key": "value"
+        }
+      },
+      "relationReificationExpansions": {
+        "params": [
+          "Xs"
+        ],
+        "functions": [
+          "sum",
+          "len"
+        ]
+      },
+      "relationPropertySchema": {
+        "type": {
+          "index": 0,
+          "key": "value"
+        }
+      },
       "relationTranslationRules": {
         "Excludes": {
           "params": [
@@ -775,37 +844,6 @@
             "F2"
           ],
           "constraint": "(= UUID_F1 UUID_F2)"
-        }
-      },
-      "relationReificationExpansions": {
-        "params": [
-          "Xs"
-        ],
-        "functions": [
-          "sum",
-          "len"
-        ]
-      },
-      "relationReificationPropertySchema": {
-        "max": {
-          "key": "value",
-          "index": 2
-        },
-        "min": {
-          "key": "value",
-          "index": 2
-        },
-        "type": {
-          "key": "value",
-          "index": 1
-        }
-      },
-      "relationReificationTypeDependentExpansions": {
-        "Bundle": {
-          "Range": [
-            "max",
-            "min"
-          ]
         }
       }
     },
