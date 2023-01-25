@@ -16,7 +16,7 @@ class MiniZincBridge:
         gecode = Solver.lookup("gecode")
         mzn_model = Model()
         mzn_model.add_string("\n".join(constraints) + "\n" + "solve satisfy;")
-        # print("\n".join(constraints) + "\n" + "solve satisfy;")
+        print("\n".join(constraints) + "\n" + "solve satisfy;")
         instance = Instance(gecode, mzn_model)
         result = instance.solve(nr_solutions=n_sols)
         if not result.status.has_solution():

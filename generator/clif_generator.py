@@ -25,6 +25,10 @@ class CLIFGenerator:
         """Gen the CLIF string from the VMos Model and translation rules"""
         model_header, model_footer = "(model", ")"
         sentence_strings: list[str] = []
+        # Since we have elements whose translation is related to the type of the
+        # incoming relation, it makes sense to not only handle these with the
+        # element, but make sure we do not regenerate the stuff twice, so we
+        # avoid translating that in relationship mapping
         for element_id, element in self.variamos_graph.nodes.data("element"):  # type: ignore
             sentence_strings.append(
                 self.generate_element_sentence(element_id=element_id, element=element)  # type: ignore
@@ -43,7 +47,19 @@ class CLIFGenerator:
     ) -> str:
         # Check if the element is a simple element
         if element.type in self.rule_set.element_types:
-            return self.generate_simple_element_sentence(element)
+            # Here we must check if its type is defined by the incoming
+            # relationship or whether it suffices to construct its declaration
+            # by itself
+            if (
+                check_tuple := self.check_typing_relation(element_id=element_id)
+            ) is not None:
+                return self.generate_typing_relation_sentence(
+                    element=element,
+                    relation=check_tuple[0],
+                    rel_type=check_tuple[1],
+                )
+            else:
+                return self.generate_simple_element_sentence(element)
         # Check if the element is a relation reification element
         elif element.type in self.rule_set.relation_reification_types:
             return self.generate_reified_element_sentence(
@@ -51,6 +67,70 @@ class CLIFGenerator:
             )
         else:
             raise exceptions.SemanticException("Unknown element type")
+
+    def check_typing_relation(
+        self, element_id: str
+    ) -> tuple[model.Relationship, str] | None:
+        for (
+            type,
+            rule,
+        ) in self.rule_set.typing_relation_translation_rules.items():
+            for _, _, relation_data_dict in (  # type: ignore
+                self.variamos_graph.in_edges(element_id, data=True)
+                if rule.deriving_relation_inbound
+                else self.variamos_graph.out_edges(element_id, data=True)
+            ):
+                # Determine if the type is buried in the properties of the element
+                # and get it
+                relationship: model.Relationship = relation_data_dict[
+                    "relation"
+                ]
+                if "type" in (schema := self.rule_set.relation_property_schema):
+                    type_schema = schema["type"]
+                    idx, key = type_schema.index, type_schema.key
+                    try:
+                        relationship_type = relationship.properties[idx][key]
+                    # FIXME: Make sure we handle these cases correctly
+                    except IndexError:
+                        return None
+                    except KeyError:
+                        return None
+                else:
+                    relationship_type = relationship.type
+                if relationship_type == type:
+                    return relationship, type
+        # If after the iteration no match is found return None
+        return None
+
+    def generate_typing_relation_sentence(
+        self,
+        element: model.Element,
+        relation: model.Relationship,
+        rel_type: str,
+    ) -> str:
+        rule = self.rule_set.typing_relation_translation_rules[rel_type]
+        cons = rule.constraint
+        for param in rule.param:
+            if param in rule.relationLookupSchema:
+                schema = rule.relationLookupSchema[param]
+                idx, key = schema.index, schema.key
+                cons = cons.replace(param, relation.properties[idx][key])
+        # TODO: Make this robust
+        return cons.replace(
+            "F1",
+            model.to_underscore_from_uuid(
+                relation.target_id
+                if rule.deriving_relation_inbound
+                else relation.source_id
+            ),
+        ).replace(
+            "F2",
+            model.to_underscore_from_uuid(
+                relation.source_id
+                if rule.deriving_relation_inbound
+                else relation.target_id
+            ),
+        )
 
     def generate_reified_element_sentence(
         self, element_id: str, element: model.Element
@@ -253,6 +333,9 @@ class CLIFGenerator:
             relationship_type = relationship.type
         # Make sure it's part of the declared relation types
         if relationship_type not in self.rule_set.relation_types:
+            # check if its a type deriving relation
+            if relationship_type in self.rule_set.typing_relation_types:
+                return None
             raise exceptions.SemanticException(
                 "The given relationship has not been declared"
             )

@@ -335,6 +335,9 @@ class TypePred:
     parent: Atom
     boolean: bool
     integer: bool
+    bounded_integer: bool
+    lower: int | None
+    upper: int | None
     enum: bool
     values: Optional[list[str]]
     # def __init__(

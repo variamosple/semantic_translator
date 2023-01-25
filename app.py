@@ -6,7 +6,6 @@ By: Hiba Hnaini _@_.fr
 """
 
 from flask import Flask, request, jsonify, make_response
-from main import run
 from variamos import model, transform
 from solvers import query_handler
 from utils.exceptions import SolverException
@@ -50,7 +49,6 @@ def translate():
             nx_graph=graph,
             query_obj=query,
             translation_rules=rules,
-            model_idx=model_idx,
         )
         try:
             return construct_response(qh, content, model_idx, model)

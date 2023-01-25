@@ -61,8 +61,9 @@ TypePred:
     //be bound to, and generally types are expressed in
     //FOL as unary predicates but we must perhaps treat
     //things slightly differently when it comes to finite
-    //domains for
+    //domains for ints and enums
     boolean?="bool" |
+    bounded_integer?="int" OPEN lower=INT upper=INT CLOSE |
     integer?="int" |
     enum?="enum" OPEN values+=Term CLOSE;
 

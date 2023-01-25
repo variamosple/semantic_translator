@@ -26,7 +26,7 @@ def rules_data():
 
 @pytest.fixture
 def vmos_model_obj(variamos_data):
-    return model.Model(**variamos_data)
+    return model.Model(**variamos_data).construct_graph()
 
 
 def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):

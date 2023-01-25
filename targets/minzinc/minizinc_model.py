@@ -173,7 +173,7 @@ def handle_bool_sentence(
                 if isinstance(s, clif.AtomSentence):
                     exprs.append(handle_atom_sentence(s, True))
                 elif isinstance(s, clif.BoolSentence):
-                    exprs.append(*handle_bool_sentence(s, True))
+                    exprs.extend(handle_bool_sentence(s, True))
                 elif isinstance(s, clif.QuantSentence):
                     raise NotImplementedError(
                         "No handling for quantification as inner constraint yet"

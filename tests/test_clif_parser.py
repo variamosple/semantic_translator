@@ -62,9 +62,26 @@ def test_type_pred(meta: TextXMetaModel):
     assert s.atom is not None
     assert (p := s.atom.pred) is not None
     assert isinstance(p, clif.TypePred)
-    assert p.integer and not p.boolean and not p.enum
+    assert p.integer and not p.boolean and not p.enum and not p.bounded_integer
     assert len(s.atom.terms) == 1
     assert s.atom.terms[0] == "x"
+
+
+def test_type_pred_bounded_int(meta: TextXMetaModel):
+    test_str = """(model
+    (int (1 2) y)
+)"""
+    mod: clif.Text = meta.model_from_str(test_str)
+    assert mod.constructions is not None
+    assert isinstance((s := mod.constructions.sentences[0]), clif.AtomSentence)
+    assert s.atom is not None
+    assert (p := s.atom.pred) is not None
+    assert isinstance(p, clif.TypePred)
+    assert p.bounded_integer and not p.boolean and not p.enum and not p.integer
+    assert len(s.atom.terms) == 1
+    assert s.atom.terms[0] == "y"
+    assert p.lower == 1
+    assert p.upper == 2
 
 
 def test_multiple_terms(meta: TextXMetaModel):
@@ -91,9 +108,7 @@ def test_quantified_terms(meta: TextXMetaModel):
     (forall (x y) (and (int x) (int y) (= x y)))
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
-    assert isinstance(
-        (f := mod.constructions.sentences[0]), clif.QuantSentence
-    )
+    assert isinstance((f := mod.constructions.sentences[0]), clif.QuantSentence)
     assert len(f.boundlist.vars) == 2
     assert f.boundlist.vars == ["x", "y"]
     assert isinstance((s := f.sentence), clif.BoolSentence)
@@ -165,7 +180,7 @@ def test_arithm_expr_str(meta: TextXMetaModel):
 def test_real_model(meta: TextXMetaModel):
     test_strs = [
         "(model",
-        "(and (bool UUID_69784178_c589_4447_bbe5_7b51b97f4918) (= UUID_69784178_c589_4447_bbe5_7b51b97f4918 1))", # noqa
+        "(and (bool UUID_69784178_c589_4447_bbe5_7b51b97f4918) (= UUID_69784178_c589_4447_bbe5_7b51b97f4918 1))",  # noqa
         "(bool UUID_bf3ab018_6304_4e84_a11f_80f3f5d1d80f)",
         "(bool UUID_ac0d2916_749b_4146_ad32_37622e2aeef0)",
         "(bool UUID_9e5a250c_9ee7_4d7b_9486_40563a1e9ab8)",
