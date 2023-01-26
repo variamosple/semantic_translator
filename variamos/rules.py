@@ -53,8 +53,16 @@ class RelationTypedElementRule(pydantic.BaseModel):
     relationLookupSchema: dict[str, RelationPropertyLookupRule]
     deriving_relation_inbound: bool
     constraint: str
+
     class Config:
         alias_generator = camel_handler.from_camelcase
+
+
+class AttributeTranslationRule(pydantic.BaseModel):
+    parent: str
+    param: str
+    template: str
+    constraint: str
 
 
 class Rules(pydantic.BaseModel):
@@ -64,6 +72,9 @@ class Rules(pydantic.BaseModel):
         str,
         typing.Union[SimpleElementRule, ReifiedRelationElementRule],
     ]
+    # Handling for element attributes
+    attribute_types: list[str]
+    attribute_translation_rules: dict[str, AttributeTranslationRule]
     # Relation Typed Elements
     typing_relation_types: list[str]
     typing_relation_translation_rules: dict[str, RelationTypedElementRule]

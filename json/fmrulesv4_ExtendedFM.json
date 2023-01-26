@@ -48,6 +48,32 @@
       "deselectedConstraint": "(and (bool UUID_F) (= UUID_F 0))"
     }
   },
+  "attributeTypes": [
+    "Integer",
+    "String",
+    "Boolean"
+  ],
+  "attributeTranslationRules": {
+    "Integer":{
+      "parent": "F",
+      "param": "id",
+      "template": "A",
+      "constraint": "(int UUID_A)"
+    },
+    "String":{
+      "parent":"F",
+      "param": "id",
+      "template": "A",
+      "values": "Xs",
+      "constraint": "(enum (Xs) UUID_A)"
+    },
+    "Boolean":{
+      "parent":"F",
+      "param": "id",
+      "template": "A",
+      "constraint":"(bool UUID_A)"
+    }
+  },
   "typingRelationTypes": [
     "IndividualCardinality"
   ],
@@ -70,7 +96,7 @@
           "key": "value"
         }
       },
-      "constraint":"(and (int (0 max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
+      "constraint": "(and (int (0 max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
     }
   },
   "relationTypes": [

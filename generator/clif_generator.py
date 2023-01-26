@@ -30,8 +30,13 @@ class CLIFGenerator:
         # element, but make sure we do not regenerate the stuff twice, so we
         # avoid translating that in relationship mapping
         for element_id, element in self.variamos_graph.nodes.data("element"):  # type: ignore
+            # Frist make the sentece for the element itself
             sentence_strings.append(
                 self.generate_element_sentence(element_id=element_id, element=element)  # type: ignore
+            )
+            # Next make the sentence for the element's attributes
+            sentence_strings.extend(
+                self.generate_attribute_senteces(element=element)
             )
         for rel_id_in, rel_id_out, relationship in self.variamos_graph.edges.data("relation"):  # type: ignore
             if (
@@ -131,6 +136,24 @@ class CLIFGenerator:
                 else relation.target_id
             ),
         )
+
+    def generate_attribute_senteces(self, element: model.Element) -> list[str]:
+        sentences = []
+        for property in (p for p in element.properties if p["custom"]):
+            if (
+                (p_t := property["type"]) not in self.rule_set.attribute_types
+                or p_t not in self.rule_set.attribute_translation_rules
+            ):
+                raise exceptions.SemanticException(
+                    "Unknown attribute type", property["type"]
+                )
+            rule = self.rule_set.attribute_translation_rules[p_t]
+            constraint = rule.constraint.replace(
+                rule.template,
+                model.to_underscore_from_uuid(property[rule.param]),
+            )
+            sentences.append(constraint)
+        return sentences
 
     def generate_reified_element_sentence(
         self, element_id: str, element: model.Element
