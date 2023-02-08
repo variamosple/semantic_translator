@@ -116,7 +116,7 @@ class MZNConstraintDecl(MZNExpression):
         arithmetic_predicate: Optional[str] = None,
         reification_predicate: Optional[str] = None,
         terms: Optional[list[str | int | clif.ArithmeticExpr]] = None,
-        sub_constraints: Optional[list[MZNConstraintDecl]] = None,
+        sub_constraints: Optional[list[list[MZNExpression]]] = None,
         top_level: bool = True,
     ) -> None:
         self.arithmetic_predicate = arithmetic_predicate
@@ -149,14 +149,19 @@ class MZNConstraintDecl(MZNExpression):
                         self.render_expr(self.terms[0]),
                         self.render_expr(self.terms[1]),
                     )
-                    return f"constraint {rhs}{self.arithmetic_predicate}{lhs}"
+                    return f"{'constraint ' if self.top_level else ''}{rhs}{self.arithmetic_predicate}{lhs}"
 
             else:
-                raise NotImplementedError("No handling of reification yet...")
-        else:
-            raise NotImplementedError(
-                "No handling for more complex stuff yet..."
-            )
+                raise NotImplementedError(
+                    "No handling of complex predicates..."
+                )
+        elif self.reification_predicate is not None:
+            if self.sub_constraints is None:
+                raise SemanticException("Incorrectly instantiated reification")
+            if len(self.sub_constraints) != 2:
+                raise SemanticException("Wrong number of subexpresions")
+            # HACK: First test with single subexpression
+            return f"constraint ({self.sub_constraints[0][0].to_string()}) -> ({self.sub_constraints[1][0].to_string()})"
 
 
 def handle_bool_sentence(
@@ -171,9 +176,9 @@ def handle_bool_sentence(
             exprs: list[MZNExpression] = []
             for s in sentence.sentences:
                 if isinstance(s, clif.AtomSentence):
-                    exprs.append(handle_atom_sentence(s, True))
+                    exprs.append(handle_atom_sentence(s, top_level))
                 elif isinstance(s, clif.BoolSentence):
-                    exprs.extend(handle_bool_sentence(s, True))
+                    exprs.extend(handle_bool_sentence(s, top_level))
                 elif isinstance(s, clif.QuantSentence):
                     raise NotImplementedError(
                         "No handling for quantification as inner constraint yet"
@@ -186,7 +191,26 @@ def handle_bool_sentence(
             )
     # implication and biconditional case
     elif sentence.antecedent is not None and sentence.consequent is not None:
-        raise NotImplementedError("Conditionals unsupported")
+        # This means we will be constructing subexpressions for a constraint
+        exprs: list[MZNExpression] = []
+        sub_expressions: list[list[MZNExpression]] = []
+        sub_expressions.append(
+            handle_constraint(sentence=sentence.antecedent, top_level=False)
+        )
+        sub_expressions.append(
+            handle_constraint(sentence=sentence.consequent, top_level=False)
+        )
+        reif_predicate = (
+            ReificationPredicate.IMP
+            if sentence.operator == "if"
+            else ReificationPredicate.BIMP
+        )
+        return [
+            MZNConstraintDecl(
+                reification_predicate=reif_predicate,
+                sub_constraints=sub_expressions,
+            )
+        ]
     # Negation case
     elif sentence.sentence is not None:
         raise NotImplementedError("Negation currently unsupported")
@@ -218,7 +242,9 @@ def handle_atom_sentence(
                     if pred.lt
                     else ArithmeticPredicate.LTE.value
                 )
-                return MZNConstraintDecl(arithmetic_pred, None, atom.terms)
+                return MZNConstraintDecl(
+                    arithmetic_pred, None, atom.terms, top_level=top_level
+                )
                 # model.add_constraint_decl(cons_decl)
         # case where we have a type declaration
         elif isinstance(pred, clif.TypePred):
@@ -235,7 +261,10 @@ def handle_atom_sentence(
                     return MZNVarDecl(atom.terms[0], "bool")
                 elif pred.bounded_integer:
                     return MZNVarDecl(
-                        atom.terms[0], "bounded_int", upper=pred.upper, lower=pred.lower
+                        atom.terms[0],
+                        "bounded_int",
+                        upper=pred.upper,
+                        lower=pred.lower,
                     )
                 elif pred.integer:
                     return MZNVarDecl(atom.terms[0], "int")
@@ -250,6 +279,7 @@ def handle_atom_sentence(
         return MZNConstraintDecl(
             arithmetic_predicate=ArithmeticPredicate.EQ.value,
             terms=[sentence.eq.lhs, sentence.eq.rhs],
+            top_level=top_level,
         )
     else:
         raise RuntimeError("Something went wrong parsing the atom sentece")

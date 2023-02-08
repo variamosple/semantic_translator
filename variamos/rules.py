@@ -6,8 +6,8 @@ from utils import camel_handler
 class SimpleElementRule(pydantic.BaseModel):
     param: str
     constraint: str
-    selected_constraint: str
-    deselected_constraint: str
+    selected_constraint: str | None
+    deselected_constraint: str | None
 
     class Config:
         alias_generator = camel_handler.from_camelcase
@@ -19,6 +19,7 @@ class MappingConfig(pydantic.BaseModel):
 
 
 class ReifiedRelationParameterMapping(pydantic.BaseModel):
+    node: str | None
     inbound_edges: MappingConfig
     outbound_edges: MappingConfig
 
@@ -65,12 +66,36 @@ class AttributeTranslationRule(pydantic.BaseModel):
     constraint: str
 
 
+class HierarchyNodeParameterMapping(pydantic.BaseModel):
+    incoming: bool
+    var: str
+    node: str
+
+
+class HierarchyNodeRule(pydantic.BaseModel):
+    param: list[str]
+    param_mapping: HierarchyNodeParameterMapping
+    constraint: str
+
+    class Config:
+        alias_generator = camel_handler.from_camelcase
+
+
+class HierarchyTranslationRule(pydantic.BaseModel):
+    # There may be a need for a rule for root nodes too
+    node_rule: HierarchyNodeRule
+    leaf_rule: SimpleElementRule
+
+    class Config:
+        alias_generator = camel_handler.from_camelcase
+
+
 class Rules(pydantic.BaseModel):
     # Simple elements that require only their own information
     element_types: list[str]
     element_translation_rules: dict[
         str,
-        typing.Union[SimpleElementRule, ReifiedRelationElementRule],
+        SimpleElementRule,
     ]
     # Handling for element attributes
     attribute_types: list[str]
@@ -78,8 +103,17 @@ class Rules(pydantic.BaseModel):
     # Relation Typed Elements
     typing_relation_types: list[str]
     typing_relation_translation_rules: dict[str, RelationTypedElementRule]
+    # Handling for types whose constraints only depend on the hierachical
+    # structure of relations with elements of the same type
+    # and thus can also have other relations that are translated in other
+    # manners
+    hierarchy_types: list[str]
+    hierarchy_translation_rules: dict[str, HierarchyTranslationRule]
     # Elements that reify a complex many-to-many relationship
     relation_reification_types: list[str]
+    relation_reification_translation_rules: dict[
+        str, ReifiedRelationElementRule
+    ]
     relation_reification_expansions: dict[str, list[str]]
     relation_reification_property_schema: dict[str, RelationPropertyLookupRule]
     relation_reification_type_dependent_expansions: dict[
@@ -89,6 +123,10 @@ class Rules(pydantic.BaseModel):
     relation_types: list[str]
     relation_property_schema: dict[str, RelationPropertyLookupRule]
     relation_translation_rules: dict[str, RelationRule]
+    # Relations we ignore because we generate the stuff elsewhere
+    ignored_relation_types: list[str] | None
+    # Since we have some symbols we'd rather remove...
+    symbol_map: dict[str, str] | None
 
     class Config:
         alias_generator = camel_handler.from_camelcase

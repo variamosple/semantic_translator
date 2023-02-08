@@ -1,0 +1,162 @@
+{
+    "elements": {
+      "Goal": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Functional Goal"
+          }
+        ]
+      },
+      "Claim": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Claim name"
+          }
+        ]
+      },
+      "SoftGoal": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Soft Goal (Non-functional)"
+          }
+        ]
+      },
+      "Cardinality": {
+        "properties": [
+          {
+            "name": "From",
+            "type": "String",
+            "comment": "M in M:N"
+          },
+          {
+            "name": "To",
+            "type": "String",
+            "comment": "N in M:N"
+          }
+        ]
+      },
+      "SoftInfluence": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Required Level of a soft goal - security goal"
+          }
+        ]
+      },
+      "ContextVariable": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Context Variable"
+          },
+          {
+            "name": "PossibleValues",
+            "type": "String",
+            "comment": "Context Variable Values"
+          }
+        ]
+      },
+      "Operationalization": {
+        "properties": [
+          {
+            "name": "Description",
+            "type": "String",
+            "comment": "Operationalization of the Goal"
+          }
+        ]
+      }
+    },
+    "restrictions": {},
+    "relationships": {
+      "SubGoal": {
+        "max": 9999999,
+        "min": 0,
+        "source": "Goal",
+        "target": [
+          "Goal"
+        ],
+        "properties": []
+      },
+      "SoftGoal_SoftGoal": {
+        "max": 9999999,
+        "min": 0,
+        "source": "SoftGoal",
+        "target": [
+          "SoftGoal"
+        ],
+        "properties": []
+      },
+      "Claim_SoftGoal": {
+        "max": 9999999,
+        "min": 0,
+        "source": "Claim",
+        "target": [
+          "SoftGoal"
+        ],
+        "properties": []
+      },
+      "Cardinality_Goal": {
+        "max": 9999999,
+        "min": 0,
+        "source": "Cardinality",
+        "target": [
+          "Goal"
+        ],
+        "properties": []
+      },
+      "SoftInfluence_SoftGoal": {
+        "max": 1,
+        "min": 1,
+        "source": "SoftInfluence",
+        "target": [
+          "SoftGoal"
+        ],
+        "properties": [
+          {
+            "name": "SatisfactionLevel",
+            "type": "String",
+            "comment": "Level required",
+            "possibleValues": "--,-,=,+,++"
+          }
+        ]
+      },
+      "ContextVariable_SoftInfluence": {
+        "max": 99999,
+        "min": 1,
+        "source": "ContextVariable",
+        "target": [
+          "SoftInfluence"
+        ],
+        "properties": [
+          {
+            "name": "Value",
+            "type": "String"
+          }
+        ]
+      },
+      "Operationalization_Claim_Goal": {
+        "max": 9999999,
+        "min": 0,
+        "source": "Operationalization",
+        "target": [
+          "Claim",
+          "Cardinality"
+        ],
+        "properties": [
+          {
+            "name": "Value",
+            "type": "String",
+            "possibleValues": " ,--,-,=,+,++"
+          }
+        ]
+      }
+    }
+  }

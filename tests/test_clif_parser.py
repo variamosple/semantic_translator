@@ -35,6 +35,51 @@ def test_simple_model(meta: TextXMetaModel):
     assert s.sentences[1].eq.rhs == "z"
 
 
+def test_multiple_conjunction(meta: TextXMetaModel):
+    test_str = """( model
+    (and (= x y) (= y z) (= z w))
+)"""
+    mod: clif.Text = meta.model_from_str(test_str)
+    assert mod.constructions is not None
+    assert isinstance(mod.constructions, clif.TextConstruction)
+    for e in mod.constructions.sentences:
+        assert isinstance(e, clif.Sentence)
+    s = mod.constructions.sentences[0]
+    assert isinstance(s, clif.BoolSentence)
+    assert s.sentences is not None
+    assert len(s.sentences) == 3
+    assert isinstance(s.sentences[0], clif.AtomSentence)
+    assert isinstance(s.sentences[0].eq, clif.Equation)
+    assert s.sentences[0].eq.lhs == "x"
+    assert s.sentences[0].eq.rhs == "y"
+    assert isinstance(s.sentences[1], clif.AtomSentence)
+    assert isinstance(s.sentences[1].eq, clif.Equation)
+    assert s.sentences[1].eq.lhs == "y"
+    assert s.sentences[1].eq.rhs == "z"
+    assert isinstance(s.sentences[2], clif.AtomSentence)
+    assert isinstance(s.sentences[2].eq, clif.Equation)
+    assert s.sentences[2].eq.lhs == "z"
+    assert s.sentences[2].eq.rhs == "w"
+
+
+def test_attribute_lookup(meta: TextXMetaModel):
+    test_str = """( model
+    (= x y::z)
+)"""
+    mod: clif.Text = meta.model_from_str(test_str)
+    assert mod.constructions is not None
+    assert isinstance(mod.constructions, clif.TextConstruction)
+    for e in mod.constructions.sentences:
+        assert isinstance(e, clif.Sentence)
+    s = mod.constructions.sentences[0]
+    assert isinstance(s, clif.AtomSentence)
+    assert s.eq is not None
+    assert isinstance(s.eq.lhs, str)
+    assert isinstance(s.eq.rhs, clif.AttributeLookup)
+    assert s.eq.rhs.element == "y"
+    assert s.eq.rhs.attribute == "z"
+
+
 def test_arithm_predicate(meta: TextXMetaModel):
     test_str = """(model
     (< x y)
@@ -105,12 +150,16 @@ def test_multiple_terms(meta: TextXMetaModel):
 
 def test_quantified_terms(meta: TextXMetaModel):
     test_str = """(model
-    (forall (x y) (and (int x) (int y) (= x y)))
+    (forall (x:Xs y:Ys) (and (int x) (int y) (= x y)))
 )"""
     mod: clif.Text = meta.model_from_str(test_str)
     assert isinstance((f := mod.constructions.sentences[0]), clif.QuantSentence)
     assert len(f.boundlist.vars) == 2
-    assert f.boundlist.vars == ["x", "y"]
+    assert all(isinstance(s, clif.Binding) for s in f.boundlist.vars)
+    assert f.boundlist.vars[0].var == "x"
+    assert f.boundlist.vars[0].set_from == "Xs"
+    assert f.boundlist.vars[1].var == "y"
+    assert f.boundlist.vars[1].set_from == "Ys"
     assert isinstance((s := f.sentence), clif.BoolSentence)
     assert s.operator == "and"
     assert s.sentences is not None

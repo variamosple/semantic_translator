@@ -7,6 +7,7 @@ class OperationEnum(str, Enum):
     sat = "sat"
     solve = "solve"
     nsolve = "nsolve"
+    get_model = "get_model"
 
 
 class ModelObjectEnum(str, Enum):

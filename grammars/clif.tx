@@ -78,17 +78,28 @@ QuantSentence:
 
 BoundList:
     //Let's keep this very simple for now
-    OPEN vars+=ID CLOSE;
+    //OPEN vars+=ID CLOSE;
+    OPEN vars+=Binding CLOSE;
+
+Binding:
+    var=ID ":" set_from=ID;
 
 Equation:
     //Simple for now
     OPEN '=' lhs=Term rhs=Term CLOSE;
+
+AttributeLookup:
+    element=ElemSelector "::" attribute=ID;
+
+ElemSelector:
+    fun=ID OPEN element=ID CLOSE | element=ID;
 
 TermSeq:
     (Term)+;
 
 Term:
     //We're not quite ready to handle complex functional terms just yet I think
+    AttributeLookup |
     !OP ID|
     INT |
     ArithmeticExpr;
@@ -104,7 +115,7 @@ BOOLOP:
     ("and" | "or");
 
 IMPOP:
-    ("if" | "iff");
+    ("iff" | "if");
 
 NEGOP:
     "not";

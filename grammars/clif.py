@@ -180,7 +180,28 @@ class QuantSentence(Sentence):
 @dataclass
 class BoundList:
     parent: QuantSentence
-    vars: list[str]
+    vars: list[Binding]
+
+
+@dataclass
+class Binding:
+    parent: BoundList
+    var: str
+    set_from: str
+
+
+@dataclass
+class AttributeLookup:
+    parent: Any  #
+    element: ElemSelector
+    attribute: str
+
+
+@dataclass
+class ElemSelector:
+    parent: AttributeLookup
+    element: str
+    fun: str | None
 
 
 def clif_meta_model(debug: Optional[bool] = None) -> TextXMetaModel:
@@ -193,6 +214,9 @@ def clif_meta_model(debug: Optional[bool] = None) -> TextXMetaModel:
             BoolSentence,
             QuantSentence,
             BoundList,
+            Binding,
+            AttributeLookup,
+            ElemSelector,
             Atom,
             Equation,
             ArithmeticPred,

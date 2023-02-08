@@ -10,8 +10,8 @@ class Relationship(pydantic.BaseModel):
     id: uuid.UUID
     type: str
     name: str
-    source_id: typing.Optional[uuid.UUID]
-    target_id: typing.Optional[uuid.UUID]
+    source_id: uuid.UUID
+    target_id: uuid.UUID
     properties: list[dict[str, typing.Any]]
 
     class Config:
@@ -45,12 +45,13 @@ class Model(pydantic.BaseModel):
     name: str
     elements: list[Element]
     relationships: list[Relationship]
+    constraints: str = ""
 
     class Config:
         alias_generator = camel_handler.from_camelcase
 
     def construct_graph(self):
-        G = nx.DiGraph()
+        G = nx.DiGraph(constraints=self.constraints)
         for e in self.elements:
             G.add_node(e.id, element=e)
         for r in self.relationships:

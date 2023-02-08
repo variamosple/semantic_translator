@@ -5,30 +5,6 @@
     "AbstractFeature"
   ],
   "elementTranslationRules": {
-    "Bundle": {
-      "param": [
-        "F",
-        "Xs",
-        "min",
-        "max"
-      ],
-      "paramMapping": {
-        "inboundEdges": {
-          "unique": true,
-          "var": "F"
-        },
-        "outboundEdges": {
-          "unique": false,
-          "var": "Xs"
-        }
-      },
-      "constraint": {
-        "Or": "(and (=< F (sum(Xs))) (=< (sum(Xs)) (F * len(Xs))) )",
-        "And": "(= (sum(Xs)) (F * len(Xs)))",
-        "Xor": "(= (sum(Xs)) F )",
-        "Range": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
-      }
-    },
     "RootFeature": {
       "param": "F",
       "constraint": "(and (bool UUID_F) (= UUID_F 1))",
@@ -99,6 +75,8 @@
       "constraint": "(and (int (0 max) UUID_F1) (and (=< (UUID_F2 * min) UUID_F1) (=< UUID_F1 (UUID_F2 * max)) ))"
     }
   },
+  "hierarchyTypes":[],
+  "hierarchyTranslationRules":{},
   "relationTypes": [
     "Mandatory",
     "Optional",
@@ -112,6 +90,32 @@
   "relationReificationTypes": [
     "Bundle"
   ],
+  "relationReificationTranslationRules":{
+    "Bundle": {
+      "param": [
+        "F",
+        "Xs",
+        "min",
+        "max"
+      ],
+      "paramMapping": {
+        "inboundEdges": {
+          "unique": true,
+          "var": "F"
+        },
+        "outboundEdges": {
+          "unique": false,
+          "var": "Xs"
+        }
+      },
+      "constraint": {
+        "Or": "(and (=< F (sum(Xs))) (=< (sum(Xs)) (F * len(Xs))) )",
+        "And": "(= (sum(Xs)) (F * len(Xs)))",
+        "Xor": "(= (sum(Xs)) F )",
+        "Range": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
+      }
+    }
+  },
   "relationReificationTypeDependentExpansions": {
     "Bundle": {
       "Range": [

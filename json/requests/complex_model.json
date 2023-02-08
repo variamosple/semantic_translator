@@ -674,7 +674,8 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "constraints": "(if (= Advanced 1) (>= VoiceControl::Version 2))"
             }
           ],
           "languagesAllowed": []
