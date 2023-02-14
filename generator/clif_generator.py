@@ -60,63 +60,73 @@ class CLIFGenerator:
                 sentence_strings.append(generated_string)
         # Handle attribute accesses from the complex constraints
         if (arb_constraints := self.variamos_graph.graph["constraints"]) != "":
-            # We need to do extra stuff whenever we encounter arbitrary
-            # constraints such that we can replace normal stuff with the correct
-            # variable names (UUIDs)
-            # We are going to do a simple hack for now
-            # HACK: We merely gather element names above and replace anywhere
-            # they are found
-            # TODO: Make this robust, capable of checking and so on...
-            print("######################################################")
-            print(names_ids)
-            print("######################################################")
-            # We now construct the regular expression that finds attribute
-            # accesses with the '::' character.
-            # TODO: replace regex string juggling with partial parsing???
-            pattern = re.compile(r"\b(\w+)::(\w+)\b")
-            matches: list[tuple[str, str]] = pattern.findall(arb_constraints)
-            matches_dict: dict[str, str] = dict(matches)
-            for name, id in names_ids:
-                if name in arb_constraints:
-                    # Before we do the replacement we must handle the
-                    # attribute access
-                    # Check that the name is the first element of the matches
-                    if name in matches_dict:
-                        props: list = self.variamos_graph.nodes[id][
-                            "element"
-                        ].properties
-                        # TODO: Check what happens when there are multiple attributes # noqa: E501
-                        # found flags whether we did find the attribute
-                        found = False
-                        for prop in props:
-                            if prop["name"] == matches_dict[name]:
-                                # Replace the expression with the matching id
-                                expression = name + "::" + prop["name"]
-                                arb_constraints = arb_constraints.replace(
-                                    expression,
-                                    "UUID_"
-                                    + model.to_underscore_from_uuid(prop["id"]),
-                                )
-                                found = True
-                        # Here if we arrive at the end fo the iteration and we
-                        # have not found any matches in the for loop
-                        # it means it is not part of the property list of the
-                        # element and must be an error
-                        if not found:
-                            raise exceptions.SemanticException(
-                                f"The {matches_dict[name]} attribute does not belong to {name}"  # noqa: E501
-                            )
-                    # Now that we have handled all the attribute accesses we can perform the simple
-                    # replacements
-                    # NOTE: This probably means that this will not work correctly if an attribute
-                    # shares a name with a feature...
-                    arb_constraints = arb_constraints.replace(
-                        name, "UUID_" + model.to_underscore_from_uuid(id)
-                    )
-                    # TODO: Do the regex logic to handle attribute selection
+            self.generate_arbitrary_constraint_sentences(
+                arb_constraints=arb_constraints, names_ids=names_ids
+            )
         return "\n".join(
             [model_header, *sentence_strings, arb_constraints, model_footer]
         )
+
+    # TODO: We should have it return and not be a side-effect on arb_constraints
+    def generate_arbitrary_constraint_sentences(
+        self,
+        arb_constraints: str,
+        names_ids: list[tuple[str, uuid.UUID]],
+    ) -> None:
+        # We need to do extra stuff whenever we encounter arbitrary
+        # constraints such that we can replace normal stuff with the correct
+        # variable names (UUIDs)
+        # We are going to do a simple hack for now
+        # HACK: We merely gather element names above and replace anywhere
+        # they are found
+        # TODO: Make this robust, capable of checking and so on...
+        print("######################################################")
+        print(names_ids)
+        print("######################################################")
+        # We now construct the regular expression that finds attribute
+        # accesses with the '::' character.
+        # TODO: replace regex string juggling with partial parsing???
+        pattern = re.compile(r"\b(\w+)::(\w+)\b")
+        matches: list[tuple[str, str]] = pattern.findall(arb_constraints)
+        matches_dict: dict[str, str] = dict(matches)
+        for name, id in names_ids:
+            if name in arb_constraints:
+                # Before we do the replacement we must handle the
+                # attribute access
+                # Check that the name is the first element of the matches
+                if name in matches_dict:
+                    props: list = self.variamos_graph.nodes[id][
+                        "element"
+                    ].properties
+                    # TODO: Check what happens when there are multiple attributes # noqa: E501
+                    # found flags whether we did find the attribute
+                    found = False
+                    for prop in props:
+                        if prop["name"] == matches_dict[name]:
+                            # Replace the expression with the matching id
+                            expression = name + "::" + prop["name"]
+                            arb_constraints = arb_constraints.replace(
+                                expression,
+                                "UUID_"
+                                + model.to_underscore_from_uuid(prop["id"]),
+                            )
+                            found = True
+                    # Here if we arrive at the end fo the iteration and we
+                    # have not found any matches in the for loop
+                    # it means it is not part of the property list of the
+                    # element and must be an error
+                    if not found:
+                        raise exceptions.SemanticException(
+                            f"The {matches_dict[name]} attribute does not belong to {name}"  # noqa: E501
+                        )
+                # Now that we have handled all the attribute accesses we can perform the simple
+                # replacements
+                # NOTE: This probably means that this will not work correctly if an attribute
+                # shares a name with a feature...
+                arb_constraints = arb_constraints.replace(
+                    name, "UUID_" + model.to_underscore_from_uuid(id)
+                )
+                # TODO: Do the regex logic to handle attribute selection
 
     def generate_element_sentence(
         self, element_id: uuid.UUID, element: model.Element
@@ -158,6 +168,8 @@ class CLIFGenerator:
                 "Missing translation rule for ", element.type
             )
         rule = self.rule_set.hierarchy_translation_rules[element.type]
+        # TODO: Check this is sound, shouldn't it only be
+        # for outgoing nodes?
         # Now we must perform an analysis whether our node is a leaf node
         # w.r.t. the hierarchy or merely a node on the hierarchy.
         # The simplest way to do this is to check the parameter mapping config
@@ -186,14 +198,23 @@ class CLIFGenerator:
             )
             # Now run the expression expansion
             tuple_idx = 0 if rule.node_rule.param_mapping.incoming else 1
+            # HACK: We will trim node_uuids such that we only leave those of a given type
+            # when the request is made, since we are dealing with hierarchies
+            # TODO: maybe make this more robust
             node_uuids: list[tuple[uuid.UUID, model.Relationship]] = [
-                (edge_tuple[tuple_idx], edge_tuple[2]) for edge_tuple in edges  # type: ignore
+                (edge_tuple[tuple_idx], edge_tuple[2])  # type: ignore
+                for edge_tuple in edges
+                if self.variamos_graph.nodes.data("element")[  # type: ignore
+                    edge_tuple[tuple_idx]
+                ].type  # type: ignore
+                == element.type
             ]
             # We can reuse the expansion rules for complex expressions
             cons = self.clif_expression_expansion(
                 node_uuids=node_uuids,
                 binding_var=rule.node_rule.param_mapping.var,
                 constraint=cons,
+                same_type=True,
             )
             return cons
         else:
@@ -486,6 +507,7 @@ class CLIFGenerator:
         node_uuids: list[tuple[uuid.UUID, model.Relationship]],
         binding_var: str,
         constraint: str,
+        same_type: bool = False,
     ) -> str:
         # FIXME: This needs better handling than just a string lookup
         # I should also consider building a cleaner representation
@@ -501,6 +523,7 @@ class CLIFGenerator:
         # the equivalent of loop unfolding
         # First we check if there is a forall in the expression
         # Otherwise proceed as usual
+        # TODO: Handle this logic in the correct place
         if "forall" in constraint:
             # HACK: we will run a partial parse on this expression
             # such that we can do the loop unfolding before handing it over

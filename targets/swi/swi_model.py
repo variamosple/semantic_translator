@@ -43,16 +43,29 @@ class SWIModel(SolverModel):
             case SWIFDConstraint():
                 self.constraint_decls.append(cons)
 
-    # TODO: Implement this method
-    # TODO: add a mechanism to handle the reset of prolog vars
     def fix_variable(self, variable: str, value: int):
-        raise NotImplementedError
+        try:
+            var_decl = self.var_decls[variable]
+            var_decl.fix_variable(value)
+        except KeyError:
+            raise RuntimeError(
+                "You are trying to set a variable that does not exist"
+            )
+
+    def reset_fix(self, variable: str):
+        try:
+            var_decl = self.var_decls[variable]
+            var_decl.reset_fix()
+        except KeyError:
+            raise RuntimeError(
+                "You are trying to reset a variable that does not exist"
+            )
 
     def generate_program(self) -> list[str]:
         strs: list[str] = []
         constraints: list[SWIConstraint] = [
             *self.var_decls.values(),
-            *self.constraint_decls
+            *self.constraint_decls,
         ]
         for cons in constraints[:-1]:
             strs.append(cons.to_string() + self.__delimiter)
@@ -76,10 +89,14 @@ class SWIFDConstraint(SWIConstraint):
     def __init__(
         self,
         arithmetic_predicate: Optional[str] = None,
+        reification_predicate: Optional[str] = None,
         terms: Optional[list[str | int | clif.ArithmeticExpr]] = None,
+        sub_constraints: Optional[list[list[SWIConstraint]]] = None,
     ) -> None:
         super().__init__(terms)
         self.arithmetic_predicate = arithmetic_predicate
+        self.reification_predicate = reification_predicate
+        self.sub_constraints = sub_constraints
 
     def render_expr(self, term) -> str:
         if isinstance(term, (int, str)):
@@ -108,6 +125,19 @@ class SWIFDConstraint(SWIConstraint):
 
             else:
                 raise NotImplementedError("No handling of reification yet...")
+        elif self.reification_predicate is not None:
+            if self.sub_constraints is None:
+                raise SemanticException("Incorrectly instantiated reification")
+            if len(self.sub_constraints) != 2:
+                raise SemanticException("Wrong number of subexpresions")
+            sub_ant = " #/\\ ".join(
+                (c.to_string() for c in self.sub_constraints[0])
+            )
+            sub_con = " #/\\ ".join(
+                (c.to_string() for c in self.sub_constraints[1])
+            )
+            return f"{sub_ant} {self.reification_predicate} {sub_con}"
+
         else:
             raise NotImplementedError(
                 "No handling for more complex stuff yet..."
@@ -123,8 +153,17 @@ class SWIFDVarDomainDec(SWIConstraint):
     ) -> None:
         super().__init__(terms)
         self.bounds = bounds
+        self._default_bounds = bounds
 
-    # TODO: provide implem
+    def fix_variable(self, value):
+        if self.bounds[0] <= value and value <= self.bounds[1]:
+            self.bounds = value, value
+        else:
+            raise SemanticException("This value violates the variable's bounds")
+
+    def reset_fix(self):
+        self.bounds = self._default_bounds
+
     def to_string(self) -> str:
         if self.terms is not None and not isinstance(
             self.terms[0], (int, clif.ArithmeticExpr)
@@ -146,7 +185,7 @@ def handle_bool_sentence(sentence: clif.BoolSentence) -> list[SWIConstraint]:
                 if isinstance(s, clif.AtomSentence):
                     exprs.append(handle_atom_sentence(s))
                 elif isinstance(s, clif.BoolSentence):
-                    exprs.append(*handle_bool_sentence(s))
+                    exprs.extend(handle_bool_sentence(s))
                 else:
                     raise NotImplementedError(
                         "No handling for quantification as inner constraint yet"
@@ -158,7 +197,21 @@ def handle_bool_sentence(sentence: clif.BoolSentence) -> list[SWIConstraint]:
             )
     # implication and biconditional case
     elif sentence.antecedent is not None and sentence.consequent is not None:
-        raise NotImplementedError("Conditionals unsupported")
+        exprs: list[SWIConstraint] = []
+        sub_expressions: list[list[SWIConstraint]] = []
+        sub_expressions.append(handle_sentence(sentence=sentence.antecedent))
+        sub_expressions.append(handle_sentence(sentence=sentence.consequent))
+        reif_predicate = (
+            ReificationPredicate.IMP
+            if sentence.operator == "if"
+            else ReificationPredicate.BIMP
+        )
+        return [
+            SWIFDConstraint(
+                reification_predicate=reif_predicate,
+                sub_constraints=sub_expressions,
+            )
+        ]
     # Negation case
     elif sentence.sentence is not None:
         raise NotImplementedError("Negation currently unsupported")
@@ -202,7 +255,16 @@ def handle_atom_sentence(sentence: clif.AtomSentence) -> SWIConstraint:
                     "Type declarations must be of a valid type"
                 )
             else:
-                bounds = (0, 1) if pred.boolean else ("inf", "sup")
+                # We know that this is a type decl
+                if pred.boolean:
+                    bounds = (0, 1)
+                elif pred.bounded_integer:
+                    if pred.lower is None or pred.upper is None:
+                        raise SemanticException("integer bounds undefined")
+                    bounds = (pred.lower, pred.upper)
+                else:
+                    # bounds = ("inf", "sup")
+                    bounds = 0, 10000
                 return SWIFDVarDomainDec(bounds=bounds, terms=atom.terms)
                 # var_decl = MZNVarDecl(atom.terms[0], var_type)
                 # model.add_var_decl(var_decl)
@@ -221,9 +283,9 @@ def handle_atom_sentence(sentence: clif.AtomSentence) -> SWIConstraint:
 def handle_sentence(sentence: clif.Sentence) -> list[SWIConstraint]:
     if isinstance(sentence, clif.AtomSentence):
         return [handle_atom_sentence(sentence)]
-    # TODO: Handle this case...
     elif isinstance(sentence, clif.BoolSentence):
         return handle_bool_sentence(sentence)
+    # TODO: Handle other sentence types...
     else:
         raise NotImplementedError("No other type of sentence handled yet")
 

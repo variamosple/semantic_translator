@@ -1,6 +1,7 @@
 import re
 import uuid
 import networkx as nx
+import json
 from variamos import query, model, rules
 from utils import enums
 from utils import exceptions
@@ -73,6 +74,7 @@ class QueryHandler:
                     return self.controller.sat()
                 case query.OperationEnum.solve:
                     # FIXME: We do not yet handle multiple product lines
+                    # FIXME: We have a problem handling model updates now...
                     self.controller.update_model(
                         fm=feature_model,
                         rules=self.translation_rules,
@@ -80,7 +82,7 @@ class QueryHandler:
                     )
                     project_json["productLines"][0]["domainEngineering"][
                         "models"
-                    ][idx] = feature_model
+                    ][idx] = json.loads(feature_model.json(by_alias=True))
                     return project_json
                 case query.OperationEnum.nsolve:
                     return len(

@@ -5,7 +5,7 @@ from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
 import tempfile
 import re
-
+from variamos import model as mdl
 
 @dataclass
 class SWIBridge:
@@ -49,13 +49,13 @@ class SWIBridge:
                         raise SolverException("CLIF/SWI -> UNSAT")
                     return result
 
-    def update_model(self, model, rules, result):
-        for e in model["elements"]:
-            if e["type"] in rules["elementTypes"] and e["properties"][1][
+    def update_model(self, model: mdl.Model, rules, result):
+        for e in model.elements:
+            if e.type in rules.element_types and e.properties[1][
                 "value"
             ] not in ["Selected", "Unselected"]:
-                e["properties"][1]["value"] = (
+                e.properties[1]["value"] = (
                     "SelectedForced"
-                    if result[0]["UUID_" + str(e["id"]).replace("-", "_")] == 1
+                    if result[0]["UUID_" + str(e.id).replace("-", "_")] == 1
                     else "UnselectedForced"
                 )

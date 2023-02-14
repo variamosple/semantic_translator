@@ -13,6 +13,10 @@ class Relationship(pydantic.BaseModel):
     source_id: uuid.UUID
     target_id: uuid.UUID
     properties: list[dict[str, typing.Any]]
+    # extra stuff
+    points: list
+    min: int
+    max: int
 
     class Config:
         alias_generator = camel_handler.from_camelcase
@@ -27,6 +31,11 @@ class Element(pydantic.BaseModel):
     name: str
     parent_id: typing.Optional[uuid.UUID]
     properties: list[dict[str, typing.Any]]
+    # Visual components
+    x: int
+    y: int
+    width: int
+    height: int
 
     class Config:
         alias_generator = camel_handler.from_camelcase

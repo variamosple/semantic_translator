@@ -160,8 +160,14 @@ class MZNConstraintDecl(MZNExpression):
                 raise SemanticException("Incorrectly instantiated reification")
             if len(self.sub_constraints) != 2:
                 raise SemanticException("Wrong number of subexpresions")
-            # HACK: First test with single subexpression
-            return f"constraint ({self.sub_constraints[0][0].to_string()}) -> ({self.sub_constraints[1][0].to_string()})"
+            # Handle multiple subconstraints
+            sub_ant = " /\\ ".join(
+                c.to_string() for c in self.sub_constraints[0]
+            )
+            sub_con = " /\\ ".join(
+                c.to_string() for c in self.sub_constraints[1]
+            )
+            return f"constraint ({sub_ant}) {self.reification_predicate} ({sub_con})"
 
 
 def handle_bool_sentence(

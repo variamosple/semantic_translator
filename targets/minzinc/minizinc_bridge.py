@@ -4,6 +4,7 @@ from targets.minzinc.minizinc_model import MZNModel
 from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
 from variamos import rules as rls
+from variamos import model as mdl
 
 
 @dataclass
@@ -23,16 +24,16 @@ class MiniZincBridge:
             raise SolverException("CLIF/MZN - Model is UNSAT")
         return result
 
-    def update_model(self, model, rules: rls.Rules, result):
-        for e in model["elements"]:
-            if e["type"] in rules.element_types and e["properties"][1][
+    def update_model(self, model: mdl.Model, rules: rls.Rules, result):
+        for e in model.elements:
+            if e.type in rules.element_types and e.properties[1][
                 "value"
             ] not in [
                 "Selected",
                 "Unselected",
             ]:  # noqa
-                e["properties"][1]["value"] = (
+                e.properties[1]["value"] = (
                     "SelectedForced"
-                    if result[0, "UUID_" + str(e["id"]).replace("-", "_")] == 1
+                    if result[0, "UUID_" + str(e.id).replace("-", "_")] == 1
                     else "UnselectedForced"
                 )
