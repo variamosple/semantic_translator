@@ -3,7 +3,7 @@ import uuid
 import networkx as nx
 import json
 from variamos import query, model, rules
-from utils import enums
+from utils import enums, uuid_utils
 from utils import exceptions
 from solvers import solver_control
 from grammars import clif
@@ -90,16 +90,36 @@ class QueryHandler:
                     )
                 case query.OperationEnum.get_model:
                     return self.pretty_model()
+                case query.OperationEnum.optimize:
+                    # check that the query contains an optimization target
+                    if self.query_obj.optimization_target is None:
+                        raise exceptions.QueryException(
+                            "No optimization target specified"
+                        )
+                    if self.query_obj.optimization_direction not in [
+                        query.OptimizationDirectionEnum.min,
+                        query.OptimizationDirectionEnum.max,
+                    ]:
+                        raise exceptions.QueryException(
+                            "Invalid optimization target specified"
+                        )
+                    optim_result = self.controller.optimize(
+                        objective=self.query_obj.optimization_target,
+                        direction=self.query_obj.optimization_direction,
+                    )
+                    return optim_result
 
     def pretty_model(self):
         regex = re.compile(r"(UUID(?:_[a-f0-9]+){5})")
         result_str = self.clif_str[:]
         for occ in re.findall(regex, self.clif_str):
             occ_clean: str = occ.replace("UUID_", "")
-            uuid_str = model.to_uuid_from_underscore(occ_clean)
+            uuid_str = uuid_utils.to_uuid_from_underscore(occ_clean)
             found = True
             try:
-                element: model.Element = self.nx_graph.nodes.data("element")[uuid_str]
+                element: model.Element = self.nx_graph.nodes.data("element")[
+                    uuid_str
+                ]
                 result_str = result_str.replace(occ, element.name)
             except KeyError:
                 found = False
@@ -108,7 +128,12 @@ class QueryHandler:
                     for prop in elem.properties:
                         if prop["custom"]:
                             if uuid.UUID(prop["id"]) == uuid_str:
-                                print("Replacing ", occ, " with ", elem.name + "::" + prop["name"])
+                                print(
+                                    "Replacing ",
+                                    occ,
+                                    " with ",
+                                    elem.name + "::" + prop["name"],
+                                )
                                 result_str = result_str.replace(
                                     occ, elem.name + "::" + prop["name"]
                                 )

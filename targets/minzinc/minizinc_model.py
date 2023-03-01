@@ -5,6 +5,8 @@ from utils.exceptions import SemanticException
 from grammars import clif
 from enum import Enum, unique
 from targets.solver_model import SolverModel
+import random
+import string
 
 
 class StrEnum(str, Enum):
@@ -31,15 +33,18 @@ class MZNModel(SolverModel):
     __delimiter = ";"
 
     def __init__(self) -> None:
-        self.var_decls: dict[str, MZNVarDecl] = dict()
+        self.var_decls: dict[str, MZNVarDecl | MZNEnumVarDeclaration] = dict()
         self.constraint_decls: list[MZNConstraintDecl] = []
 
-    def add_var_decl(self, var_decl: MZNVarDecl) -> None:
+    def add_var_decl(
+        self, var_decl: MZNVarDecl | MZNEnumVarDeclaration
+    ) -> None:
         self.var_decls[var_decl.var] = var_decl
 
     def add_constraint_decl(self, constraint_decl: MZNConstraintDecl) -> None:
         self.constraint_decls.append(constraint_decl)
 
+    # TODO: This is a hack, we should be able to fix variables for enums too
     def fix_variable(self, variable: str, value: int):
         try:
             var_decl = self.var_decls[variable]
@@ -49,6 +54,7 @@ class MZNModel(SolverModel):
                 "You are trying to set a variable that does not exist"
             )
 
+    # TODO: This is a hack, we should be able to reset variables for enums too
     def reset_fix(self, variable: str):
         try:
             var_decl = self.var_decls[variable]
@@ -110,6 +116,42 @@ class MZNVarDecl(MZNExpression):
             return f"var int:{qvar}"
 
 
+class MZNEnumVarDeclaration(MZNExpression):
+    def __init__(
+        self, var: str, enum_values: list[str], fixed_value: str | None = None
+    ) -> None:
+        super().__init__()
+        self.var = var
+        # generate a random name for the enum
+        self.enum_name = (
+            f"enum_{''.join(random.choices(string.ascii_letters, k=10))}"
+        )
+        # init the enum declaration itself
+        self.enum_decl = MZNEnumDeclaration(self.enum_name, enum_values)
+        self.fixed_value = fixed_value
+
+    def quote_var(self) -> str:
+        return "'" + self.var + "'"
+
+    def to_string(self) -> str:
+        qvar = self.quote_var()
+        fixed_expr = (
+            f" = {self.fixed_value}" if self.fixed_value is not None else ""
+        )
+        enum_decl_str = self.enum_decl.to_string()
+        return f"{enum_decl_str}; var {self.enum_name}:{qvar}{fixed_expr}"
+
+
+class MZNEnumDeclaration(MZNExpression):
+    def __init__(self, name: str, values: list[str]) -> None:
+        super().__init__()
+        self.name = name
+        self.values = values
+
+    def to_string(self) -> str:
+        return f"enum {self.name} = {{{', '.join(self.values)}}}"
+
+
 class MZNConstraintDecl(MZNExpression):
     def __init__(
         self,
@@ -138,6 +180,8 @@ class MZNConstraintDecl(MZNExpression):
             )
 
     def to_string(self) -> str:
+        # determine if we are a top level constraint
+        top_level_str = "constraint " if self.top_level else ""
         if self.terms is not None:
             if self.arithmetic_predicate is not None:
                 if len(self.terms) != 2:
@@ -149,7 +193,7 @@ class MZNConstraintDecl(MZNExpression):
                         self.render_expr(self.terms[0]),
                         self.render_expr(self.terms[1]),
                     )
-                    return f"{'constraint ' if self.top_level else ''}{rhs}{self.arithmetic_predicate}{lhs}"
+                    return f"{top_level_str}{rhs}{self.arithmetic_predicate}{lhs}"
 
             else:
                 raise NotImplementedError(
@@ -167,7 +211,7 @@ class MZNConstraintDecl(MZNExpression):
             sub_con = " /\\ ".join(
                 c.to_string() for c in self.sub_constraints[1]
             )
-            return f"constraint ({sub_ant}) {self.reification_predicate} ({sub_con})"
+            return f"{top_level_str}({sub_ant}) {self.reification_predicate} ({sub_con})"
 
 
 def handle_bool_sentence(
@@ -215,6 +259,7 @@ def handle_bool_sentence(
             MZNConstraintDecl(
                 reification_predicate=reif_predicate,
                 sub_constraints=sub_expressions,
+                top_level=top_level,
             )
         ]
     # Negation case
@@ -274,6 +319,15 @@ def handle_atom_sentence(
                     )
                 elif pred.integer:
                     return MZNVarDecl(atom.terms[0], "int")
+                # Handle enum case
+                elif pred.enum:
+                    if pred.values is None or len(pred.values) == 0:
+                        raise SemanticException(
+                            "Enum type must have at least one value"
+                        )
+                    return MZNEnumVarDeclaration(
+                        atom.terms[0], enum_values=pred.values
+                    )
                 else:
                     raise RuntimeError("oops")
                 # var_decl = MZNVarDecl(atom.terms[0], var_type)
@@ -317,7 +371,7 @@ def clif_to_MZN(clif_model: clif.Text) -> MZNModel:
     mzn_model = MZNModel()
     for sentence in high_level_constraints:
         for c in handle_constraint(sentence=sentence, top_level=True):
-            if isinstance(c, MZNVarDecl):
+            if isinstance(c, (MZNVarDecl, MZNEnumVarDeclaration)):
                 mzn_model.add_var_decl(c)
             elif isinstance(c, MZNConstraintDecl):
                 mzn_model.add_constraint_decl(c)

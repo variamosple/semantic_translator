@@ -3,6 +3,7 @@ import typing
 import uuid
 import networkx as nx
 
+from solvers import results
 from utils import camel_handler
 
 
@@ -67,10 +68,36 @@ class Model(pydantic.BaseModel):
             G.add_edge(r.source_id, r.target_id, relation=r)
         return G
 
-
-def to_underscore_from_uuid(id: uuid.UUID) -> str:
-    return str(id).replace("-", "_")
-
-
-def to_uuid_from_underscore(id: str) -> uuid.UUID:
-    return uuid.UUID(id.replace("_", "-"))
+    # Handle updating selections from results
+    def update_selections(self, result: results.Result):
+        # check that there is single solution in the result
+        if result.solution is None:
+            raise Exception("No solution found")
+        if len(result.solution.solutions) != 1:
+            raise NotImplementedError("Multiple solutions not supported")
+        # get the solution
+        solution = result.solution.solutions[0]
+        for elem in self.elements:
+            # check if the element is in the solution and that it has a
+            # selection property
+            if (
+                str(elem.id) in solution
+                and (
+                    # get a reference to the selection property
+                    # if it exists otherwise None
+                    sel_prop := next(
+                        (
+                            p
+                            for p in elem.properties
+                            if p["name"] == "Selected"
+                        ),
+                        None,
+                    )
+                )
+                is not None
+            ):
+                # check the value in the solution
+                if solution[str(elem.id)] == 1:
+                    sel_prop["value"] = "Selected"
+                else:
+                    sel_prop["value"] = "Unselected"

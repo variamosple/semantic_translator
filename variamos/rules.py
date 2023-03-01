@@ -3,9 +3,18 @@ import typing
 from utils import camel_handler
 
 
+class EnumParameterMapping(pydantic.BaseModel):
+    var: str
+    attribute: str
+
+    class Config:
+        alias_generator = camel_handler.from_camelcase
+
+
 class SimpleElementRule(pydantic.BaseModel):
     param: str
     constraint: str
+    enum_mapping: EnumParameterMapping | None
     selected_constraint: str | None
     deselected_constraint: str | None
 

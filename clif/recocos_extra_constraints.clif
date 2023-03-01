@@ -1,0 +1,5 @@
+(= PredictFlooding 1)
+(and (int TotC) (= TotC (C1 + C2 + C3 + C4 + C5) ) )
+(and (int TotNFR) (= TotNFR (EnergyEfficiency + FaultTolerance + PredictionAccuracy) ) )
+(and (int TotSD) (= TotSD (SI1 + SI2 + SI3 + SI4) ) )
+(and (int ObjValue) (= ObjValue ( (1000 * TotC) + (100 * TotSD) + TotNFR ) ) )

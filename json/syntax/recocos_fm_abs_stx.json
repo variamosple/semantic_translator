@@ -6,6 +6,12 @@
             "name": "Description",
             "type": "String",
             "comment": "Functional Goal"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "Selected Goal",
+            "possibleValues": "Undefined,Selected,Unselected"
           }
         ]
       },
@@ -15,6 +21,12 @@
             "name": "Description",
             "type": "String",
             "comment": "Claim name"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "Selected Goal",
+            "possibleValues": "Undefined,Selected,Unselected"
           }
         ]
       },
@@ -47,15 +59,21 @@
             "name": "Description",
             "type": "String",
             "comment": "Required Level of a soft goal - security goal"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "Selected Goal",
+            "possibleValues": "Undefined,Selected,Unselected"
           }
         ]
       },
       "ContextVariable": {
         "properties": [
           {
-            "name": "Description",
+            "name": "SetValue",
             "type": "String",
-            "comment": "Context Variable"
+            "comment": "Context Variable value"
           },
           {
             "name": "PossibleValues",
@@ -70,6 +88,12 @@
             "name": "Description",
             "type": "String",
             "comment": "Operationalization of the Goal"
+          },
+          {
+            "name": "Selected",
+            "type": "String",
+            "comment": "Selected Goal",
+            "possibleValues": "Undefined,Selected,Unselected"
           }
         ]
       }

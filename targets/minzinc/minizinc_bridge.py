@@ -5,6 +5,7 @@ from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
 from variamos import rules as rls
 from variamos import model as mdl
+from variamos import query
 
 
 @dataclass
@@ -20,6 +21,43 @@ class MiniZincBridge:
         print("\n".join(constraints) + "\n" + "solve satisfy;")
         instance = Instance(gecode, mzn_model)
         result = instance.solve(nr_solutions=n_sols)
+        if not result.status.has_solution():
+            raise SolverException("CLIF/MZN - Model is UNSAT")
+        return result
+
+    def optimize(
+        self,
+        model: SolverModel,
+        objective: str,
+        direction: query.OptimizationDirectionEnum,
+        n_sols: int = 1,
+    ):
+        if not isinstance(model, MZNModel):
+            raise TypeError("Must be a mzn model")
+        constraints = model.generate_program()
+        gecode = Solver.lookup("gecode")
+        mzn_model = Model()
+        direction_str = (
+            "minimize"
+            if direction == query.OptimizationDirectionEnum.min
+            else "maximize"
+        )
+        mzn_model.add_string(
+            "\n".join(constraints)
+            + "\n"
+            + f"solve {direction_str} {objective};"
+        )
+        print(
+            "\n".join(constraints)
+            + "\n"
+            + f"solve {direction_str} {objective};"
+        )
+        instance = Instance(gecode, mzn_model)
+        # We don't yet have support for multiple optimal solutions
+        # We need to pass None if we have a single solution
+        # and the number of solutions if we have multiple solutions
+        n_sol_arg = None if n_sols == 1 else n_sols
+        result = instance.solve(nr_solutions=n_sol_arg)
         if not result.status.has_solution():
             raise SolverException("CLIF/MZN - Model is UNSAT")
         return result

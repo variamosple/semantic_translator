@@ -8,7 +8,9 @@ from targets.swi.prolog_bridge import SWIBridge
 from targets.swi.swi_model import clif_to_SWI
 from utils.enums import TargetLang
 from utils import exceptions
+from utils import uuid_utils
 from variamos import query, model, rules
+from solvers import results
 
 
 class SolverController:
@@ -19,6 +21,7 @@ class SolverController:
     """
 
     constraint_model: SolverModel
+    result_function: typing.Callable[..., results.Result]
 
     def __init__(
         self,
@@ -36,9 +39,11 @@ class SolverController:
             case TargetLang.minizinc:
                 self.constraint_model = clif_to_MZN(clif_model)
                 self.bridge = MiniZincBridge()
+                self.result_function = results.Result.from_minizinc_output
             case TargetLang.swi:
                 self.constraint_model = clif_to_SWI(clif_model)
                 self.bridge = SWIBridge()
+                self.result_function = results.Result.from_swi_output
             case _:
                 raise TypeError("Language unsupported")
 
@@ -70,7 +75,7 @@ class SolverController:
             #     # self.vmos_model.elements
             #     (self.vmos_graph.nodes.data("element")),
             # ):
-            var_id = "UUID_" + model.to_underscore_from_uuid(
+            var_id = "UUID_" + uuid_utils.to_underscore_from_uuid(
                 selected_element.id
             )
             self._run_fixed_sat(elem_sel, iter_results, var_id)
@@ -107,7 +112,7 @@ class SolverController:
                     # ):
                     relationship_type = rel.properties[idx][key]
                     if relationship_type in elem_sel.object_type:
-                        element_id = "UUID_" + model.to_underscore_from_uuid(
+                        element_id = "UUID_" + uuid_utils.to_underscore_from_uuid(
                             # We'll assume that the relation connections are
                             # in fact present
                             rel.target_id  # pyright: ignore
@@ -132,7 +137,7 @@ class SolverController:
                 # for rel in self.vmos_model.relationships:
                 relationship_type = rel.type
                 if relationship_type in elem_sel.object_type:
-                    element_id = "UUID_" + model.to_underscore_from_uuid(
+                    element_id = "UUID_" + uuid_utils.to_underscore_from_uuid(
                         # We'll assume that the relation connections are
                         # in fact present
                         rel.target_id  # pyright: ignore
@@ -185,7 +190,7 @@ class SolverController:
                     )
                     node_uuids: list[str] = [
                         "UUID_"
-                        + model.to_underscore_from_uuid(
+                        + uuid_utils.to_underscore_from_uuid(
                             edge_tuple[tuple_idx]
                         )  # pyright: ignore
                         for edge_tuple in edges
@@ -228,7 +233,7 @@ class SolverController:
                 )
                 node_uuids: list[str] = [
                     "UUID_"
-                    + model.to_underscore_from_uuid(edge_tuple[tuple_idx])  # type: ignore
+                    + uuid_utils.to_underscore_from_uuid(edge_tuple[tuple_idx])  # type: ignore
                     for edge_tuple in edges
                 ]
                 for id in node_uuids:
@@ -279,6 +284,15 @@ class SolverController:
     def solve_n(self, n_sols):
         # Maybe improve the api to make the typecheck pass
         return self.bridge.solve(self.constraint_model, n_sols)
+
+    def optimize(
+        self, objective: str, direction: query.OptimizationDirectionEnum
+    ):
+        # transform the result
+        result = self.result_function(
+            self.bridge.optimize(self.constraint_model, objective, direction)
+        )
+        return result
 
     def update_model(self, fm, rules, result):
         self.bridge.update_model(fm, rules, result)

@@ -1,0 +1,6 @@
+{
+    "operation": "optimize",
+    "solver": "minizinc",
+    "optimization_target": "ObjValue",
+    "optimization_direction": "max"
+}

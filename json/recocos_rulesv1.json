@@ -7,7 +7,11 @@
   "elementTranslationRules": {
     "ContextVariable": {
       "param": "C",
-      "constraint": "(enum (Xs) UUID_C)"
+      "constraint": "(enum (Xs) UUID_C)",
+      "enumMapping": {
+        "var": "Xs",
+        "attribute":"PossibleValues"
+      }
     },
     "Goal": {
       "param": "F",
@@ -18,8 +22,15 @@
       "constraint": "(bool UUID_F)"
     }
   },
-  "attributeTypes": [],
-  "attributeTranslationRules": {},
+  "attributeTypes": ["ContextVariable"],
+  "attributeTranslationRules": {
+    "SetValue": {
+      "parent": "C",
+      "param": "value",
+      "template": "V",
+      "constraint": "(= UUID_C V)"
+    }
+  },
   "typingRelationTypes": [],
   "typingRelationTranslationRules": {},
   "hierarchyTypes": [
@@ -168,11 +179,6 @@
     "+": "3",
     "=": "2",
     "-": "1",
-    "--": "0",
-    "Low": "0",
-    "High": "1",
-    "Normal": "0",
-    "Alert": "1",
-    "Emergency": "2"
+    "--": "0"
   }
 }

@@ -5,7 +5,10 @@ from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
 import tempfile
 import re
+import typing
+import time
 from variamos import model as mdl
+
 
 @dataclass
 class SWIBridge:
@@ -31,23 +34,54 @@ class SWIBridge:
             tmp.flush()
             # Seek file for reading
             tmp.seek(0)
-            with PrologMQI() as mqi:
-                with PrologThread(mqi) as prolog_thread:
-                    print(tmp.name)
-                    query_str = f"['{tmp.name}']"
-                    print(query_str)
-                    prolog_thread.query(query_str + ".")
-                    print("file loaded")
-                    result = prolog_thread.query(
-                        "program([!!!]), once(label([!!!])).".replace(
-                            "!!!", ",".join(occs)
-                        )
-                    )
-                    print(result)
-                    # handle solution before returning
-                    if result is False:
-                        raise SolverException("CLIF/SWI -> UNSAT")
-                    return result
+            # run the query
+            query_str = "program([!!!]), label([!!!]).".replace(
+                "!!!", ",".join(occs)
+            )
+            return self.query(
+                temp_file_name=tmp.name, query_str=query_str, n_sols=n_sols
+            )
+
+    # function to handle prolog queries
+    def query(
+        self, temp_file_name: str, query_str: str, n_sols: int
+    ) -> list[dict[str, typing.Any]]:
+        time_limit = 60.0
+        sols = []
+        with PrologMQI() as mqi:
+            with PrologThread(mqi) as prolog_thread:
+                print(temp_file_name)
+                query_str = f"['{temp_file_name}']"
+                print(query_str)
+                prolog_thread.query(query_str + ".")
+                print("file loaded")
+                prolog_thread.query_async(query_str, find_all=False)
+                # start python thread timer
+                # if timer expires, kill the prolog thread
+                start_time = time.perf_counter()
+                print("starting timer ", start_time)
+                while not (
+                    (loop_time := time.perf_counter()) - start_time > time_limit
+                ) and len(sols) < n_sols:
+                    result = prolog_thread.query_async_result()
+                    print("loop time ", loop_time)
+                    if result is None or result is False:
+                        break
+                    else:  # result is a solution
+                        if result is True:
+                            raise SolverException("SWI Missing Variables")
+                        # check that the result is a list, that its length is 1,
+                        # and that the first element is a dict
+                        if (
+                            not isinstance(result, list)
+                            and len(result) != 1
+                            and not isinstance(result[0], dict)
+                        ):
+                            raise SolverException("SWI Invalid Result")
+                        sols.append(result[0])
+                # after the timer expires or the prolog thread finishes
+                prolog_thread.stop()
+        return sols
 
     def update_model(self, model: mdl.Model, rules, result):
         for e in model.elements:

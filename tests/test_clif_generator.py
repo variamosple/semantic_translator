@@ -29,6 +29,9 @@ def vmos_model_obj(variamos_data):
     return model.Model(**variamos_data).construct_graph()
 
 
+@pytest.mark.skip(
+    reason="This is a benchmark test and does not reflect the current API"
+)
 def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
     t0 = time.perf_counter()
     clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)
@@ -50,6 +53,9 @@ def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
     print("Total roundtrip T", round((t4 - t0) * 1000, 3), "ms")
 
 
+@pytest.mark.skip(
+    reason="This is a benchmark test and does not reflect the current API"
+)
 def test_model_roundtrip(vmos_model_obj: model.Model, rules_data: rules.Rules):
     t0 = time.perf_counter()
     clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)

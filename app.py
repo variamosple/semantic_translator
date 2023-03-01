@@ -5,6 +5,7 @@ By: Camilo Correa Restrepo camilo.correa-restrepo@univ-paris1.fr
 By: Hiba Hnaini _@_.fr
 """
 
+import json
 from flask import Flask, request, jsonify, make_response
 from variamos import model, transform
 from solvers import query_handler
@@ -71,18 +72,31 @@ def translate():
 def construct_response(
     qh: query_handler.QueryHandler, content, model_idx: int, model: model.Model
 ):
+    query_result = qh.run_query(
+        project_json=content["data"]["project"],
+        idx=model_idx,
+        feature_model=model,
+    )
+    # update the model with the new values
+    model.update_selections(query_result)
+    # fix the project JSON content
+    # get the lenght of the models
+    dom_length = len(
+        content["data"]["project"]["productLines"][0]["domainEngineering"][
+            "models"
+        ]
+    )
+    model = json.loads(model.json(by_alias=True))
+    if model_idx < dom_length:
+        content["data"]["project"]["productLines"][0]["domainEngineering"][
+            "models"
+        ][model_idx] = model
+    else:
+        content["data"]["project"]["productLines"][0]["applicationEngineering"][
+            "models"
+        ][model_idx - dom_length] = model
     return _corsify_actual_response(
-        jsonify(
-            {
-                "data": {
-                    "content": qh.run_query(
-                        project_json=content["data"]["project"],
-                        idx=model_idx,
-                        feature_model=model,
-                    )
-                }
-            }
-        )
+        jsonify({"data": {"content": content["data"]["project"]}})
     )
 
 

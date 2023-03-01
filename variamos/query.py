@@ -3,11 +3,17 @@ from enum import Enum
 from utils import enums
 
 
+class OptimizationDirectionEnum(str, Enum):
+    min = "min"
+    max = "max"
+
+
 class OperationEnum(str, Enum):
     sat = "sat"
     solve = "solve"
     nsolve = "nsolve"
     get_model = "get_model"
+    optimize = "optimize"
 
 
 class ModelObjectEnum(str, Enum):
@@ -40,3 +46,5 @@ class Query(pydantic.BaseModel):
     operation_n: pydantic.PositiveInt | None
     iterate_over: IterationSpec | None
     solver: enums.TargetLang
+    optimization_target: str | None
+    optimization_direction: OptimizationDirectionEnum | None

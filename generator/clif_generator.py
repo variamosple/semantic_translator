@@ -3,6 +3,7 @@ import uuid
 import networkx as nx
 import re
 from variamos import model, rules
+from utils import uuid_utils
 from utils import exceptions
 from textx import metamodel_from_file, get_children_of_type
 from grammars import clif
@@ -13,6 +14,7 @@ class CLIFGenerator:
     rule_set: rules.Rules
     # variamos_model: model.Model
     variamos_graph: nx.DiGraph
+    # TODO: Add prefixes for all of the variables by default
     _var_prefix = "UUID_"
 
     def __init__(
@@ -60,7 +62,7 @@ class CLIFGenerator:
                 sentence_strings.append(generated_string)
         # Handle attribute accesses from the complex constraints
         if (arb_constraints := self.variamos_graph.graph["constraints"]) != "":
-            self.generate_arbitrary_constraint_sentences(
+            arb_constraints = self.generate_arbitrary_constraint_sentences(
                 arb_constraints=arb_constraints, names_ids=names_ids
             )
         return "\n".join(
@@ -72,7 +74,9 @@ class CLIFGenerator:
         self,
         arb_constraints: str,
         names_ids: list[tuple[str, uuid.UUID]],
-    ) -> None:
+        # We cannot actually pass the string by reference, therefore we do
+        # not have a side-effect on the original string
+    ) -> str:
         # We need to do extra stuff whenever we encounter arbitrary
         # constraints such that we can replace normal stuff with the correct
         # variable names (UUIDs)
@@ -108,7 +112,9 @@ class CLIFGenerator:
                             arb_constraints = arb_constraints.replace(
                                 expression,
                                 "UUID_"
-                                + model.to_underscore_from_uuid(prop["id"]),
+                                + uuid_utils.to_underscore_from_uuid(
+                                    prop["id"]
+                                ),
                             )
                             found = True
                     # Here if we arrive at the end fo the iteration and we
@@ -124,9 +130,10 @@ class CLIFGenerator:
                 # NOTE: This probably means that this will not work correctly if an attribute
                 # shares a name with a feature...
                 arb_constraints = arb_constraints.replace(
-                    name, "UUID_" + model.to_underscore_from_uuid(id)
+                    name, "UUID_" + uuid_utils.to_underscore_from_uuid(id)
                 )
                 # TODO: Do the regex logic to handle attribute selection
+        return arb_constraints
 
     def generate_element_sentence(
         self, element_id: uuid.UUID, element: model.Element
@@ -194,7 +201,7 @@ class CLIFGenerator:
             # Replace self
             cons = cons.replace(
                 rule.node_rule.param_mapping.node,
-                model.to_underscore_from_uuid(element.id),
+                uuid_utils.to_underscore_from_uuid(element.id),
             )
             # Now run the expression expansion
             tuple_idx = 0 if rule.node_rule.param_mapping.incoming else 1
@@ -220,7 +227,8 @@ class CLIFGenerator:
         else:
             cons = rule.leaf_rule.constraint
             return cons.replace(
-                rule.leaf_rule.param, model.to_underscore_from_uuid(element.id)
+                rule.leaf_rule.param,
+                uuid_utils.to_underscore_from_uuid(element.id),
             )
 
     def check_typing_relation(
@@ -271,14 +279,14 @@ class CLIFGenerator:
         # TODO: Make this robust
         return cons.replace(
             "F1",
-            model.to_underscore_from_uuid(
+            uuid_utils.to_underscore_from_uuid(
                 relation.target_id
                 if rule.deriving_relation_inbound
                 else relation.source_id
             ),
         ).replace(
             "F2",
-            model.to_underscore_from_uuid(
+            uuid_utils.to_underscore_from_uuid(
                 relation.source_id
                 if rule.deriving_relation_inbound
                 else relation.target_id
@@ -287,6 +295,9 @@ class CLIFGenerator:
 
     def generate_attribute_senteces(self, element: model.Element) -> list[str]:
         sentences = []
+        # FIXME: Add better handling for feature models so attributes are only
+        # added for the types declared.
+        # This only handles custom attributes
         for property in (p for p in element.properties if p["custom"]):
             if (
                 (p_t := property["type"]) not in self.rule_set.attribute_types
@@ -298,9 +309,34 @@ class CLIFGenerator:
             rule = self.rule_set.attribute_translation_rules[p_t]
             constraint = rule.constraint.replace(
                 rule.template,
-                model.to_underscore_from_uuid(property[rule.param]),
+                uuid_utils.to_underscore_from_uuid(property[rule.param]),
             )
             sentences.append(constraint)
+        # HACK: This is a hack to add the attribute for GRIDSTIX
+        # we will discriminate on the attribute type
+        # and use the attribute types to determine the node types of the
+        # elements that will have the attribute
+        # FIXME: This condition should probably be handled outside of this
+        # function in the main loop
+        if element.type in self.rule_set.attribute_types:
+            for property in (
+                p
+                for p in element.properties
+                if p["name"] in self.rule_set.attribute_translation_rules
+            ):
+                rule = self.rule_set.attribute_translation_rules[property["name"]]
+                # Do the translation for the parent element
+                constraint = rule.constraint.replace(
+                    rule.parent, uuid_utils.to_underscore_from_uuid(element.id)
+                )
+                # Do the translation for the attribute
+                constraint = constraint.replace(
+                    rule.template,
+                    uuid_utils.to_underscore_from_uuid(property[rule.param])
+                    if rule.param == "id"
+                    else property[rule.param],
+                )
+                sentences.append(constraint)
         return sentences
 
     def generate_reified_element_sentence(
@@ -390,7 +426,8 @@ class CLIFGenerator:
             cons = cons.replace(
                 element_rule.param_mapping.node,
                 # TODO: Check that these types are correct
-                self._var_prefix + model.to_underscore_from_uuid(element_id),
+                self._var_prefix
+                + uuid_utils.to_underscore_from_uuid(element_id),
             )
         # Now that the expressions relating to the edges have been replaced
         # we must replace the expressions tied to properties in the bundle.
@@ -430,7 +467,7 @@ class CLIFGenerator:
             else:
                 _, node_uuid, relation = edges[0]
             binding_var = param_mapping.var
-            node_uuid = self._var_prefix + model.to_underscore_from_uuid(
+            node_uuid = self._var_prefix + uuid_utils.to_underscore_from_uuid(
                 node_uuid
             )
             # We must now do the same lookup analysis as before
@@ -621,7 +658,7 @@ class CLIFGenerator:
                         new_inner_expr.replace(
                             sub_var,
                             self._var_prefix
-                            + model.to_underscore_from_uuid(
+                            + uuid_utils.to_underscore_from_uuid(
                                 node_uuid
                             ),  # type: ignore # noqa: E501
                         )
@@ -634,7 +671,7 @@ class CLIFGenerator:
         #############################
         # FIXME: As before, this should be a structured representation
         node_str_uuids: list[str] = [
-            self._var_prefix + model.to_underscore_from_uuid(node_id)
+            self._var_prefix + uuid_utils.to_underscore_from_uuid(node_id)
             for (node_id, _) in node_uuids
         ]
         for func in self.rule_set.relation_reification_expansions["functions"]:
@@ -689,13 +726,51 @@ class CLIFGenerator:
 
     def generate_simple_element_sentence(self, element: model.Element):
         element_rule = self.rule_set.element_translation_rules[element.type]
+        # Check that the element has a translation rule
         if not isinstance(element_rule, rules.SimpleElementRule):
             raise exceptions.SemanticException(
                 "Simple elements must have an element translation rule"
             )
-        return element_rule.constraint.replace(
-            element_rule.param, model.to_underscore_from_uuid(element.id)
-        )
+        # Check whether the element has an enumeration spec
+        enum_in_constraint = "enum" in element_rule.constraint
+        if element_rule.enum_mapping is None:
+            if enum_in_constraint:
+                raise exceptions.SemanticException(
+                    "The element has no enumeration mapping"
+                )
+            return element_rule.constraint.replace(
+                element_rule.param,
+                uuid_utils.to_underscore_from_uuid(element.id),
+            )
+        else:
+            if not enum_in_constraint:
+                raise exceptions.SemanticException(
+                    "There is an enum mapping but no enum in the constraint"
+                )
+            else:
+                # find the value of the property that contains the enum values
+                enum_vals_string: str = next(
+                    prop["value"]
+                    for prop in element.properties
+                    if prop["name"] == element_rule.enum_mapping.attribute
+                )
+                # split the enum_vals_string into a list of enum values
+                enum_vals = enum_vals_string.split(",")
+                # check that there are multiple enum values
+                if len(enum_vals) < 2:
+                    raise exceptions.SemanticException(
+                        "There must be at least two enum values"
+                    )
+                # construct the inner portion of the constraint
+                constraint = element_rule.constraint.replace(
+                    element_rule.enum_mapping.var, " ".join(enum_vals)
+                )
+                # construct the outer portion of the constraint
+                constraint = constraint.replace(
+                    element_rule.param,
+                    uuid_utils.to_underscore_from_uuid(element.id),
+                )
+                return constraint
 
     def generate_relationship_sentence(
         self, relationship: model.Relationship
@@ -747,8 +822,8 @@ class CLIFGenerator:
                 "Neither the source nor the target can be empty"
             )
         endpoints = (
-            model.to_underscore_from_uuid(relationship.source_id),
-            model.to_underscore_from_uuid(relationship.target_id),
+            uuid_utils.to_underscore_from_uuid(relationship.source_id),
+            uuid_utils.to_underscore_from_uuid(relationship.target_id),
         )
         cons = relation_rule.constraint
         for (p, node_uuid) in zip(relation_rule.params, endpoints):
