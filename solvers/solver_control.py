@@ -271,19 +271,20 @@ class SolverController:
         self.constraint_model.fix_variable(variable, value)
         return self.sat()
 
-    def sat(self) -> bool:
-        try:
-            self.solve_one()
-            return True
-        except exceptions.SolverException:
-            return False
+    # Refactor to return a result in alignment with the rest of the api
+    def sat(self) -> results.Result:
+        # try:
+        result = self.solve_one()
+        return result
+        # except exceptions.SolverException:
+        #     return False
 
     def solve_one(self):
         return self.solve_n(1)
 
     def solve_n(self, n_sols):
         # Maybe improve the api to make the typecheck pass
-        return self.bridge.solve(self.constraint_model, n_sols)
+        return self.result_function(self.bridge.solve(self.constraint_model, n_sols))
 
     def optimize(
         self, objective: str, direction: query.OptimizationDirectionEnum

@@ -10,6 +10,12 @@ from variamos import query
 
 @dataclass
 class MiniZincBridge:
+    """
+    This class is a bridge between the MiniZinc application and the rest of the
+    application. It is used for running queries and solving models. It allows 
+    for both optimization and satisfaction problems, though is limited to single
+    solutions for optimization problems.
+    """
     def solve(self, model: SolverModel, n_sols: int = 1):
         if not isinstance(model, MZNModel):
             raise TypeError("Must be a mzn model")
@@ -58,8 +64,9 @@ class MiniZincBridge:
         # and the number of solutions if we have multiple solutions
         n_sol_arg = None if n_sols == 1 else n_sols
         result = instance.solve(nr_solutions=n_sol_arg)
-        if not result.status.has_solution():
-            raise SolverException("CLIF/MZN - Model is UNSAT")
+        # We won't except out if there solution is not found
+        # if not result.status.has_solution():
+        #     raise SolverException("CLIF/MZN - Model is UNSAT")
         return result
 
     def update_model(self, model: mdl.Model, rules: rls.Rules, result):

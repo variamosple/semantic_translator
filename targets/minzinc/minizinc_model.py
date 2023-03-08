@@ -329,7 +329,7 @@ def handle_atom_sentence(
                         atom.terms[0], enum_values=pred.values
                     )
                 else:
-                    raise RuntimeError("oops")
+                    raise RuntimeError("Unknown type predicate")
                 # var_decl = MZNVarDecl(atom.terms[0], var_type)
                 # model.add_var_decl(var_decl)
         else:

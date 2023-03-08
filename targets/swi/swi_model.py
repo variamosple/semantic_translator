@@ -31,12 +31,12 @@ class SWIModel(SolverModel):
     __delimiter = ","
 
     def __init__(self) -> None:
-        self.var_decls: dict[str, SWIFDVarDomainDec] = dict()
+        self.var_decls: dict[str, SWIFDVarDomainDec | SWIEnumVarDec] = dict()
         self.constraint_decls: list[SWIFDConstraint] = []
 
     def add_cons(self, cons: SWIConstraint) -> None:
         match cons:
-            case SWIFDVarDomainDec():
+            case SWIFDVarDomainDec() | SWIEnumVarDec():
                 assert cons.terms is not None
                 assert isinstance((t := cons.terms[0]), str), "Must be a string"
                 self.var_decls[t] = cons
@@ -175,6 +175,32 @@ class SWIFDVarDomainDec(SWIConstraint):
             raise SemanticException("error in domain def")
 
 
+class SWIEnumVarDec(SWIConstraint):
+    def __init__(
+        self,
+        terms: Optional[list[str | int | clif.ArithmeticExpr]] = None,
+        values: list[str] = [],
+    ) -> None:
+        super().__init__(terms)
+        self.values = values
+
+    def to_string(self) -> str:
+        if len(self.values) == 0:
+            raise SemanticException("Enum variables must have values")
+        if self.terms is None or len(self.terms) != 1:
+            raise SemanticException("Enum variables must have one term")
+        values_list = "[" + ", ".join(self.values) + "]"
+        ints = list(map(str, range(len(self.values))))
+        enum_values_list = "[" + ", ".join(ints) + "]"
+        var_bounds = (ints[0], ints[-1])
+        enum_str = (
+            f"{values_list} = {enum_values_list}, "
+            f"{self.terms[0]} in {var_bounds[0]}..{var_bounds[1]}"
+        )
+        print(enum_str)
+        return enum_str
+
+
 def handle_bool_sentence(sentence: clif.BoolSentence) -> list[SWIConstraint]:
     if len(sentence.sentences) > 0:
         if sentence.operator == "and":
@@ -262,9 +288,16 @@ def handle_atom_sentence(sentence: clif.AtomSentence) -> SWIConstraint:
                     if pred.lower is None or pred.upper is None:
                         raise SemanticException("integer bounds undefined")
                     bounds = (pred.lower, pred.upper)
-                else:
+                elif pred.integer:
                     # bounds = ("inf", "sup")
-                    bounds = 0, 10000
+                    bounds = 0, 100000
+                elif pred.enum:
+                    if pred.values is None or len(pred.values) == 0:
+                        raise SemanticException("Enum values undefined")
+                    # special return case for enum
+                    return SWIEnumVarDec(terms=atom.terms, values=pred.values)
+                else:
+                    raise SemanticException("Type declaration not supported")
                 return SWIFDVarDomainDec(bounds=bounds, terms=atom.terms)
                 # var_decl = MZNVarDecl(atom.terms[0], var_type)
                 # model.add_var_decl(var_decl)

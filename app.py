@@ -72,6 +72,8 @@ def translate():
 def construct_response(
     qh: query_handler.QueryHandler, content, model_idx: int, model: model.Model
 ):
+    # TODO: handle the different types of queries in the responses to avoid
+    # always updating the model and updating the project JSON
     query_result = qh.run_query(
         project_json=content["data"]["project"],
         idx=model_idx,

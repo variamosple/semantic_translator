@@ -25,9 +25,9 @@
     }
   },
   "attributeTypes": [
-    "Integer",
-    "String",
-    "Boolean"
+    "RootFeature",
+    "AbstractFeature",
+    "ConcreteFeature"
   ],
   "attributeTranslationRules": {
     "Integer":{

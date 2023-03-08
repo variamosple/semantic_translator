@@ -114,7 +114,7 @@ class TP:
     def model_str(self, target) -> str:
         return (
             " "
-            + self.op
+            + ("//" if target == TargetLang.swi and self.op == "/" else self.op)
             + " "
             + self.f.model_str(target)
             + (self.tp.model_str(target) if self.tp is not None else "")
@@ -129,7 +129,7 @@ class F:
 
     def model_str(self, target) -> str:
         if self.expr is not None:
-            return self.expr.model_str(target)
+            return "(" + self.expr.model_str(target) + ")"
         elif self.val is not None:
             if isinstance(self.val, int):
                 return str(self.val)
@@ -139,7 +139,7 @@ class F:
                 else:
                     return "'" + self.val + "'"
             elif isinstance(self.val, ArithmeticExpr):
-                return self.val.model_str(target)
+                return "(" + self.val.model_str(target) + ")"
             else:
                 raise RuntimeError(f"Wrong class type for prop:{self.val}")
         else:
