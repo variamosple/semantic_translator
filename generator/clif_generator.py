@@ -300,8 +300,9 @@ class CLIFGenerator:
         # This only handles custom attributes
         for property in (p for p in element.properties if p["custom"]):
             if (
-                (p_t := property["type"]) not in self.rule_set.attribute_types
-                or p_t not in self.rule_set.attribute_translation_rules
+                element.type not in self.rule_set.attribute_types
+                or (p_t := property["type"])
+                not in self.rule_set.attribute_translation_rules
             ):
                 raise exceptions.SemanticException(
                     "Unknown attribute type", property["type"]
@@ -324,7 +325,9 @@ class CLIFGenerator:
                 for p in element.properties
                 if p["name"] in self.rule_set.attribute_translation_rules
             ):
-                rule = self.rule_set.attribute_translation_rules[property["name"]]
+                rule = self.rule_set.attribute_translation_rules[
+                    property["name"]
+                ]
                 # Do the translation for the parent element
                 constraint = rule.constraint.replace(
                     rule.parent, uuid_utils.to_underscore_from_uuid(element.id)

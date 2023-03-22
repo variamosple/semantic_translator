@@ -69,14 +69,8 @@ class Model(pydantic.BaseModel):
         return G
 
     # Handle updating selections from results
-    def update_selections(self, result: results.Result):
-        # check that there is single solution in the result
-        if result.solution is None:
-            raise Exception("No solution found")
-        if len(result.solution.solutions) != 1:
-            raise NotImplementedError("Multiple solutions not supported")
+    def update_selections(self, solution: dict[str, int]):
         # get the solution
-        solution = result.solution.solutions[0]
         for elem in self.elements:
             # check if the element is in the solution and that it has a
             # selection property
@@ -98,6 +92,6 @@ class Model(pydantic.BaseModel):
             ):
                 # check the value in the solution
                 if solution[str(elem.id)] == 1:
-                    sel_prop["value"] = "Selected"
+                    sel_prop["value"] = "SelectedForced"
                 else:
-                    sel_prop["value"] = "Unselected"
+                    sel_prop["value"] = "UnselectedForced"

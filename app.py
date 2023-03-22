@@ -6,6 +6,7 @@ By: Hiba Hnaini _@_.fr
 """
 
 import json
+import copy
 from flask import Flask, request, jsonify, make_response
 from variamos import model, transform
 from solvers import query_handler
@@ -79,27 +80,61 @@ def construct_response(
         idx=model_idx,
         feature_model=model,
     )
-    # update the model with the new values
-    model.update_selections(query_result)
-    # fix the project JSON content
-    # get the lenght of the models
-    dom_length = len(
-        content["data"]["project"]["productLines"][0]["domainEngineering"][
-            "models"
-        ]
-    )
-    model = json.loads(model.json(by_alias=True))
-    if model_idx < dom_length:
-        content["data"]["project"]["productLines"][0]["domainEngineering"][
-            "models"
-        ][model_idx] = model
-    else:
-        content["data"]["project"]["productLines"][0]["applicationEngineering"][
-            "models"
-        ][model_idx - dom_length] = model
-    return _corsify_actual_response(
-        jsonify({"data": {"content": content["data"]["project"]}})
-    )
+    if qh.is_dry():
+        # In this case we know the response is a boolean
+        return _corsify_actual_response(
+            jsonify({"data": {"content": query_result}})
+        )
+    elif not query_result.solution.single_solution:
+        # In this case we know the response is a list of configurations
+        # HACK: FIXME: We will hack together the set of responses by creating a list
+        # of project with the different configurations
+        # This needs to be better handled in the future
+        dom_length = len(
+            content["data"]["project"]["productLines"][0]["domainEngineering"][
+                "models"
+            ]
+        )
+        model_copies = []
+        project_copies = []
+        for sln in query_result.solution.solutions:
+            m_c = model.copy(deep=True)
+            m_c.update_selections(sln)
+            model_copies.append(m_c)
+            p_c = copy.deepcopy(content["data"]["project"])
+            p_c["productLines"][0][
+                "domainEngineering"
+                if model_idx < dom_length
+                else "applicationEngineering"
+            ]["models"][model_idx % dom_length] = json.loads(
+                m_c.json(by_alias=True)
+            )
+            project_copies.append(p_c)
+        return _corsify_actual_response(
+            jsonify({"data": {"content": project_copies}})
+        )
+    elif query_result.solution.single_solution:
+        # update the model with the new values
+        model.update_selections(query_result.solution.solutions[0])
+        # fix the project JSON content
+        # get the lenght of the models
+        dom_length = len(
+            content["data"]["project"]["productLines"][0]["domainEngineering"][
+                "models"
+            ]
+        )
+        model = json.loads(model.json(by_alias=True))
+        if model_idx < dom_length:
+            content["data"]["project"]["productLines"][0]["domainEngineering"][
+                "models"
+            ][model_idx] = model
+        else:
+            content["data"]["project"]["productLines"][0][
+                "applicationEngineering"
+            ]["models"][model_idx - dom_length] = model
+        return _corsify_actual_response(
+            jsonify({"data": {"content": content["data"]["project"]}})
+        )
 
 
 def _build_cors_preflight_response():

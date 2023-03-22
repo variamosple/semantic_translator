@@ -54,6 +54,12 @@ class QueryHandler:
         clif_model: clif.Text = clif_mm.model_from_str(self.clif_str)
         return clif_model
 
+    def is_dry(self):
+        return (
+            self.query_obj.operation == query.OperationEnum.sat
+            or self.query_obj.operation == query.OperationEnum.get_model
+        )
+
     def run_query(self, project_json, idx, feature_model):
         # there can either be iteration or not
         if (i_spec := self.query_obj.iterate_over) is not None:
@@ -75,19 +81,18 @@ class QueryHandler:
                 case query.OperationEnum.solve:
                     # FIXME: We do not yet handle multiple product lines
                     # FIXME: We have a problem handling model updates now...
-                    self.controller.update_model(
-                        fm=feature_model,
-                        rules=self.translation_rules,
-                        result=self.controller.solve_one(),
-                    )
-                    project_json["productLines"][0]["domainEngineering"][
-                        "models"
-                    ][idx] = json.loads(feature_model.json(by_alias=True))
-                    return project_json
+                    # self.controller.update_model(
+                    #     fm=feature_model,
+                    #     rules=self.translation_rules,
+                    #     result=self.controller.solve_one(),
+                    # )
+                    # project_json["productLines"][0]["domainEngineering"][
+                    #     "models"
+                    # ][idx] = json.loads(feature_model.json(by_alias=True))
+                    # return project_json
+                    return self.controller.solve_one()
                 case query.OperationEnum.nsolve:
-                    return len(
-                        self.controller.solve_n(self.query_obj.operation_n)
-                    )
+                    return self.controller.solve_n(self.query_obj.operation_n)
                 case query.OperationEnum.get_model:
                     return self.pretty_model()
                 case query.OperationEnum.optimize:

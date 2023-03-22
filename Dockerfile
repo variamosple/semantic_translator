@@ -14,7 +14,7 @@ RUN apt-get update
 
 RUN apt-get install swi-prolog -y
 
-RUN pip install flask minizinc swiplserver
+RUN pip install flask minizinc swiplserver pydantic networkx pyhumps textx
 
 
 

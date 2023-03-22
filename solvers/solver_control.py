@@ -272,10 +272,10 @@ class SolverController:
         return self.sat()
 
     # Refactor to return a result in alignment with the rest of the api
-    def sat(self) -> results.Result:
+    def sat(self) -> bool:
         # try:
         result = self.solve_one()
-        return result
+        return result.status == results.StatusEnum.SATISFIED
         # except exceptions.SolverException:
         #     return False
 
