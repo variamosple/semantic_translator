@@ -126,15 +126,15 @@
   },
   "relationReificationPropertySchema": {
     "type": {
-      "index": 1,
+      "index": 0,
       "key": "value"
     },
     "min": {
-      "index": 2,
+      "index": 1,
       "key": "value"
     },
     "max": {
-      "index": 3,
+      "index": 2,
       "key": "value"
     }
   },
