@@ -1,119 +1,119 @@
 {
-    "elements": {
-      "Goal": {
-        "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0idmFyaWFibGUiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIxMCIgeT0iMCIgLz4KICAgIDxjb25zdHJhaW50IHg9IjQ1IiB5PSIwIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMTAwIiB5PSIwIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iNSIgeT0iMjUiLz4KICAgIDxjb25zdHJhaW50IHg9Ijk1IiB5PSIyNSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjQ1IiB5PSI1MCIgLz4KICAgIDxjb25zdHJhaW50IHg9IjkwIiB5PSI1MCIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgIDxmaWxsY29sb3IgY29sb3I9IiNENUU4RDQiIC8+CiAgICAgPHBhdGg+CiAgICAgICAgICAgIDxtb3ZlIHg9IjEwIiB5PSIwIi8+CiAgICAgICAgICAgIAogICAgICAgICAgICA8bGluZSB4PSIxMDAiIHk9IjAiLz4KICAgICAgICAgICAgPGxpbmUgeD0iOTAiIHk9IjUwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjAiIHk9IjUwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjEwIiB5PSIwIi8+CiAgICA8L3BhdGg+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Goal",
-        "width": 100,
-        "design": "shape=Goal",
-        "height": 50
-      },
-      "Claim": {
-        "draw": "PHNoYXBlIGg9IjEwMCIgdz0iMTAwIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iaW5oZXJpdCI+CiAgPGNvbm5lY3Rpb25zPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMCIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwLjUiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgPC9jb25uZWN0aW9ucz4KICA8YmFja2dyb3VuZD4KICAgICA8ZmlsbGNvbG9yIGNvbG9yPSIjRkZGRkZGIiAvPgogICAgIDxwYXRoPgogICAgICAgICAgICA8bW92ZSB4PSIwIiB5PSIxMDAiLz4KICAgICAgICAgICAgCiAgICAgICAgICAgIDxsaW5lIHg9IjIwIiB5PSIwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjgwIiB5PSIwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjEwMCIgeT0iMTAwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjAiIHk9IjEwMCIvPgogICAgICAgICAgIAogICAgPC9wYXRoPgogIDwvYmFja2dyb3VuZD4KICA8Zm9yZWdyb3VuZD4KICAgIDxmaWxsc3Ryb2tlIC8+CiAgICAKICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Claim",
-        "width": 100,
-        "design": "shape=Claim",
-        "height": 50
-      },
-      "SoftGoal": {
-        "draw": "PHNoYXBlIGg9IjEwMCIgdz0iMTAwIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iaW5oZXJpdCI+CiAgPGNvbm5lY3Rpb25zPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMCIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwLjUiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgPC9jb25uZWN0aW9ucz4KICA8YmFja2dyb3VuZD4KICAgICA8ZmlsbGNvbG9yIGNvbG9yPSIjREFFOEZDIiAvPgogICAgIDxwYXRoPgogICAgICAgICAgICA8bW92ZSB4PSIxNSIgeT0iNTAiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSIwIiB4Mj0iMCIgeDM9IjI1IiB5MT0iNTAiIHkyPSIzNSIgeTM9IjM1Ii8+CiAgICAgICAgICAgIDxjdXJ2ZSB4MT0iMzAiIHgyPSI2MCIgeDM9IjY1IiB5MT0iMTAiIHkyPSIzMCIgeTM9IjM1Ii8+CiAgICAgICAgICAgIDxjdXJ2ZSB4MT0iOTUiIHgyPSIxMDAiIHgzPSI4NSIgeTE9IjMwIiB5Mj0iNDUiIHkzPSI1MCIvPgogICAgICAgICAgICA8Y3VydmUgeDE9IjkwIiB4Mj0iMTAwIiB4Mz0iNzUiIHkxPSI1MCIgeTI9IjY4IiB5Mz0iNjUiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSI2NSIgeDI9IjQwIiB4Mz0iMzMiIHkxPSI3NSIgeTI9Ijc1IiB5Mz0iNjUiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSIxNSIgeDI9IjUiIHgzPSIxNSIgeTE9IjcwIiB5Mj0iNTgiIHkzPSI1MCIvPgo8L3BhdGg+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cgo=",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Soft Goal",
-        "width": 100,
-        "design": "shape=SoftGoal",
-        "height": 100
-      },
-      "Cardinality": {
-        "draw": "PHNoYXBlIG5hbWU9ImNvbXBvbmVudCIgYXNwZWN0PSJmaXhlZCIgc3Ryb2tld2lkdGg9IjIiPgoJPGJhY2tncm91bmQ+CgkJPHN0cm9rZWNvbG9yIGNvbG9yPSIjNDQ2ZTc5Ii8+CgkJPGZpbGxjb2xvciBjb2xvcj0iI2ZmZmZmZiIvPgoJCTxwYXRoPiAKCQkJPGVsbGlwc2UgeD0iMCIgeT0iMCIgdz0iMTAwIiBoPSIxMDAiLz4gCgkJPC9wYXRoPgkJCgk8L2JhY2tncm91bmQ+Cgk8Zm9yZWdyb3VuZD4KCQk8ZmlsbHN0cm9rZS8+Cjx0ZXh0IHg9IjUwIiB5PSI0NSIgYWxpZ249ImNlbnRlciI+PCFbQ0RBVEFbCgkJCWZ1bmN0aW9uKHNoYXBlKQoJCQl7CgkJCQlpZihzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ0Zyb20nXS52YWx1ZSE9InVuZGVmaW5lZCIgJiYgc2hhcGUuc3RhdGUuY2VsbC52YWx1ZS5hdHRyaWJ1dGVzWydUbyddLnZhbHVlIT0idW5kZWZpbmVkIikKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ0Zyb20nXS52YWx1ZSsiOiIrc2hhcGUuc3RhdGUuY2VsbC52YWx1ZS5hdHRyaWJ1dGVzWydUbyddLnZhbHVlOwoJCQl9CgkJXV0+PC90ZXh0PiAKCTwvZm9yZWdyb3VuZD4KPC9zaGFwZT4=",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAACE0lEQVRIS7WVv6v5YRTH3zaL3wYDizLIxMBCyT+AJJNEWCkpBjuDYiKUSULiL/BjU4qESUhsfkRZTG7PR1yuz/12fd17xuc5z+v8es45jPP5fAaNbDYbhMNhVKtVsFgsKJVK6PV6tFot9Pt9HI9HWCwWRKNR8Pn8JwKDDpxOpxGJRFCr1aBQKMDj8Z4e7nY7jMdjmEwmCu7xeB50nsBmsxkikQipVIouENozr9eLw+GAUql0u38AEygJ1+fz/Rh6VYzH4+h0OqhUKtTRDUzCHwwGL3n61TpJh0ajgdvtvoBJoeRyOdbr9cuefn1A6jGfzy9gYsnhcECr1b4NbrfbKBaLFzD5LtPplLb6r1q6Rs9YLBZnnU6HxWLxKuNbfYlEAka9Xj/n83nU6/VfAxuNRjASiQTVI36//9fAyWTyDz3+sxyTPAgEAkwmE9ph8mp+SC+Q+UJ9N9Lrdrsd5He8K81mE+Vy+QImk0omk2G73b7LBYfDwXK5/JwV2WwW3W4XmUzmv+Eul4uK2ul0foIJzWazQa1WIxAIvAwnM3k4HKJQKDxOtyvJarWCy+WCRPBTIZ6eTqcb9GFs3kNyuRyCwSDVjaTCQqHwyQap/mg0ojZIIpGgwr8X2tVEFPb7PUKhELXzmEwmVCoVDAYDGo0Ger0e5SHZebFYDGw2+8nwt+B7zdVqRcFmsxmkUillRCwW/zNTH/HNGKNltOpYAAAAAElFTkSuQmCC",
-        "label": "Cardinality",
-        "width": 100,
-        "design": "shape=Cardinality",
-        "height": 50,
-        "label_property": "None"
-      },
-      "SoftInfluence": {
-        "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgo8ZmlsbGNvbG9yIGNvbG9yPSIjQkFDOEQzIiAvPgogICAgIDxlbGxpcHNlIHg9IjAiIHk9IjAiIHc9IjEwMCIgaD0iNTAiIC8+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgCiAgICA8c3Ryb2tlIC8+CiAgPC9mb3JlZ3JvdW5kPgo8L3NoYXBlPg==",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Soft Influence",
-        "width": 100,
-        "design": "shape=SoftInfluence",
-        "height": 50
-      },
-      "ContextVariable": {
-        "draw": "PHNoYXBlIGg9IjgwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgPGZpbGxjb2xvciBjb2xvcj0iIzFCQTFFMiIgLz4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHc9IjEwMCIgaD0iODAiIC8+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDx0ZXh0IHg9IjUwIiB5PSI1NSIgYWxpZ249ImNlbnRlciI+PCFbQ0RBVEFbCgkJCWZ1bmN0aW9uKHNoYXBlKQoJCQl7CgkJCQlpZihzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ1Bvc3NpYmxlVmFsdWVzJ10udmFsdWUhPSJ1bmRlZmluZWQiKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuICJ7IitzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ1Bvc3NpYmxlVmFsdWVzJ10udmFsdWUrIn0iOwoJCQl9CgkJXV0+PC90ZXh0PiAKICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Context Variable",
-        "width": 100,
-        "design": "shape=ContextVariable",
-        "height": 50
-      },
-      "Operationalization": {
-        "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgIDxmaWxsY29sb3IgY29sb3I9IiNGNUY1RjUiIC8+CiAgICAgPHBhdGg+CiAgICAgICAgICAgIDxtb3ZlIHg9IjAiIHk9IjI1Ii8+CiAgICAgICAgICAgIAogICAgICAgICAgICA8bGluZSB4PSIyMCIgeT0iMCIvPgogICAgICAgICAgICA8bGluZSB4PSI4MCIgeT0iMCIvPgogICAgICAgICAgICA8bGluZSB4PSIxMDAiIHk9IjI1Ii8+CiAgICAgICAgICAgIDxsaW5lIHg9IjgwIiB5PSI1MCIvPgogICAgICAgICAgICA8bGluZSB4PSIyMCIgeT0iNTAiLz4KICAgICAgICAgICAgPGxpbmUgeD0iMCIgeT0iMjUiLz4KICAgIDwvcGF0aD4KICA8L2JhY2tncm91bmQ+CiAgPGZvcmVncm91bmQ+CiAgICA8ZmlsbHN0cm9rZSAvPgogICAgCiAgICA8c3Ryb2tlIC8+CiAgPC9mb3JlZ3JvdW5kPgo8L3NoYXBlPgo=",
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
-        "label": "Operationalization",
-        "width": 100,
-        "design": "shape=Operationalization",
-        "height": 50
-      }
+  "elements": {
+    "Goal": {
+      "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0idmFyaWFibGUiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIxMCIgeT0iMCIgLz4KICAgIDxjb25zdHJhaW50IHg9IjQ1IiB5PSIwIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMTAwIiB5PSIwIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iNSIgeT0iMjUiLz4KICAgIDxjb25zdHJhaW50IHg9Ijk1IiB5PSIyNSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjQ1IiB5PSI1MCIgLz4KICAgIDxjb25zdHJhaW50IHg9IjkwIiB5PSI1MCIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgIDxmaWxsY29sb3IgY29sb3I9IiNENUU4RDQiIC8+CiAgICAgPHBhdGg+CiAgICAgICAgICAgIDxtb3ZlIHg9IjEwIiB5PSIwIi8+CiAgICAgICAgICAgIAogICAgICAgICAgICA8bGluZSB4PSIxMDAiIHk9IjAiLz4KICAgICAgICAgICAgPGxpbmUgeD0iOTAiIHk9IjUwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjAiIHk9IjUwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjEwIiB5PSIwIi8+CiAgICA8L3BhdGg+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Goal",
+      "width": 100,
+      "design": "shape=Goal",
+      "height": 50
     },
-    "relationships": {
-      "SubGoal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=12;"
-          }
-        ],
-        "label_property": "None"
-      },
-      "SoftGoal_SoftGoal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=12;"
-          }
-        ],
-        "label_property": "None"
-      },
-      "Claim_SoftGoal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;"
-          }
-        ],
-        "label_property": "None"
-      },
-      "Cardinality_Goal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;fontSize=16"
-          }
-        ],
-        "label_property": "Value"
-      },
-      "SoftInfluence_SoftGoal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=10;fontSize=16"
-          }
-        ],
-        "label_property": "SatisfactionLevel"
-      },
-      "ContextVariable_SoftInfluence": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=10;"
-          }
-        ],
-        "label_property": "Value"
-      },
-      "Operationalization_Claim_Goal": {
-        "styles": [
-          {
-            "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;fontSize=16"
-          }
-        ],
-        "label_property": "Value"
-      }
+    "Claim": {
+      "draw": "PHNoYXBlIGg9IjEwMCIgdz0iMTAwIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iaW5oZXJpdCI+CiAgPGNvbm5lY3Rpb25zPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMCIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwLjUiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgPC9jb25uZWN0aW9ucz4KICA8YmFja2dyb3VuZD4KICAgICA8ZmlsbGNvbG9yIGNvbG9yPSIjRkZGRkZGIiAvPgogICAgIDxwYXRoPgogICAgICAgICAgICA8bW92ZSB4PSIwIiB5PSIxMDAiLz4KICAgICAgICAgICAgCiAgICAgICAgICAgIDxsaW5lIHg9IjIwIiB5PSIwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjgwIiB5PSIwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjEwMCIgeT0iMTAwIi8+CiAgICAgICAgICAgIDxsaW5lIHg9IjAiIHk9IjEwMCIvPgogICAgICAgICAgIAogICAgPC9wYXRoPgogIDwvYmFja2dyb3VuZD4KICA8Zm9yZWdyb3VuZD4KICAgIDxmaWxsc3Ryb2tlIC8+CiAgICAKICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Claim",
+      "width": 100,
+      "design": "shape=Claim",
+      "height": 50
+    },
+    "SoftGoal": {
+      "draw": "PHNoYXBlIGg9IjEwMCIgdz0iMTAwIiBhc3BlY3Q9InZhcmlhYmxlIiBzdHJva2V3aWR0aD0iaW5oZXJpdCI+CiAgPGNvbm5lY3Rpb25zPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMCIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwLjUiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMCIgeT0iMSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMC41IiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIxIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgPC9jb25uZWN0aW9ucz4KICA8YmFja2dyb3VuZD4KICAgICA8ZmlsbGNvbG9yIGNvbG9yPSIjREFFOEZDIiAvPgogICAgIDxwYXRoPgogICAgICAgICAgICA8bW92ZSB4PSIxNSIgeT0iNTAiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSIwIiB4Mj0iMCIgeDM9IjI1IiB5MT0iNTAiIHkyPSIzNSIgeTM9IjM1Ii8+CiAgICAgICAgICAgIDxjdXJ2ZSB4MT0iMzAiIHgyPSI2MCIgeDM9IjY1IiB5MT0iMTAiIHkyPSIzMCIgeTM9IjM1Ii8+CiAgICAgICAgICAgIDxjdXJ2ZSB4MT0iOTUiIHgyPSIxMDAiIHgzPSI4NSIgeTE9IjMwIiB5Mj0iNDUiIHkzPSI1MCIvPgogICAgICAgICAgICA8Y3VydmUgeDE9IjkwIiB4Mj0iMTAwIiB4Mz0iNzUiIHkxPSI1MCIgeTI9IjY4IiB5Mz0iNjUiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSI2NSIgeDI9IjQwIiB4Mz0iMzMiIHkxPSI3NSIgeTI9Ijc1IiB5Mz0iNjUiLz4KICAgICAgICAgICAgPGN1cnZlIHgxPSIxNSIgeDI9IjUiIHgzPSIxNSIgeTE9IjcwIiB5Mj0iNTgiIHkzPSI1MCIvPgo8L3BhdGg+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cgo=",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Soft Goal",
+      "width": 100,
+      "design": "shape=SoftGoal",
+      "height": 100
+    },
+    "Cardinality": {
+      "draw": "PHNoYXBlIG5hbWU9ImNvbXBvbmVudCIgYXNwZWN0PSJmaXhlZCIgc3Ryb2tld2lkdGg9IjIiPgoJPGJhY2tncm91bmQ+CgkJPHN0cm9rZWNvbG9yIGNvbG9yPSIjNDQ2ZTc5Ii8+CgkJPGZpbGxjb2xvciBjb2xvcj0iI2ZmZmZmZiIvPgoJCTxwYXRoPiAKCQkJPGVsbGlwc2UgeD0iMCIgeT0iMCIgdz0iMTAwIiBoPSIxMDAiLz4gCgkJPC9wYXRoPgkJCgk8L2JhY2tncm91bmQ+Cgk8Zm9yZWdyb3VuZD4KCQk8ZmlsbHN0cm9rZS8+Cjx0ZXh0IHg9IjUwIiB5PSI0NSIgYWxpZ249ImNlbnRlciI+PCFbQ0RBVEFbCgkJCWZ1bmN0aW9uKHNoYXBlKQoJCQl7CgkJCQlpZihzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ0Zyb20nXS52YWx1ZSE9InVuZGVmaW5lZCIgJiYgc2hhcGUuc3RhdGUuY2VsbC52YWx1ZS5hdHRyaWJ1dGVzWydUbyddLnZhbHVlIT0idW5kZWZpbmVkIikKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ0Zyb20nXS52YWx1ZSsiOiIrc2hhcGUuc3RhdGUuY2VsbC52YWx1ZS5hdHRyaWJ1dGVzWydUbyddLnZhbHVlOwoJCQl9CgkJXV0+PC90ZXh0PiAKCTwvZm9yZWdyb3VuZD4KPC9zaGFwZT4=",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAACE0lEQVRIS7WVv6v5YRTH3zaL3wYDizLIxMBCyT+AJJNEWCkpBjuDYiKUSULiL/BjU4qESUhsfkRZTG7PR1yuz/12fd17xuc5z+v8es45jPP5fAaNbDYbhMNhVKtVsFgsKJVK6PV6tFot9Pt9HI9HWCwWRKNR8Pn8JwKDDpxOpxGJRFCr1aBQKMDj8Z4e7nY7jMdjmEwmCu7xeB50nsBmsxkikQipVIouENozr9eLw+GAUql0u38AEygJ1+fz/Rh6VYzH4+h0OqhUKtTRDUzCHwwGL3n61TpJh0ajgdvtvoBJoeRyOdbr9cuefn1A6jGfzy9gYsnhcECr1b4NbrfbKBaLFzD5LtPplLb6r1q6Rs9YLBZnnU6HxWLxKuNbfYlEAka9Xj/n83nU6/VfAxuNRjASiQTVI36//9fAyWTyDz3+sxyTPAgEAkwmE9ph8mp+SC+Q+UJ9N9Lrdrsd5He8K81mE+Vy+QImk0omk2G73b7LBYfDwXK5/JwV2WwW3W4XmUzmv+Eul4uK2ul0foIJzWazQa1WIxAIvAwnM3k4HKJQKDxOtyvJarWCy+WCRPBTIZ6eTqcb9GFs3kNyuRyCwSDVjaTCQqHwyQap/mg0ojZIIpGgwr8X2tVEFPb7PUKhELXzmEwmVCoVDAYDGo0Ger0e5SHZebFYDGw2+8nwt+B7zdVqRcFmsxmkUillRCwW/zNTH/HNGKNltOpYAAAAAElFTkSuQmCC",
+      "label": "Cardinality",
+      "width": 100,
+      "design": "shape=Cardinality",
+      "height": 50,
+      "label_property": "None"
+    },
+    "SoftInfluence": {
+      "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgo8ZmlsbGNvbG9yIGNvbG9yPSIjQkFDOEQzIiAvPgogICAgIDxlbGxpcHNlIHg9IjAiIHk9IjAiIHc9IjEwMCIgaD0iNTAiIC8+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgCiAgICA8c3Ryb2tlIC8+CiAgPC9mb3JlZ3JvdW5kPgo8L3NoYXBlPg==",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Soft Influence",
+      "width": 100,
+      "design": "shape=SoftInfluence",
+      "height": 50
+    },
+    "ContextVariable": {
+      "draw": "PHNoYXBlIGg9IjgwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgPGZpbGxjb2xvciBjb2xvcj0iIzFCQTFFMiIgLz4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHc9IjEwMCIgaD0iODAiIC8+CiAgPC9iYWNrZ3JvdW5kPgogIDxmb3JlZ3JvdW5kPgogICAgPGZpbGxzdHJva2UgLz4KICAgIDx0ZXh0IHg9IjUwIiB5PSI1NSIgYWxpZ249ImNlbnRlciI+PCFbQ0RBVEFbCgkJCWZ1bmN0aW9uKHNoYXBlKQoJCQl7CgkJCQlpZihzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ1Bvc3NpYmxlVmFsdWVzJ10udmFsdWUhPSJ1bmRlZmluZWQiKQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuICJ7IitzaGFwZS5zdGF0ZS5jZWxsLnZhbHVlLmF0dHJpYnV0ZXNbJ1Bvc3NpYmxlVmFsdWVzJ10udmFsdWUrIn0iOwoJCQl9CgkJXV0+PC90ZXh0PiAKICAgIDxzdHJva2UgLz4KICA8L2ZvcmVncm91bmQ+Cjwvc2hhcGU+Cg==",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Context Variable",
+      "width": 100,
+      "design": "shape=ContextVariable",
+      "height": 50
+    },
+    "Operationalization": {
+      "draw": "PHNoYXBlIGg9IjUwIiB3PSIxMDAiIGFzcGVjdD0iZml4ZWQiIHN0cm9rZXdpZHRoPSJpbmhlcml0Ij4KICA8Y29ubmVjdGlvbnM+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIwIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjAiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjAiIHk9IjAuNSIgcGVyaW1ldGVyPSIxIiAvPgogICAgPGNvbnN0cmFpbnQgeD0iMSIgeT0iMC41IiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwIiB5PSIxIiBwZXJpbWV0ZXI9IjEiIC8+CiAgICA8Y29uc3RyYWludCB4PSIwLjUiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICAgIDxjb25zdHJhaW50IHg9IjEiIHk9IjEiIHBlcmltZXRlcj0iMSIgLz4KICA8L2Nvbm5lY3Rpb25zPgogIDxiYWNrZ3JvdW5kPgogICAgIDxmaWxsY29sb3IgY29sb3I9IiNGNUY1RjUiIC8+CiAgICAgPHBhdGg+CiAgICAgICAgICAgIDxtb3ZlIHg9IjAiIHk9IjI1Ii8+CiAgICAgICAgICAgIAogICAgICAgICAgICA8bGluZSB4PSIyMCIgeT0iMCIvPgogICAgICAgICAgICA8bGluZSB4PSI4MCIgeT0iMCIvPgogICAgICAgICAgICA8bGluZSB4PSIxMDAiIHk9IjI1Ii8+CiAgICAgICAgICAgIDxsaW5lIHg9IjgwIiB5PSI1MCIvPgogICAgICAgICAgICA8bGluZSB4PSIyMCIgeT0iNTAiLz4KICAgICAgICAgICAgPGxpbmUgeD0iMCIgeT0iMjUiLz4KICAgIDwvcGF0aD4KICA8L2JhY2tncm91bmQ+CiAgPGZvcmVncm91bmQ+CiAgICA8ZmlsbHN0cm9rZSAvPgogICAgCiAgICA8c3Ryb2tlIC8+CiAgPC9mb3JlZ3JvdW5kPgo8L3NoYXBlPgo=",
+      "icon": "iVBORw0KGgoAAAANSUhEUgAAACEAAAAQCAYAAACYwhZnAAAAR0lEQVRIS+2VMQoAMAgDk5dHX57SQpdCZ5f4AcNxGkoyhocALGksRnfjhLDnYJBMiKNASNxLCImQeL9inIgTXyeqaqxF9+4FTfM+fusqx+IAAAAASUVORK5CYII=",
+      "label": "Operationalization",
+      "width": 100,
+      "design": "shape=Operationalization",
+      "height": 50
+    }
+  },
+  "relationships": {
+    "SubGoal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=12;"
+        }
+      ],
+      "label_property": "None"
+    },
+    "SoftGoal_SoftGoal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=12;"
+        }
+      ],
+      "label_property": "None"
+    },
+    "Claim_SoftGoal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;"
+        }
+      ],
+      "label_property": "None"
+    },
+    "Cardinality_Goal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;fontSize=16"
+        }
+      ],
+      "label_property": "Value"
+    },
+    "SoftInfluence_SoftGoal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=10;fontSize=16"
+        }
+      ],
+      "label_property": "SatisfactionLevel"
+    },
+    "ContextVariable_SoftInfluence": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=1;endSize=10;"
+        }
+      ],
+      "label_property": "Value"
+    },
+    "Operationalization_Claim_Goal": {
+      "styles": [
+        {
+          "style": "strokeColor=#446E79;strokeWidth=1;endArrow=open;endFill=0;endSize=10;fontSize=16"
+        }
+      ],
+      "label_property": "Value"
     }
   }
+}

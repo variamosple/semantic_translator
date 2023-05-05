@@ -56,7 +56,9 @@ class SolverController:
             # guaranteed
             value=elem_sel.with_value,  # pyright: ignore
         )
-        iter_results.append(self.sat())
+        # We will be adding the results to the list
+        # these will be tuples of the form (var_id, sat_result)
+        iter_results.append((var_id, self.sat()))
         self.constraint_model.reset_fix(variable=var_id)
 
     def _run_element_iteration(self, elem_sel: query.ModelSelectorSpec):

@@ -7,7 +7,7 @@ By: Hiba Hnaini _@_.fr
 
 import json
 import copy
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 from variamos import model, transform
 from solvers import query_handler
 from utils.exceptions import SolverException
@@ -65,9 +65,15 @@ def translate():
         #         jsonify({"data": {"error": "Cannot find configuration"}})
         #     )
     else:
-        raise RuntimeError(
-            "Weird - don't know how to handle method {}".format(request.method)
+        # raise RuntimeError(
+        #     "Weird - don't know how to handle method {}".format(request.method)
+        # )
+        # Return a 500 error, indicating that the server doesn't support this
+        # method
+        err_response = make_response(
+            jsonify({"error": "Method not supported"}), 500
         )
+        return _corsify_actual_response(err_response)
 
 
 def construct_response(
@@ -135,6 +141,8 @@ def construct_response(
         return _corsify_actual_response(
             jsonify({"data": {"content": content["data"]["project"]}})
         )
+    else:
+        raise RuntimeError("Unknown query result")
 
 
 def _build_cors_preflight_response():
@@ -145,6 +153,6 @@ def _build_cors_preflight_response():
     return response
 
 
-def _corsify_actual_response(response):
+def _corsify_actual_response(response) -> Response:
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response

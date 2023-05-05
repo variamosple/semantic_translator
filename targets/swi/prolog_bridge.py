@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from swiplserver import PrologMQI, PrologThread
+from swiplserver import PrologMQI, PrologThread, PrologResultNotAvailableError
 from targets.swi.swi_model import SWIModel
 from targets.solver_model import SolverModel
 from utils.exceptions import SolverException
@@ -168,7 +168,10 @@ class SWIBridge:
                     )
                     and len(sols) < n_sols
                 ):
-                    result = prolog_thread.query_async_result()
+                    try:
+                        result = prolog_thread.query_async_result(60)
+                    except PrologResultNotAvailableError:
+                        raise SolverException("something went wrong with the query")
                     print("loop time ", loop_time)
                     if result is None or result is False:
                         break
