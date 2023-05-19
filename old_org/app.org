@@ -1,6 +1,6 @@
 #+title: Server App
-#+author: Camilo Correa Restrepo
-#+author: Hiba Hnaini
+#+author: 
+#+author: 
 
 This is the code for the server that runs the semantic translator for VariaMos.
 
@@ -10,8 +10,8 @@ This is the code for the server that runs the semantic translator for VariaMos.
 """
 VariaMos semantic translator server.
 
-By: Camilo Correa Restrepo camilo.correa-restrepo@univ-paris1.fr
-By: Hiba Hnaini _@_.fr
+By: 
+By: 
 """
 
 from flask import Flask, request, jsonify, make_response

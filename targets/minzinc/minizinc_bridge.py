@@ -27,8 +27,8 @@ class MiniZincBridge:
         print("\n".join(constraints) + "\n" + "solve satisfy;")
         instance = Instance(gecode, mzn_model)
         result = instance.solve(nr_solutions=n_sols)
-        if not result.status.has_solution():
-            raise SolverException("CLIF/MZN - Model is UNSAT")
+        # if not result.status.has_solution():
+        #     raise SolverException("CLIF/MZN - Model is UNSAT")
         return result
 
     def optimize(

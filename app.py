@@ -1,8 +1,8 @@
 """
 VariaMos semantic translator server.
 
-By: Camilo Correa Restrepo camilo.correa-restrepo@univ-paris1.fr
-By: Hiba Hnaini _@_.fr
+By: 
+By: 
 """
 
 import json

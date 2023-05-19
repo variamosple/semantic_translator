@@ -1,5 +1,5 @@
 #+title: Minizinc_bridge
-#+author: Camilo Correa Restrepo
+#+author:
 
 #+begin_src python :session s1 :results yes :tangle minizinc_bridge.py
 from minizinc import Instance, Model, Solver

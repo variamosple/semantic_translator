@@ -1,5 +1,5 @@
 #+title: Prolog adapter for the semantic translator
-#+author: Camilo Correa Restrepo
+#+author: 
 
 #+begin_src python :session s1 :results yes :tangle prolog_bridge.py
 from swiplserver import PrologMQI, PrologThread
