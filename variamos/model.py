@@ -50,6 +50,13 @@ class Element(pydantic.BaseModel):
         }
 
 
+def find_property_by_name(properties: list[dict[str, typing.Any]], name: str):
+    return next(
+        (p for p in properties if p["name"] == name),
+        None,
+    )
+
+
 class Model(pydantic.BaseModel):
     id: uuid.UUID
     name: str
@@ -80,11 +87,7 @@ class Model(pydantic.BaseModel):
                     # get a reference to the selection property
                     # if it exists otherwise None
                     sel_prop := next(
-                        (
-                            p
-                            for p in elem.properties
-                            if p["name"] == "Selected"
-                        ),
+                        (p for p in elem.properties if p["name"] == "Selected"),
                         None,
                     )
                 )

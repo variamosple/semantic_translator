@@ -40,15 +40,19 @@ class CLIFGenerator:
         names_ids = []
         for element_id, element in self.variamos_graph.nodes.data("element"):  # type: ignore
             # Frist make the sentece for the element itself
-            sentence_strings.append(
-                self.generate_element_sentence(
-                    element_id=element_id, element=element  # type: ignore
-                )
+            e_sentence = self.generate_element_sentence(
+                element_id=element_id, element=element  # type: ignore
             )
+            if e_sentence is not None:
+                sentence_strings.append(e_sentence)
             # Next make the sentence for the element's attributes
-            sentence_strings.extend(
-                self.generate_attribute_senteces(element=element)
+            attr_sentences = list(
+                s
+                for s in self.generate_attribute_senteces(element=element)
+                if s is not None
             )
+            if len(attr_sentences) > 0:
+                sentence_strings.extend(attr_sentences)
             # HACK: add the name property into the above data structure
             # HACK: turn off checks
             names_ids.append((element.name, element_id))  # pyright: ignore
@@ -143,6 +147,8 @@ class CLIFGenerator:
             # Here we must check if its type is defined by the incoming
             # relationship or whether it suffices to construct its declaration
             # by itself
+            # TODO: Make sure that the logic to handle the typing relations'
+            # selection status is correct
             if (
                 check_tuple := self.check_typing_relation(element_id=element_id)
             ) is not None:
@@ -312,6 +318,10 @@ class CLIFGenerator:
                 rule.template,
                 uuid_utils.to_underscore_from_uuid(property[rule.param]),
             )
+            # HACK: Handle this special case for feature models
+            if rule.value:
+                # Get the actual value of the property
+                constraint = constraint.replace(rule.value, property["value"])
             sentences.append(constraint)
         # HACK: This is a hack to add the attribute for GRIDSTIX
         # we will discriminate on the attribute type
@@ -339,6 +349,7 @@ class CLIFGenerator:
                     if rule.param == "id"
                     else property[rule.param],
                 )
+
                 sentences.append(constraint)
         return sentences
 
@@ -609,7 +620,7 @@ class CLIFGenerator:
                     }
                 # Now make the list of inner expression expanded out
                 inner_expresion_list: list[str] = []
-                for (node_uuid, relation) in node_uuids:
+                for node_uuid, relation in node_uuids:
                     new_inner_expr = inner_expr[:]
                     # Handle the expansion of the expression inside the generated
                     # inner expressions
@@ -741,6 +752,31 @@ class CLIFGenerator:
                 raise exceptions.SemanticException(
                     "The element has no enumeration mapping"
                 )
+            # Determine the return value as a function of whether or not
+            # the element has is selected
+            # HACK: this only works for feature models for now
+            if (
+                element_rule.selected_constraint
+                and element_rule.deselected_constraint
+            ):
+                # Check if element is selected
+                if (
+                    sel_status := model.find_property_by_name(
+                        element.properties, "Selected"
+                    )
+                ) is not None:
+                    if sel_status["value"] == "Selected":
+                        return element_rule.selected_constraint.replace(
+                            element_rule.param,
+                            uuid_utils.to_underscore_from_uuid(element.id),
+                        )
+                    elif sel_status["value"] == "Unselected":
+                        return element_rule.deselected_constraint.replace(
+                            element_rule.param,
+                            uuid_utils.to_underscore_from_uuid(element.id),
+                        )
+            # This is the fallback case where there is no selection status
+            # and no translation rules for selection status
             return element_rule.constraint.replace(
                 element_rule.param,
                 uuid_utils.to_underscore_from_uuid(element.id),
@@ -829,6 +865,6 @@ class CLIFGenerator:
             uuid_utils.to_underscore_from_uuid(relationship.target_id),
         )
         cons = relation_rule.constraint
-        for (p, node_uuid) in zip(relation_rule.params, endpoints):
+        for p, node_uuid in zip(relation_rule.params, endpoints):
             cons = cons.replace(p, node_uuid)
         return cons
