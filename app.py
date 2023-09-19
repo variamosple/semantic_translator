@@ -138,7 +138,7 @@ def construct_response(
         else:
             content["data"]["project"]["productLines"][0][
                 "applicationEngineering"
-            ]["models"][model_idx - dom_length] = model
+            ]["applications"][0]["models"][model_idx - dom_length] = model
         return _corsify_actual_response(
             jsonify({"data": {"content": content["data"]["project"]}})
         )
