@@ -22,10 +22,7 @@ class Solution:
         """Create a Solution from the output of a SWI-Prolog solver"""
         single_solution = len(swi_solution) == 1
         solutions = [
-            {
-                Solution._clean_id(var[0]): var[1]
-                for var in solution.items()
-            }
+            {Solution._clean_id(var[0]): var[1] for var in solution.items()}
             for solution in swi_solution
         ]
         for solution in solutions:
@@ -57,6 +54,17 @@ class Solution:
                 }
                 for solution in mzn_solution
             ]
+        for solution in solutions:
+            print(solution)
+        return Solution(single_solution=single_solution, solutions=solutions)
+
+    @classmethod
+    def from_z3_output(cls, z3_solution: list[dict[str, int]]) -> Solution:
+        single_solution = len(z3_solution) == 1
+        solutions = [
+            {Solution._clean_id(var[0]): var[1] for var in solution.items()}
+            for solution in z3_solution
+        ]
         for solution in solutions:
             print(solution)
         return Solution(single_solution=single_solution, solutions=solutions)
@@ -100,6 +108,16 @@ class Result:
         if len(swi_result) > 0:
             status = StatusEnum.SATISFIED
             solution = Solution.from_swi_output(swi_solution=swi_result)
+            return Result(solution=solution, status=status)
+        else:
+            status = StatusEnum.UNSATISFIED
+            return Result(solution=None, status=status)
+
+    @classmethod
+    def from_z3_output(cls, z3_result: list[dict[str, int]]) -> Result:
+        if len(z3_result) > 0:
+            status = StatusEnum.SATISFIED
+            solution = Solution.from_z3_output(z3_solution=z3_result)
             return Result(solution=solution, status=status)
         else:
             status = StatusEnum.UNSATISFIED

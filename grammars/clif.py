@@ -6,7 +6,6 @@ from abc import ABC, abstractmethod
 from utils.enums import TargetLang
 from dataclasses import dataclass
 
-
 @dataclass
 class Text:
     constructions: TextConstruction

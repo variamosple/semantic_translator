@@ -9,3 +9,4 @@ class StrEnum(str, Enum):
 class TargetLang(StrEnum):
     minizinc = "minizinc"
     swi = "swi"
+    z3 = "z3"

@@ -1,11 +1,13 @@
 import typing
 import networkx as nx
 from grammars.clif import Text
+from targets.solver_model import SolverModel
 from targets.minzinc.minizinc_bridge import MiniZincBridge
 from targets.minzinc.minizinc_model import clif_to_MZN
-from targets.solver_model import SolverModel
 from targets.swi.prolog_bridge import SWIBridge
 from targets.swi.swi_model import clif_to_SWI
+from targets.z3.z3_bridge import Z3Bridge
+from targets.z3.z3_model import Z3Model
 from utils.enums import TargetLang
 from utils import exceptions
 from utils import uuid_utils
@@ -20,7 +22,7 @@ class SolverController:
         target_lang (str):
     """
 
-    constraint_model: SolverModel
+    constraint_model: SolverModel | Z3Model
     result_function: typing.Callable[..., results.Result]
 
     def __init__(
@@ -44,6 +46,11 @@ class SolverController:
                 self.constraint_model = clif_to_SWI(clif_model)
                 self.bridge = SWIBridge()
                 self.result_function = results.Result.from_swi_output
+            case TargetLang.z3:
+                generic_csp = SolverModel.from_clif_text(clif_model)
+                self.constraint_model = Z3Model.from_gen_csp(generic_csp)
+                self.bridge = Z3Bridge()
+                self.result_function = results.Result.from_z3_output
             case _:
                 raise TypeError("Language unsupported")
 
@@ -286,7 +293,9 @@ class SolverController:
 
     def solve_n(self, n_sols):
         # Maybe improve the api to make the typecheck pass
-        return self.result_function(self.bridge.solve(self.constraint_model, n_sols))
+        return self.result_function(
+            self.bridge.solve(self.constraint_model, n_sols)
+        )
 
     def optimize(
         self, objective: str, direction: query.OptimizationDirectionEnum

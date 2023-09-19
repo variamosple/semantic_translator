@@ -8,6 +8,7 @@ By:
 import json
 import copy
 from flask import Flask, request, jsonify, make_response, Response
+from solvers.results import StatusEnum
 from variamos import model, transform
 from solvers import query_handler
 from utils.exceptions import SolverException
@@ -86,7 +87,7 @@ def construct_response(
         idx=model_idx,
         feature_model=model,
     )
-    if qh.is_dry():
+    if qh.is_dry() or query_result == False:
         # In this case we know the response is a boolean
         return _corsify_actual_response(
             jsonify({"data": {"content": query_result}})

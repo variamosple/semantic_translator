@@ -7,14 +7,24 @@ def transform_request_to_python(
 ) -> tuple[model.Model, nx.DiGraph, rules.Rules, query.Query, int]:
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
     dom_models = project_json["productLines"][0]["domainEngineering"]["models"]
-    app_models = project_json["productLines"][0]["applicationEngineering"]["models"]
+    if (
+        len(
+            project_json["productLines"][0]["applicationEngineering"][
+                "applications"
+            ]
+        )
+        != 0
+    ):
+        app_models = project_json["productLines"][0]["applicationEngineering"][
+            "applications"
+        ][0]["models"]
+    else:
+        app_models = []
     all_models = [*dom_models, *app_models]
     idx, fm = next(
         filter(
             lambda mod: mod[1]["id"] == selectedModelId,
-            enumerate(
-                all_models
-            ),
+            enumerate(all_models),
         )
     )
     vmos_model = model.Model(**fm)
