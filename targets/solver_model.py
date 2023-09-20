@@ -39,19 +39,35 @@ class CSPVariable(CSPExpression):
     type: TypePredType
     upper: int | None = 1
     lower: int | None = 0
+    _default_bounds: tuple[int, int] | None = field(init=False)
 
-    # @abstractmethod
+    def __post_init__(self):
+        if self.upper is not None and self.lower is not None:
+            self._default_bounds = self.upper, self.lower
+        else:
+            self._default_bounds = None
+
     def fix_variable(self, value: int):
-        pass
+        if self.lower is None or self.lower <= value:
+            self.lower = value
+        else:
+            raise SemanticException("This value violates the variable's bounds")
+        
+        if self.upper is None or self.upper >= value:
+            self.upper = value
+        else:
+            raise SemanticException("This value violates the variable's bounds")
 
-    # @abstractmethod
+    # TODO: This is a hack, we should be able to fix variables for enums too
     def reset_fix(self):
-        pass
+        if self._default_bounds is not None:
+            self.upper, self.lower = self._default_bounds
+        else:
+            self.upper, self.lower = None, None
 
 
 @dataclass
 class CSPEnumVariable(CSPVariable):
-    terms: list[str] = field(default_factory=list)
     values: list[str] = field(default_factory=list)
 
 
@@ -206,6 +222,10 @@ def handle_atom_sentence(
                 if pred.boolean:
                     return CSPVariable(atom.terms[0], TypePredType.BOOL)
                 elif pred.bounded_integer:
+                    if pred.upper is None or pred.lower is None:
+                        raise SemanticException(
+                            "Bounded integer type must have upper and lower bounds"
+                        )
                     return CSPVariable(
                         atom.terms[0],
                         TypePredType.BOUNDED_INT,

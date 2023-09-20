@@ -3,9 +3,9 @@ import networkx as nx
 from grammars.clif import Text
 from targets.solver_model import SolverModel
 from targets.minzinc.minizinc_bridge import MiniZincBridge
-from targets.minzinc.minizinc_model import clif_to_MZN
+from targets.minzinc.minizinc_model import MZNModel
 from targets.swi.prolog_bridge import SWIBridge
-from targets.swi.swi_model import clif_to_SWI
+from targets.swi.swi_model import SWIModel
 from targets.z3.z3_bridge import Z3Bridge
 from targets.z3.z3_model import Z3Model
 from utils.enums import TargetLang
@@ -22,7 +22,7 @@ class SolverController:
         target_lang (str):
     """
 
-    constraint_model: SolverModel | Z3Model
+    constraint_model: SolverModel | Z3Model | SWIModel | MZNModel
     result_function: typing.Callable[..., results.Result]
 
     def __init__(
@@ -37,17 +37,18 @@ class SolverController:
         self.vmos_graph = vmos_graph
         self.translation_rules = translation_rules
         self.target_lang = target_lang
+        generic_csp = SolverModel.from_clif_text(clif_model)
         match target_lang:
             case TargetLang.minizinc:
-                self.constraint_model = clif_to_MZN(clif_model)
+                self.constraint_model = MZNModel.from_gen_csp(generic_csp)
                 self.bridge = MiniZincBridge()
                 self.result_function = results.Result.from_minizinc_output
             case TargetLang.swi:
-                self.constraint_model = clif_to_SWI(clif_model)
+                self.constraint_model = SWIModel.from_gen_csp(generic_csp)
                 self.bridge = SWIBridge()
                 self.result_function = results.Result.from_swi_output
             case TargetLang.z3:
-                generic_csp = SolverModel.from_clif_text(clif_model)
+                # generic_csp = SolverModel.from_clif_text(clif_model)
                 self.constraint_model = Z3Model.from_gen_csp(generic_csp)
                 self.bridge = Z3Bridge()
                 self.result_function = results.Result.from_z3_output
