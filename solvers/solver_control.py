@@ -310,6 +310,11 @@ class SolverController:
     def update_model(self, fm, rules, result):
         self.bridge.update_model(fm, rules, result)
 
+    def get_code(self):
+        """Performs a translation to the target but does not actually do the
+        solving"""
+        return self.bridge.translate(self.constraint_model)
+
     # def do_query(self, query: Query):
     #     if query.n_sols > 0:
     #         result = self.solve(query.n_sols)

@@ -13,6 +13,7 @@ class OperationEnum(str, Enum):
     solve = "solve"
     nsolve = "nsolve"
     get_model = "get_model"
+    get_code = "get_code"
     optimize = "optimize"
 
 

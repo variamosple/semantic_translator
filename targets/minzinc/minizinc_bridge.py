@@ -16,6 +16,11 @@ class MiniZincBridge:
     for both optimization and satisfaction problems, though is limited to single
     solutions for optimization problems.
     """
+
+    def translate(self, model: MZNModel):
+        constraints = model.generate_program()
+        return "\n".join(constraints)
+
     def solve(self, model: SolverModel, n_sols: int = 1):
         if not isinstance(model, MZNModel):
             raise TypeError("Must be a mzn model")

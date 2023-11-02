@@ -8,6 +8,10 @@ from variamos import query
 
 @dataclass
 class Z3Bridge:
+
+    def translate(self, model: Z3Model):
+        raise NotImplementedError("Z3 does not generate a program to return")
+
     def solve(self, model: Z3Model, n_sols: int = 1):
         s = z3.Solver()
         s.add(model.constraints)

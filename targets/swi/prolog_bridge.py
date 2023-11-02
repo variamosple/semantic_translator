@@ -23,6 +23,25 @@ class SWIBridge:
     a timeout and for looking for arbritrary numbers of solutions.
     """
 
+    def translate(self, model: SWIModel):
+        """
+        This function takes a model and returns a string representing the
+        program to be queried.
+
+        @model: The model to be translated
+        """
+        constraints = model.generate_program()
+        regex = re.compile(r"(UUID(?:_[a-f0-9]+){5})")
+        program = """:- use_module(library(clpfd)).
+program([!!!]) :-
+"""
+        program += "\n".join(constraints) + "."
+        # print(program)
+        occs = set(regex.findall(program))
+        print(occs)
+        program = program.replace("!!!", ",".join(occs))
+        return program
+
     # TODO: Handle N solutions
     # TODO: Remove the regex and use the model to get the variables
     def solve(self, model: SolverModel, n_sols: int = 1):

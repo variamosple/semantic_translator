@@ -58,6 +58,7 @@ class QueryHandler:
         return (
             self.query_obj.operation == query.OperationEnum.sat
             or self.query_obj.operation == query.OperationEnum.get_model
+            or self.query_obj.operation == query.OperationEnum.get_code
         )
 
     def run_query(self, project_json, idx, feature_model):
@@ -95,6 +96,8 @@ class QueryHandler:
                     return self.controller.solve_n(self.query_obj.operation_n)
                 case query.OperationEnum.get_model:
                     return self.pretty_model()
+                case query.OperationEnum.get_code:
+                    return self.controller.get_code()
                 case query.OperationEnum.optimize:
                     # check that the query contains an optimization target
                     if self.query_obj.optimization_target is None:

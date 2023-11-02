@@ -87,10 +87,18 @@ def construct_response(
         idx=model_idx,
         feature_model=model,
     )
-    if qh.is_dry() or query_result == False:
+    if qh.is_dry() or query_result is False:
         # In this case we know the response is a boolean
         return _corsify_actual_response(
             jsonify({"data": {"content": query_result}})
+        )
+    elif (
+        not isinstance(query_result, list)
+        and query_result.status == StatusEnum.UNSATISFIED
+    ):
+        # In this case we know that no solution was foundx
+        return _corsify_actual_response(
+            jsonify({"data": {"content": False}})
         )
     elif not query_result.solution.single_solution:
         # In this case we know the response is a list of configurations
