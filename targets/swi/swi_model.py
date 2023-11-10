@@ -61,6 +61,8 @@ class SWIModel:
                 return " #<==> "
 
     def swi_render_var_decl(self, var_decl: CSPVariable) -> str:
+        if var_decl.lower is None or var_decl.upper is None:
+            return f"{var_decl.name} in inf..sup"
         return f"{var_decl.name} in {var_decl.lower}..{var_decl.upper}"
 
     def swi_render_enum_var_decl(self, var_decl: CSPEnumVariable) -> str:

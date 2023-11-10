@@ -94,7 +94,16 @@ class Model(pydantic.BaseModel):
                 is not None
             ):
                 # check the value in the solution
-                if solution[str(elem.id)] == 1:
+                if solution[str(elem.id)] >= 1:
                     sel_prop["value"] = "SelectedForced"
                 else:
                     sel_prop["value"] = "UnselectedForced"
+            # Now check if something happened to the properties
+            # and determine if a value has been set
+            if (
+                sel_prop := next(
+                    (p for p in elem.properties if p["id"] in solution),
+                    None,
+                )
+            ) is not None:
+                sel_prop["value"] = solution[str(sel_prop["id"])]

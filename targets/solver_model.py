@@ -233,7 +233,7 @@ def handle_atom_sentence(
                         lower=pred.lower,
                     )
                 elif pred.integer:
-                    return CSPVariable(atom.terms[0], TypePredType.INT)
+                    return CSPVariable(atom.terms[0], TypePredType.INT, None, None)
                 # Handle enum case
                 elif pred.enum:
                     if pred.values is None or len(pred.values) == 0:
