@@ -103,9 +103,7 @@ class CLIFGenerator:
                 # attribute access
                 # Check that the name is the first element of the matches
                 if name in matches_dict:
-                    props: list = self.variamos_graph.nodes[id][
-                        "element"
-                    ].properties
+                    props: list = self.variamos_graph.nodes[id]["element"].properties
                     # TODO: Check what happens when there are multiple attributes # noqa: E501
                     # found flags whether we did find the attribute
                     found = False
@@ -116,9 +114,7 @@ class CLIFGenerator:
                             arb_constraints = arb_constraints.replace(
                                 expression,
                                 "UUID_"
-                                + uuid_utils.to_underscore_from_uuid(
-                                    prop["id"]
-                                ),
+                                + uuid_utils.to_underscore_from_uuid(prop["id"]),
                             )
                             found = True
                     # Here if we arrive at the end fo the iteration and we
@@ -169,9 +165,7 @@ class CLIFGenerator:
                 element_id=element_id, element=element
             )
         else:
-            raise exceptions.SemanticException(
-                "Unknown element type:", element.type
-            )
+            raise exceptions.SemanticException("Unknown element type:", element.type)
 
     def generate_hierarchical_sentence(
         self, element_id: uuid.UUID, element: model.Element
@@ -191,15 +185,13 @@ class CLIFGenerator:
         if rule.node_rule.param_mapping.incoming:
             edges = self.variamos_graph.in_edges(element_id, data="relation")
             is_node = any(
-                self.variamos_graph.nodes.data("element")[source].type
-                == element.type
+                self.variamos_graph.nodes.data("element")[source].type == element.type
                 for (source, _, _) in edges
             )
         else:
             edges = self.variamos_graph.out_edges(element_id, data="relation")
             is_node = any(
-                self.variamos_graph.nodes.data("element")[target].type
-                == element.type
+                self.variamos_graph.nodes.data("element")[target].type == element.type
                 for (_, target, _) in edges
             )
         if is_node:
@@ -320,9 +312,20 @@ class CLIFGenerator:
             )
             # HACK: Handle this special case for feature models
             if rule.value:
+                # handle the case where the prop is None
+                if property["value"] is None:
+                    if rule.unset_constraint is None:
+                        constraint = None
+                    else:
+                        constraint = rule.unset_constraint.replace(
+                            rule.template,
+                            uuid_utils.to_underscore_from_uuid(property[rule.param]),
+                        )
                 # Get the actual value of the property
-                constraint = constraint.replace(rule.value, property["value"])
-            sentences.append(constraint)
+                else:
+                    constraint = constraint.replace(rule.value, property["value"])
+            if constraint is not None:
+                sentences.append(constraint)
         # HACK: This is a hack to add the attribute for GRIDSTIX
         # we will discriminate on the attribute type
         # and use the attribute types to determine the node types of the
@@ -335,9 +338,7 @@ class CLIFGenerator:
                 for p in element.properties
                 if p["name"] in self.rule_set.attribute_translation_rules
             ):
-                rule = self.rule_set.attribute_translation_rules[
-                    property["name"]
-                ]
+                rule = self.rule_set.attribute_translation_rules[property["name"]]
                 # Do the translation for the parent element
                 constraint = rule.constraint.replace(
                     rule.parent, uuid_utils.to_underscore_from_uuid(element.id)
@@ -382,9 +383,7 @@ class CLIFGenerator:
         # Determine if the type is buried in the properties of the element
         # and get it
         # We will also reuse the schema binding later on
-        if "type" in (
-            schema := self.rule_set.relation_reification_property_schema
-        ):
+        if "type" in (schema := self.rule_set.relation_reification_property_schema):
             type_schema = schema["type"]
             idx, key = type_schema.index, type_schema.key
             try:
@@ -440,8 +439,7 @@ class CLIFGenerator:
             cons = cons.replace(
                 element_rule.param_mapping.node,
                 # TODO: Check that these types are correct
-                self._var_prefix
-                + uuid_utils.to_underscore_from_uuid(element_id),
+                self._var_prefix + uuid_utils.to_underscore_from_uuid(element_id),
             )
         # Now that the expressions relating to the edges have been replaced
         # we must replace the expressions tied to properties in the bundle.
@@ -481,9 +479,7 @@ class CLIFGenerator:
             else:
                 _, node_uuid, relation = edges[0]
             binding_var = param_mapping.var
-            node_uuid = self._var_prefix + uuid_utils.to_underscore_from_uuid(
-                node_uuid
-            )
+            node_uuid = self._var_prefix + uuid_utils.to_underscore_from_uuid(node_uuid)
             # We must now do the same lookup analysis as before
             # We must do the partial parse as before
             # But this time we need not go so deep
@@ -498,11 +494,7 @@ class CLIFGenerator:
             )
             # Find the instance corresponding to the node we're interest in
             lookup_instance = next(
-                (
-                    li
-                    for li in lookup_instances
-                    if li.element.element == binding_var
-                ),
+                (li for li in lookup_instances if li.element.element == binding_var),
                 None,
             )
             if lookup_instance is not None:
@@ -526,9 +518,7 @@ class CLIFGenerator:
                                 and attribute in self.rule_set.symbol_map
                             ):
                                 attribute = self.rule_set.symbol_map[attribute]
-                            constraint = constraint.replace(
-                                expression, attribute
-                            )
+                            constraint = constraint.replace(expression, attribute)
                         else:
                             raise exceptions.SemanticException(
                                 f"The {attribute}"
@@ -536,9 +526,7 @@ class CLIFGenerator:
                                 f" {relation.type} relations"  # noqa: E501
                             )
                     else:
-                        raise exceptions.SemanticException(
-                            "Unknown function type", fun
-                        )
+                        raise exceptions.SemanticException("Unknown function type", fun)
             return constraint.replace(binding_var, node_uuid)
         # Handle case where the node refies multiple edges coming out
         else:
@@ -549,9 +537,7 @@ class CLIFGenerator:
                 (edge_tuple[tuple_idx], edge_tuple[2]) for edge_tuple in edges  # type: ignore
             ]
             binding_var = param_mapping.var
-            return self.clif_expression_expansion(
-                node_uuids, binding_var, constraint
-            )
+            return self.clif_expression_expansion(node_uuids, binding_var, constraint)
 
     def clif_expression_expansion(
         self,
@@ -562,10 +548,7 @@ class CLIFGenerator:
     ) -> str:
         # FIXME: This needs better handling than just a string lookup
         # I should also consider building a cleaner representation
-        if (
-            binding_var
-            not in self.rule_set.relation_reification_expansions["params"]
-        ):
+        if binding_var not in self.rule_set.relation_reification_expansions["params"]:
             raise exceptions.SemanticException(
                 "No declared parameter for fun expansion"
             )
@@ -607,9 +590,9 @@ class CLIFGenerator:
                 end_inner: int = instance.sentence._tx_position_end  # type: ignore # noqa: E501
                 inner_expr = expanded_cons[start_inner:end_inner]
                 # Use the parsed instance to find attribute lookups
-                lookup_instances: list[
-                    clif.AttributeLookup
-                ] = get_children_of_type(clif.AttributeLookup, instance)
+                lookup_instances: list[clif.AttributeLookup] = get_children_of_type(
+                    clif.AttributeLookup, instance
+                )
                 lookup_map: dict[str, dict[str, str | None]] = {}
                 # HACK: This only works once
                 for lo in lookup_instances:
@@ -634,8 +617,7 @@ class CLIFGenerator:
                                     (
                                         prop["value"]
                                         for prop in relation.properties
-                                        if prop["name"]
-                                        == attr_lookup["attribute"]
+                                        if prop["name"] == attr_lookup["attribute"]
                                     ),
                                     None,
                                 )
@@ -646,12 +628,9 @@ class CLIFGenerator:
                                     # HACK: We are doing this so the damn thing compiles
                                     if (
                                         self.rule_set.symbol_map is not None
-                                        and attribute
-                                        in self.rule_set.symbol_map
+                                        and attribute in self.rule_set.symbol_map
                                     ):
-                                        attribute = self.rule_set.symbol_map[
-                                            attribute
-                                        ]
+                                        attribute = self.rule_set.symbol_map[attribute]
                                     new_inner_expr = new_inner_expr.replace(
                                         attr_lookup["expression"], attribute
                                     )
@@ -713,16 +692,12 @@ class CLIFGenerator:
             element_rule.param_mapping.inbound_edges.unique
             and self.variamos_graph.in_degree(element.id) > 1  # type: ignore
         ):
-            raise exceptions.SemanticException(
-                "There can only be one incoming edge"
-            )
+            raise exceptions.SemanticException("There can only be one incoming edge")
         if (
             element_rule.param_mapping.outbound_edges.unique
             and self.variamos_graph.out_degree(element.id) > 1  # type: ignore
         ):
-            raise exceptions.SemanticException(
-                "There can only be one incoming edge"
-            )
+            raise exceptions.SemanticException("There can only be one incoming edge")
 
     def handle_type_dependent_expansions(
         self,
@@ -755,10 +730,7 @@ class CLIFGenerator:
             # Determine the return value as a function of whether or not
             # the element has is selected
             # HACK: this only works for feature models for now
-            if (
-                element_rule.selected_constraint
-                and element_rule.deselected_constraint
-            ):
+            if element_rule.selected_constraint and element_rule.deselected_constraint:
                 # Check if element is selected
                 if (
                     sel_status := model.find_property_by_name(
@@ -849,9 +821,7 @@ class CLIFGenerator:
                 relationship.name,
             )
         try:
-            relation_rule = self.rule_set.relation_translation_rules[
-                relationship_type
-            ]
+            relation_rule = self.rule_set.relation_translation_rules[relationship_type]
         except KeyError:
             raise exceptions.SemanticException(
                 "No constraint translation rule for given type"

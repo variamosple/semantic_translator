@@ -35,7 +35,8 @@
       "param": "id",
       "template": "A",
       "value": "V",
-      "constraint": "(and (int UUID_A) (= UUID_A V))"
+      "constraint": "(and (int UUID_A) (= UUID_A V))",
+      "unsetConstraint": "(int UUID_A)"
     },
     "String":{
       "parent":"F",

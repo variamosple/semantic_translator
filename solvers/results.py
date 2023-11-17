@@ -62,7 +62,7 @@ class Solution:
     def from_z3_output(cls, z3_solution: list[dict[str, int]]) -> Solution:
         single_solution = len(z3_solution) == 1
         solutions = [
-            {Solution._clean_id(var[0]): var[1] for var in solution.items()}
+            {Solution._clean_id(var[0]): var[1].as_long() for var in solution.items()}
             for solution in z3_solution
         ]
         for solution in solutions:

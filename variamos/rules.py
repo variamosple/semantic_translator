@@ -73,6 +73,7 @@ class AttributeTranslationRule(pydantic.BaseModel):
     param: str
     template: str
     constraint: str
+    unset_constraint: str | None
     value: str | None
 
 
