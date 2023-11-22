@@ -311,19 +311,24 @@ class CLIFGenerator:
                 uuid_utils.to_underscore_from_uuid(property[rule.param]),
             )
             # HACK: Handle this special case for feature models
-            if rule.value:
-                # handle the case where the prop is None
-                if property["value"] is None:
-                    if rule.unset_constraint is None:
-                        constraint = None
-                    else:
-                        constraint = rule.unset_constraint.replace(
-                            rule.template,
-                            uuid_utils.to_underscore_from_uuid(property[rule.param]),
-                        )
-                # Get the actual value of the property
+            if rule.value or rule.values:
+                # HACK: Handle the case of string attributes in feature models
+                if p_t == "String":
+                    xs = property["possibleValues"].split(",")
+                    constraint = constraint.replace("Xs", " ".join(xs))
                 else:
-                    constraint = constraint.replace(rule.value, property["value"])
+                    # handle the case where the prop is None
+                    if property["value"] is None:
+                        if rule.unset_constraint is None:
+                            constraint = None
+                        else:
+                            constraint = rule.unset_constraint.replace(
+                                rule.template,
+                                uuid_utils.to_underscore_from_uuid(property[rule.param]),
+                            )
+                    # Get the actual value of the property
+                    else:
+                        constraint = constraint.replace(rule.value, property["value"])
             if constraint is not None:
                 sentences.append(constraint)
         # HACK: This is a hack to add the attribute for GRIDSTIX

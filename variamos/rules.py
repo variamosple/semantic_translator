@@ -75,6 +75,7 @@ class AttributeTranslationRule(pydantic.BaseModel):
     constraint: str
     unset_constraint: str | None
     value: str | None
+    values: str | None
 
 
 class HierarchyNodeParameterMapping(pydantic.BaseModel):
