@@ -96,7 +96,9 @@ class CLIFGenerator:
         # TODO: replace regex string juggling with partial parsing???
         pattern = re.compile(r"\b(\w+)::(\w+)\b")
         matches: list[tuple[str, str]] = pattern.findall(arb_constraints)
-        matches_dict: dict[str, str] = dict(matches)
+        matches_dict: dict[str, list[str]] =  {} # dict(matches)
+        for k,v in matches:
+            matches_dict.setdefault(k,[]).append(v)
         for name, id in names_ids:
             if name in arb_constraints:
                 # Before we do the replacement we must handle the
@@ -104,27 +106,28 @@ class CLIFGenerator:
                 # Check that the name is the first element of the matches
                 if name in matches_dict:
                     props: list = self.variamos_graph.nodes[id]["element"].properties
-                    # TODO: Check what happens when there are multiple attributes # noqa: E501
-                    # found flags whether we did find the attribute
-                    found = False
-                    for prop in props:
-                        if prop["name"] == matches_dict[name]:
-                            # Replace the expression with the matching id
-                            expression = name + "::" + prop["name"]
-                            arb_constraints = arb_constraints.replace(
-                                expression,
-                                "UUID_"
-                                + uuid_utils.to_underscore_from_uuid(prop["id"]),
+                    for att in matches_dict[name]:
+                        # TODO: Check what happens when there are multiple attributes # noqa: E501
+                        # found flags whether we did find the attribute
+                        found = False
+                        for prop in props:
+                            if prop["name"] == att:
+                                # Replace the expression with the matching id
+                                expression = name + "::" + prop["name"]
+                                arb_constraints = arb_constraints.replace(
+                                    expression,
+                                    "UUID_"
+                                    + uuid_utils.to_underscore_from_uuid(prop["id"]),
+                                )
+                                found = True
+                        # Here if we arrive at the end fo the iteration and we
+                        # have not found any matches in the for loop
+                        # it means it is not part of the property list of the
+                        # element and must be an error
+                        if not found:
+                            raise exceptions.SemanticException(
+                                f"The {matches_dict[name]} attribute does not belong to {name}"  # noqa: E501
                             )
-                            found = True
-                    # Here if we arrive at the end fo the iteration and we
-                    # have not found any matches in the for loop
-                    # it means it is not part of the property list of the
-                    # element and must be an error
-                    if not found:
-                        raise exceptions.SemanticException(
-                            f"The {matches_dict[name]} attribute does not belong to {name}"  # noqa: E501
-                        )
                 # Now that we have handled all the attribute accesses we can perform the simple
                 # replacements
                 # NOTE: This probably means that this will not work correctly if an attribute
