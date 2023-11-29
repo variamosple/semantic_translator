@@ -328,8 +328,11 @@ class CLIFGenerator:
                             )
                     # Get the actual value of the property
                     else:
-                        constraint = constraint.replace(rule.value, property["value"])
+                        constraint = constraint.replace(rule.value, str(property["value"]))
             if constraint is not None:
+                constraint = constraint.replace(
+                    rule.parent, uuid_utils.to_underscore_from_uuid(element.id)
+                )
                 sentences.append(constraint)
         # HACK: This is a hack to add the attribute for GRIDSTIX
         # we will discriminate on the attribute type
