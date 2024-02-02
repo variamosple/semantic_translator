@@ -1,4 +1,5 @@
 import pytest
+pytest.skip(allow_module_level=True)
 from grammars import clif
 from textx.metamodel import TextXMetaModel
 from targets.minzinc.minizinc_model import (

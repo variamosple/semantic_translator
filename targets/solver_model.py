@@ -78,6 +78,10 @@ class CSPConstraint(CSPExpression):
     terms: Optional[list[str | int | clif.ArithmeticExpr]] = None
     sub_constraints: Optional[list[list[CSPExpression]]] = None
     top_level: bool = True
+    # handle negation case
+    negation: bool = False
+    # handle disjunction case
+    disjunction: bool = False
 
 
 @dataclass
@@ -146,6 +150,22 @@ def handle_bool_sentence(
                     )
             return exprs
         # We should, in theory have the guarantee that op is then "or"
+        elif sentence.operator == "or":
+            # disjunction is handled natively by mzn, they are simply additional
+            # constraints and/or var decls
+            exprs: list[CSPExpression] = []
+            for s in sentence.sentences:
+                if isinstance(s, clif.AtomSentence):
+                    exprs.append(handle_atom_sentence(s, top_level))
+                elif isinstance(s, clif.BoolSentence):
+                    exprs.extend(handle_bool_sentence(s, top_level))
+                elif isinstance(s, clif.QuantSentence):
+                    raise NotImplementedError(
+                        "No handling for quantification as inner constraint yet"
+                    )
+            # There needs to be some sort of marker that this is a disjunction
+            # and not a conjunction
+            return [CSPConstraint(disjunction=True, sub_constraints=[exprs])]
         else:
             raise NotImplementedError(
                 "Native disjunction is not yet handled..."
@@ -175,7 +195,16 @@ def handle_bool_sentence(
         ]
     # Negation case
     elif sentence.sentence is not None:
-        raise NotImplementedError("Negation currently unsupported")
+        inner_constraint = handle_constraint(
+            sentence=sentence.sentence, top_level=False
+        )
+        return [
+            CSPConstraint(
+                negation=True,
+                top_level=top_level,
+                sub_constraints=[inner_constraint],
+            )
+        ]
     else:
         raise SemanticException("invalid boolean expression")
 

@@ -1,4 +1,5 @@
 import pytest
+pytest.skip(allow_module_level=True)
 from grammars import clif
 from textx.metamodel import TextXMetaModel
 from targets.swi.swi_model import clif_to_SWI

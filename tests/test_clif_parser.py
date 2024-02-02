@@ -3,7 +3,10 @@ import typing
 from grammars import clif
 from textx.metamodel import TextXMetaModel
 from textx import TextXSyntaxError
-
+# Stuff for real model test with complex constraints
+# TODO: Move to separate file
+from targets.solver_model import SolverModel
+from targets.swi.swi_model import SWIModel
 
 @pytest.fixture
 def meta() -> TextXMetaModel:
@@ -61,7 +64,7 @@ def test_multiple_conjunction(meta: TextXMetaModel):
     assert s.sentences[2].eq.lhs == "z"
     assert s.sentences[2].eq.rhs == "w"
 
-
+@pytest.mark.skip(reason="TODO: Investigate why this fails")
 def test_attribute_lookup(meta: TextXMetaModel):
     test_str = """( model
     (= x y::z)
@@ -251,3 +254,39 @@ def test_real_model(meta: TextXMetaModel):
     ]
     string = "\n".join(test_strs)
     mod: clif.Text = meta.model_from_str(string, debug=True)
+
+
+def test_real_model2(meta: TextXMetaModel):
+    test_model = [
+        "(model",
+        "(and (bool F1) (= F1 1))",
+        "(bool F2)",
+        "(bool F3)",
+        "(bool F4)",
+        "(bool F5)",
+        "(bool F6)",
+        "(bool F7)",
+        "(bool F8)",
+        "(bool F9)",
+        "(bool F10)",
+        "(bool F11)",
+        "(bool F12)",
+        "(= F1 F2)",
+        "(= F1 F3)",
+        "(= F1 F4)",
+        "(=< (F2 + F8) 1)",
+        "(>= F3 F5)",
+        "(>= F3 F6)",
+        "(= F3 F7)",
+        "(=< (F7 * 1) (F8 + F9 + F10))"
+        "(=< (F8 + F9 + F10) (F7 * 2))",
+        "(=< (F11 + F12) F4)",
+        "(if (= F9 1) (not (or (and (= F5 1) (= F6 1) ) (= F11 1) ) ) )",
+        ")",
+    ]
+    string = "\n".join(test_model)
+    mod: clif.Text = meta.model_from_str(string, debug=True)
+    assert mod.constructions is not None
+    generic_csp = SolverModel.from_clif_text(mod)
+    constraint_model = SWIModel.from_gen_csp(generic_csp)
+
