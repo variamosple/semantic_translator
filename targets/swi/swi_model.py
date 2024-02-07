@@ -1,3 +1,4 @@
+# pyright: strict
 from __future__ import annotations
 from grammars import clif
 from dataclasses import dataclass, field

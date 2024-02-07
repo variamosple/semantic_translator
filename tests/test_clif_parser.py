@@ -255,7 +255,6 @@ def test_real_model(meta: TextXMetaModel):
     string = "\n".join(test_strs)
     mod: clif.Text = meta.model_from_str(string, debug=True)
 
-
 def test_real_model2(meta: TextXMetaModel):
     test_model = [
         "(model",

@@ -1,17 +1,27 @@
+# pyright: strict
 from __future__ import annotations
-from utils.exceptions import SemanticException
+# from utils.exceptions import SemanticException
 from grammars import clif
 from dataclasses import dataclass, field
+from functools import singledispatch, singledispatchmethod
 from targets.solver_model import (
     ArithmeticPredicate,
+    CSPArithmeticConstraint,
+    CSPConjunctionConstraint,
+    CSPDisjunctionConstraint,
+    CSPExpression,
+    CSPNegationConstraint,
+    CSPReificationConstraint,
     ReificationPredicate,
     CSPEnumVariable,
     CSPConstraint,
     CSPVariable,
     SolverModel,
+    TypePredType,
 )
 import random
 import string
+import typing
 
 
 @dataclass
@@ -26,9 +36,7 @@ class MZNModel:
             var_decl = self.var_decls[variable]
             var_decl.fix_variable(value)
         except KeyError:
-            raise RuntimeError(
-                "You are trying to set a variable that does not exist"
-            )
+            raise RuntimeError("You are trying to set a variable that does not exist")
 
     # TODO: This is a hack, we should be able to reset variables for enums too
     def reset_fix(self, variable: str):
@@ -36,9 +44,7 @@ class MZNModel:
             var_decl = self.var_decls[variable]
             var_decl.reset_fix()
         except KeyError:
-            raise RuntimeError(
-                "You are trying to reset a variable that does not exist"
-            )
+            raise RuntimeError("You are trying to reset a variable that does not exist")
 
     def to_arith_pred_str(self, predicate: ArithmeticPredicate) -> str:
         match predicate:
@@ -63,97 +69,87 @@ class MZNModel:
                 return " <-> "
 
     @staticmethod
-    def quote_var(var_name) -> str:
+    def quote_var(var_name: str) -> str:
         return "'" + var_name + "'"
 
-    def mzn_render_csp_var_decl(self, var_decl: CSPVariable) -> str:
-        qvar = self.quote_var(var_decl.name)
-        if (
-            var_decl.type == "bool"
-            or var_decl.type == "bounded_int"
-            or (var_decl.lower is not None and var_decl.upper is not None)
-        ):
-            return f"var {var_decl.lower}..{var_decl.upper}:{qvar}"
-        else:
-            return f"var int:{qvar}"
-
-    def mzn_render_enum_var_decl(self, var_decl: CSPEnumVariable) -> str:
-        # generate a random name for the enum
-        enum_name = (
-            f"enum_{''.join(random.choices(string.ascii_letters, k=10))}"
+    @singledispatchmethod
+    def render_expression(self, expr: CSPExpression) -> str:
+        raise NotImplementedError(
+            "Cannot render an expression of type " + str(type(expr))
         )
+
+    @render_expression.register(CSPEnumVariable)
+    def _(self, expr: CSPEnumVariable) -> str:
+        # generate a random name for the enum
+        enum_name = f"enum_{''.join(random.choices(string.ascii_letters, k=10))}"
         # create the enum declaration
         # PS why the triple brackets?
-        enum_decl_str = f"enum {enum_name} = {{{', '.join(var_decl.values)}}}"
+        enum_decl_str = f"enum {enum_name} = {{{', '.join(expr.values)}}}"
         # render the final string
-        qvar = self.quote_var(var_decl.name)
+        qvar = self.quote_var(expr.name)
         # TODO: handle the case where the variable is fixed
         # TODO: check if it is even needed
         return f"{enum_decl_str}; var {enum_name}:{qvar}"
 
-    def mzn_render_constraint(self, constraint: CSPConstraint) -> str:
-        def render_expr(self, term) -> str:
-            if isinstance(term, int):
-                return str(term)
-            elif isinstance(term, str):
-                return "'" + term + "'"
-            elif isinstance(term, clif.ArithmeticExpr):
-                return term.model_str("minizinc")
-            else:
-                raise SemanticException(
-                    "Something went wrong parsing constraint terms"
-                )
-
-        top_level_str = "constraint " if constraint.top_level else ""
-        if constraint.arithmetic_predicate is not None:
-            if constraint.terms is None or len(constraint.terms) != 2:
-                raise SemanticException("Arithmetic predicates are binary only")
-            else:
-                rhs, lhs = (
-                    render_expr(self, constraint.terms[0]),
-                    render_expr(self, constraint.terms[1]),
-                )
-                return (
-                    f"{top_level_str}{rhs}"
-                    f"{self.to_arith_pred_str(constraint.arithmetic_predicate)}"
-                    f"{lhs}"
-                )
-        elif constraint.reification_predicate is not None:
-            if (
-                constraint.sub_constraints is None
-                or len(constraint.sub_constraints) != 2
-            ):
-                raise SemanticException("Wrong number of subexpresions")
-            sub_ant = " /\\ ".join(
-                (
-                    self.render_csp_var_decl_or_constraint(c)
-                    for c in constraint.sub_constraints[0]
-                )
-            )
-            sub_con = " /\\ ".join(
-                (
-                    self.render_csp_var_decl_or_constraint(c)
-                    for c in constraint.sub_constraints[1]
-                )
-            )
-            return (
-                f"{top_level_str}({sub_ant})"
-                f"{self.to_reif_pred_str(constraint.reification_predicate)}"
-                f"({sub_con})"
-            )
-
-    def render_csp_var_decl_or_constraint(
-        self, cons: CSPVariable | CSPConstraint
-    ) -> str:
-        if isinstance(cons, CSPVariable):
-            if isinstance(cons, CSPEnumVariable):
-                return self.mzn_render_enum_var_decl(cons)
-            else:
-                return self.mzn_render_csp_var_decl(cons)
-        elif isinstance(cons, CSPConstraint):
-            return self.mzn_render_constraint(cons)
+    @render_expression.register(CSPVariable)
+    def _(self, expr: CSPVariable) -> str:
+        qvar = self.quote_var(expr.name)
+        if (
+            expr.type == TypePredType.BOOL
+            or expr.type == TypePredType.BOUNDED_INT
+            or (expr.lower is not None and expr.upper is not None)
+        ):
+            return f"var {expr.lower}..{expr.upper}:{qvar}"
         else:
-            raise RuntimeError("Something went wrong rendering the constraint")
+            return f"var int:{qvar}"
+
+    @render_expression.register(CSPArithmeticConstraint)
+    def _(self, expr: CSPArithmeticConstraint) -> str:
+        if len(expr.terms) != 2:
+            raise RuntimeError("Arithmetic constraints are binary only")
+        rhs, lhs = (
+            render_mzn_expression(expr.terms[0]),
+            render_mzn_expression(expr.terms[1]),
+        )
+        top_level_str = "constraint " if expr.top_level else ""
+        return (
+            f"{top_level_str}{rhs}" 
+            f"{self.to_arith_pred_str(expr.arithmetic_predicate)}" 
+            f"{lhs}"
+        )
+    
+    @render_expression.register(CSPReificationConstraint)
+    def _(self, expr: CSPReificationConstraint) -> str:
+        ant = self.render_expression(expr.lhs)
+        con = self.render_expression(expr.rhs)
+        top_level_str = "constraint " if expr.top_level else ""
+        return (
+            f"{top_level_str}({ant})" 
+            f"{self.to_reif_pred_str(expr.reification_predicate)}" 
+            f"({con})"
+        )
+
+    @render_expression.register(CSPConjunctionConstraint)
+    def _(self, expr: CSPConjunctionConstraint) -> str:
+        return " /\\ ".join(
+            (
+                self.render_expression(c)
+                for c in expr.sub_constraints
+            )
+        )
+
+    @render_expression.register(CSPDisjunctionConstraint)
+    def _(self, expr: CSPDisjunctionConstraint) -> str:
+        return " \\/ ".join(
+            (
+                self.render_expression(c)
+                for c in expr.sub_constraints
+            )
+        )
+
+    @render_expression.register(CSPNegationConstraint)
+    def _(self, expr: CSPNegationConstraint) -> str:
+        return f"not ({self.render_expression(expr.sub_constraint)})"
 
     def generate_program(self) -> list[str]:
         strs: list[str] = []
@@ -162,11 +158,25 @@ class MZNModel:
             *self.constraint_decls,
         ]
         for cons in constraints:
-            strs.append(
-                self.render_csp_var_decl_or_constraint(cons) + self.__delimiter
-            )
+            strs.append(self.render_expression(cons) + self.__delimiter)
         return strs
 
     @classmethod
     def from_gen_csp(cls, generic_csp: SolverModel):
         return cls(generic_csp.var_decls, generic_csp.constraints)
+
+@singledispatch
+def render_mzn_expression(term: typing.Any) -> str:
+    raise NotImplementedError(f"Cannot render an expression of type {type(term)}")
+
+@render_mzn_expression.register(int)
+def _(term: int) -> str:
+    return str(term)
+
+@render_mzn_expression.register(str)
+def _(term: str) -> str:
+    return f"'{term}'"
+
+@render_mzn_expression.register(clif.ArithmeticExpr)
+def _(term: clif.ArithmeticExpr) -> str:
+    return term.model_str("minizinc")
