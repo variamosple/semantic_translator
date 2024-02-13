@@ -1,15 +1,24 @@
 # pyright: strict
 from __future__ import annotations
+import typing
 from grammars import clif
 from dataclasses import dataclass, field
 from utils.exceptions import SemanticException
+from functools import singledispatch, singledispatchmethod
 from targets.solver_model import (
     ArithmeticPredicate,
+    CSPArithmeticConstraint,
+    CSPConjunctionConstraint,
+    CSPDisjunctionConstraint,
+    CSPExpression,
+    CSPNegationConstraint,
+    CSPReificationConstraint,
     ReificationPredicate,
     CSPEnumVariable,
     CSPConstraint,
     CSPVariable,
     SolverModel,
+    # TypePredType,
 )
 
 
@@ -60,88 +69,77 @@ class SWIModel:
                 return " #==> "
             case ReificationPredicate.BIMP:
                 return " #<==> "
-
-    def swi_render_var_decl(self, var_decl: CSPVariable) -> str:
-        if var_decl.lower is None or var_decl.upper is None:
-            return f"{var_decl.name} in inf..sup"
-        return f"{var_decl.name} in {var_decl.lower}..{var_decl.upper}"
-
-    def swi_render_enum_var_decl(self, var_decl: CSPEnumVariable) -> str:
-        if len(var_decl.values) == 0:
+            
+    @singledispatchmethod
+    def render_expression(self, expr: CSPExpression) -> str:
+        raise  NotImplementedError(
+            "Cannot render an expression of type " + str(type(expr))
+        )
+    
+    @render_expression.register(CSPEnumVariable)
+    def _(self, expr: CSPEnumVariable) -> str:
+        if len(expr.values) == 0:
             raise SemanticException("Enum variables must have values")
-        values_list = "[" + ", ".join(var_decl.values) + "]"
-        ints = list(map(str, range(len(var_decl.values))))
+        values_list = "[" + ", ".join(expr.values) + "]"
+        ints = list(map(str, range(len(expr.values))))
         enum_values_list = "[" + ", ".join(ints) + "]"
         var_bounds = (ints[0], ints[-1])
         return (
             f"{values_list} = {enum_values_list}, "
-            f"{var_decl.name} in {var_bounds[0]}..{var_bounds[1]}"
+            f"{expr.name} in {var_bounds[0]}..{var_bounds[1]}"
         )
+    
+    @render_expression.register(CSPVariable)
+    def _(self, expr: CSPVariable) -> str:
+        if expr.lower is None or expr.upper is None:
+            return f"{expr.name} in inf..sup"
+        return f"{expr.name} in {expr.lower}..{expr.upper}"
 
-    def swi_render_constraint(self, constraint: CSPConstraint) -> str:
-        def render_expr(term) -> str:
-            if isinstance(term, (int, str)):
-                return str(term)
-            elif isinstance(term, clif.ArithmeticExpr):
-                return term.model_str()
-            else:
-                raise SemanticException(
-                    "Something went wrong parsing constraint terms"
-                )
-
-        if constraint.arithmetic_predicate is not None:
-            if constraint.terms is None or len(constraint.terms) != 2:
-                raise SemanticException("Arithmetic predicates are binary only")
-            else:
-                rhs, lhs = (
-                    render_expr(constraint.terms[0]),
-                    render_expr(constraint.terms[1]),
-                )
-                return (
-                    f"{rhs}"
-                    f"{self.to_arith_pred_str(constraint.arithmetic_predicate)}"
-                    f"{lhs}"
-                )
-        elif constraint.reification_predicate is not None:
-            if (
-                constraint.sub_constraints is None
-                or len(constraint.sub_constraints) != 2
-            ):
-                raise SemanticException("Wrong number of subexpresions")
-            sub_ant = " #/\\ ".join(
-                (
-                    self.render_csp_var_decl_or_constraint(c)
-                    for c in constraint.sub_constraints[0]
-                )
+    @render_expression.register(CSPArithmeticConstraint)
+    def _(self, expr: CSPArithmeticConstraint) -> str:
+        if len(expr.terms) != 2:
+            raise RuntimeError("Arithmetic constraints are binary only")
+        rhs, lhs = (
+            render_swi_expression(expr.terms[0]),
+            render_swi_expression(expr.terms[1]),
+        )
+        return (
+            f"{rhs}"
+            f"{self.to_arith_pred_str(expr.arithmetic_predicate)}"
+            f"{lhs}"
+        )
+    
+    @render_expression.register(CSPReificationConstraint)
+    def _(self, expr: CSPReificationConstraint) -> str:
+        ant = self.render_expression(expr.lhs)
+        con = self.render_expression(expr.rhs)
+        return (
+            f"({ant})"
+            f"{self.to_reif_pred_str(expr.reification_predicate)}"
+            f"({con})"
+        )
+    
+    @render_expression.register(CSPConjunctionConstraint)
+    def _(self, expr: CSPConjunctionConstraint) -> str:
+        return " #/\\ ".join(
+            (
+                self.render_expression(c)
+                for c in expr.sub_constraints
             )
-            sub_con = " #/\\ ".join(
-                (
-                    self.render_csp_var_decl_or_constraint(c)
-                    for c in constraint.sub_constraints[1]
-                )
+        )
+    
+    @render_expression.register(CSPDisjunctionConstraint)
+    def _(self, expr: CSPDisjunctionConstraint) -> str:
+        return " #\\/ ".join(
+            (
+                self.render_expression(c)
+                for c in expr.sub_constraints
             )
-            return (
-                f"{sub_ant}"
-                f"{self.to_reif_pred_str(constraint.reification_predicate)}"
-                f"{sub_con}"
-            )
-        else:
-            raise NotImplementedError(
-                "No handling for more complex stuff yet..."
-            )
-
-    def render_csp_var_decl_or_constraint(
-        self, item: CSPVariable | CSPConstraint
-    ) -> str:
-        if isinstance(item, CSPVariable):
-            if isinstance(item, CSPEnumVariable):
-                return self.swi_render_enum_var_decl(item)
-            else:
-                return self.swi_render_var_decl(item)
-        elif isinstance(item, CSPConstraint):
-            return self.swi_render_constraint(item)
-        else:
-            raise RuntimeError("Something went wrong rendering the csp item")
+        )
+    
+    @render_expression.register(CSPNegationConstraint)
+    def _(self, expr: CSPNegationConstraint) -> str:
+        return f"#\\ ({self.render_expression(expr.sub_constraint)})"
 
     def generate_program(self) -> list[str]:
         strs: list[str] = []
@@ -151,11 +149,27 @@ class SWIModel:
         ]
         for cons in constraints[:-1]:
             strs.append(
-                self.render_csp_var_decl_or_constraint(cons) + self.__delimiter
+                self.render_expression(cons) + self.__delimiter
             )
-        strs.append(self.render_csp_var_decl_or_constraint(constraints[-1]))
+        strs.append(self.render_expression(constraints[-1]))
         return strs
 
     @classmethod
     def from_gen_csp(cls, generic_csp: SolverModel):
         return cls(generic_csp.var_decls, generic_csp.constraints)
+    
+@singledispatch
+def render_swi_expression(term: typing.Any) -> str:
+    raise NotImplementedError(f"Cannot render an expression of type {type(term)}")
+
+@render_swi_expression.register(int)
+def _(term: int) -> str:
+    return str(term)
+
+@render_swi_expression.register(str)
+def _(term: str) -> str:
+    return str(term)
+
+@render_swi_expression.register(clif.ArithmeticExpr)
+def _(term: clif.ArithmeticExpr) -> str:
+    return term.model_str("swi")

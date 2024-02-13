@@ -1,15 +1,23 @@
+# pyright: basic
 from __future__ import annotations
 import z3
 import typing
 from grammars import clif
+from functools import singledispatch, singledispatchmethod
 from targets.solver_model import (
-    SolverModel,
-    CSPVariable,
+    ArithmeticPredicate,
+    CSPArithmeticConstraint,
+    CSPConjunctionConstraint,
+    CSPDisjunctionConstraint,
+    CSPExpression,
+    CSPNegationConstraint,
+    CSPReificationConstraint,
+    ReificationPredicate,
     CSPEnumVariable,
     CSPConstraint,
+    CSPVariable,
+    SolverModel,
     TypePredType,
-    ArithmeticPredicate,
-    ReificationPredicate,
 )
 from utils.exceptions import SemanticException
 from dataclasses import dataclass, field
@@ -39,9 +47,7 @@ class Z3Model:
         elif variable in self.enum_consts:
             raise NotImplementedError("Enum variable fixing not implemented")
         else:
-            raise SemanticException(
-                f"Variable {variable} not found in model {self}"
-            )
+            raise SemanticException(f"Variable {variable} not found in model {self}")
 
     def reset_fix(self, variable: str):
         # For now we can get away with just removing the last constraint
@@ -51,9 +57,7 @@ class Z3Model:
         elif variable in self.enum_consts:
             raise NotImplementedError("Enum variable fixing not implemented")
         else:
-            raise SemanticException(
-                f"Variable {variable} not found in model {self}"
-            )
+            raise SemanticException(f"Variable {variable} not found in model {self}")
 
     @classmethod
     def from_gen_csp(cls, generic_csp: SolverModel):
@@ -129,44 +133,15 @@ class Z3Model:
                 f"Unknown variable type {type(var)} for variable {var.name}"
             )
 
+    @singledispatchmethod
     @staticmethod
-    def _construct_z3_constraint(constraint: CSPConstraint, z3model: Z3Model):
-        if isinstance(constraint, CSPConstraint):
-            if constraint.arithmetic_predicate is not None:
-                if constraint.terms is not None:
-                    return Z3Model._construct_z3_arithmetic_constraint(
-                        constraint, z3model
-                    )
-                else:
-                    raise SemanticException(
-                        f"Constraint {constraint}"
-                        "has arithmetic predicate but no terms"
-                    )
-            elif constraint.reification_predicate is not None:
-                if constraint.sub_constraints is not None:
-                    return Z3Model._construct_z3_reification_constraint(
-                        constraint, z3model
-                    )
-                else:
-                    raise SemanticException(
-                        f"Constraint {constraint}"
-                        "has reification predicate but no subconstraints"
-                    )
-            else:
-                raise SemanticException(
-                    f"Constraint {constraint}"
-                    "has neither arithmetic nor reification predicate"
-                )
-        else:
-            raise SemanticException(
-                f"Unknown constraint type {type(constraint)}"
-                f"for constraint {constraint}"
-            )
+    def _construct_z3_constraint(constraint: CSPExpression, _: Z3Model):
+        raise NotImplementedError(
+            f"Cannot construct a Z3 constraint from expression {constraint}"
+        )
 
     @staticmethod
-    def _construct_z3_arithmetic_expr(
-        expr: clif.ArithmeticExpr, z3model: Z3Model
-    ):
+    def _construct_z3_arithmetic_expr(expr: clif.ArithmeticExpr, z3model: Z3Model):
         def handle_e(e: clif.E):
             if e.ep is not None:
                 if e.ep.op == "+":
@@ -229,10 +204,9 @@ class Z3Model:
         inner_expr = expr.expr
         return handle_e(inner_expr)
 
+    @_construct_z3_constraint.register(CSPArithmeticConstraint)
     @staticmethod
-    def _construct_z3_arithmetic_constraint(
-        constraint: CSPConstraint, z3model: Z3Model
-    ):
+    def _(constraint: CSPArithmeticConstraint, z3model: Z3Model):
         if constraint.terms is None or len(constraint.terms) != 2:
             raise SemanticException(
                 f"Arithmetic constraint {constraint} has more than two terms"
@@ -263,6 +237,10 @@ class Z3Model:
             else:
                 # FIXME: No error handling!!!!
                 term2 = 1 if constraint.terms[1] == 1 else 0
+            if term1 is None or term2 is None:
+                raise SemanticException(
+                    f"Arithmetic constraint {constraint} has None term"
+                )
             match constraint.arithmetic_predicate:
                 case ArithmeticPredicate.GT:
                     return term1 > term2
@@ -277,36 +255,40 @@ class Z3Model:
                 case ArithmeticPredicate.NEQ:
                     return term1 != term2
 
+    @_construct_z3_constraint.register(CSPReificationConstraint)
     @staticmethod
-    def _construct_z3_reification_constraint(
-        constraint: CSPConstraint, z3model: Z3Model
-    ):
-        if (
-            constraint.sub_constraints is None
-            or len(constraint.sub_constraints) != 2
-        ):
-            raise SemanticException(
-                f"Reification constraint {constraint}"
-                "has more than two subconstraints"
+    def _(constraint: CSPReificationConstraint, z3model: Z3Model):
+        lhs = Z3Model._construct_z3_constraint(constraint.lhs, z3model)
+        rhs = Z3Model._construct_z3_constraint(constraint.rhs, z3model)
+        match constraint.reification_predicate:
+            case ReificationPredicate.IMP:
+                return z3.Implies(lhs, rhs)
+            case ReificationPredicate.BIMP:
+                return z3.And(z3.Implies(lhs, rhs), z3.Implies(rhs, lhs))
+
+    @_construct_z3_constraint.register(CSPConjunctionConstraint)
+    @staticmethod
+    def _(constraint: CSPConjunctionConstraint, z3model: Z3Model):
+        return z3.And(
+            *(
+                Z3Model._construct_z3_constraint(c, z3model)
+                for c in constraint.sub_constraints
             )
-        else:
-            # We have to assume that the constraints are CSPConstraints
-            subc1 = z3.And(
-                [
-                    Z3Model._construct_z3_constraint(subc, z3model)
-                    for subc in constraint.sub_constraints[0]
-                ]
-            )  # noqa
-            subc2 = z3.And(
-                [
-                    Z3Model._construct_z3_constraint(subc, z3model)
-                    for subc in constraint.sub_constraints[1]
-                ]
-            )  # noqa
-            match constraint.reification_predicate:
-                case ReificationPredicate.IMP:
-                    return z3.Implies(subc1, subc2)
-                case ReificationPredicate.BIMP:
-                    return z3.And(
-                        z3.Implies(subc1, subc2), z3.Implies(subc2, subc1)
-                    )
+        )
+
+    @_construct_z3_constraint.register(CSPDisjunctionConstraint)
+    @staticmethod
+    def _(constraint: CSPDisjunctionConstraint, z3model: Z3Model):
+        return z3.Or(
+            *(
+                Z3Model._construct_z3_constraint(c, z3model)
+                for c in constraint.sub_constraints
+            )
+        )
+
+    @_construct_z3_constraint.register(CSPNegationConstraint)
+    @staticmethod
+    def _(constraint: CSPNegationConstraint, z3model: Z3Model):
+        return z3.Not(
+            Z3Model._construct_z3_constraint(constraint.sub_constraint, z3model)
+        )

@@ -1,0 +1,186 @@
+{
+  "symbolMap": {
+    "+": "3",
+    "-": "1",
+    "=": "2",
+    "++": "4",
+    "--": "0"
+  },
+  "elementTypes": [
+    "ContextVariable",
+    "Goal",
+    "Operationalization"
+  ],
+  "relationTypes": [
+    "SubGoal"
+  ],
+  "attributeTypes": [
+    "ContextVariable"
+  ],
+  "hierarchyTypes": [
+    "SoftGoal"
+  ],
+  "typingRelationTypes": [],
+  "ignoredRelationTypes": [
+    "SoftGoal_SoftGoal",
+    "Claim_SoftGoal",
+    "Cardinality_Goal",
+    "SoftInfluence_SoftGoal",
+    "ContextVariable_SoftInfluence",
+    "Operationalization_Claim_Goal"
+  ],
+  "relationPropertySchema": {},
+  "elementTranslationRules": {
+    "Goal": {
+      "param": "F",
+      "constraint": "(bool UUID_F)"
+    },
+    "ContextVariable": {
+      "param": "C",
+      "constraint": "(enum (Xs) UUID_C)",
+      "enumMapping": {
+        "var": "Xs",
+        "attribute": "PossibleValues"
+      }
+    },
+    "Operationalization": {
+      "param": "F",
+      "constraint": "(bool UUID_F)"
+    }
+  },
+  "relationReificationTypes": [
+    "Cardinality",
+    "Claim",
+    "SoftInfluence"
+  ],
+  "relationTranslationRules": {
+    "SubGoal": {
+      "params": [
+        "F1",
+        "F2"
+      ],
+      "constraint": "(= UUID_F1 UUID_F2)"
+    }
+  },
+  "attributeTranslationRules": {
+    "SetValue": {
+      "param": "value",
+      "parent": "C",
+      "template": "V",
+      "constraint": "(= UUID_C V)"
+    }
+  },
+  "hierarchyTranslationRules": {
+    "SoftGoal": {
+      "leafRule": {
+        "param": "F",
+        "constraint": "(int (0 4) UUID_F)"
+      },
+      "nodeRule": {
+        "param": [
+          "F",
+          "Xs"
+        ],
+        "constraint": "(and (int (0 4) UUID_F) (= UUID_F ( ( sum(Xs) )/len(Xs) ) ) )",
+        "paramMapping": {
+          "var": "Xs",
+          "node": "F",
+          "incoming": true
+        }
+      }
+    }
+  },
+  "relationReificationExpansions": {
+    "params": [
+      "Xs"
+    ],
+    "functions": [
+      "sum",
+      "len"
+    ]
+  },
+  "typingRelationTranslationRules": {},
+  "relationReificationPropertySchema": {
+    "max": {
+      "key": "value",
+      "index": 1
+    },
+    "min": {
+      "key": "value",
+      "index": 0
+    }
+  },
+  "relationReificationTranslationRules": {
+    "Claim": {
+      "param": [
+        "C",
+        "F",
+        "Xs"
+      ],
+      "constraint": {
+        "Claim": "(and (bool C) (iff (= C 1) (forall (x:Xs) (if (= x 1) (=< F edge(x)::Value) ) ) ) )"
+      },
+      "paramMapping": {
+        "node": "C",
+        "inboundEdges": {
+          "var": "Xs",
+          "unique": false
+        },
+        "outboundEdges": {
+          "var": "F",
+          "unique": true
+        }
+      }
+    },
+    "Cardinality": {
+      "param": [
+        "F",
+        "Xs",
+        "min",
+        "max"
+      ],
+      "constraint": {
+        "Cardinality": "(and (=< (F * min) (sum(Xs))) (=< (sum(Xs)) (F * max)) )"
+      },
+      "paramMapping": {
+        "inboundEdges": {
+          "var": "Xs",
+          "unique": false
+        },
+        "outboundEdges": {
+          "var": "F",
+          "unique": true
+        }
+      }
+    },
+    "SoftInfluence": {
+      "param": [
+        "S",
+        "F",
+        "Xs"
+      ],
+      "constraint": {
+        "SoftInfluence": "(and (bool S) (iff (= S 1) (if (= F edge(F)::Value) (forall (x:Xs) (= x edge(x)::SatisfactionLevel) ) ) ) )"
+      },
+      "paramMapping": {
+        "node": "S",
+        "inboundEdges": {
+          "var": "F",
+          "unique": true
+        },
+        "outboundEdges": {
+          "var": "Xs",
+          "unique": false
+        }
+      }
+    }
+  },
+  "relationReificationTypeDependentExpansions": {
+    "Cardinality": {
+      "Cardinality": [
+        "max",
+        "min"
+      ]
+    }
+  }
+}

@@ -3,10 +3,16 @@ import typing
 from grammars import clif
 from textx.metamodel import TextXMetaModel
 from textx import TextXSyntaxError
+from solvers.results import Result
 # Stuff for real model test with complex constraints
 # TODO: Move to separate file
 from targets.solver_model import SolverModel
+from targets.swi.prolog_bridge import SWIBridge
+from targets.minzinc.minizinc_model import MZNModel
+from targets.minzinc.minizinc_bridge import MiniZincBridge
 from targets.swi.swi_model import SWIModel
+from targets.z3.z3_bridge import Z3Bridge
+from targets.z3.z3_model import Z3Model
 
 @pytest.fixture
 def meta() -> TextXMetaModel:
@@ -258,29 +264,29 @@ def test_real_model(meta: TextXMetaModel):
 def test_real_model2(meta: TextXMetaModel):
     test_model = [
         "(model",
-        "(and (bool F1) (= F1 1))",
-        "(bool F2)",
-        "(bool F3)",
-        "(bool F4)",
-        "(bool F5)",
-        "(bool F6)",
-        "(bool F7)",
-        "(bool F8)",
-        "(bool F9)",
-        "(bool F10)",
-        "(bool F11)",
-        "(bool F12)",
-        "(= F1 F2)",
-        "(= F1 F3)",
-        "(= F1 F4)",
-        "(=< (F2 + F8) 1)",
-        "(>= F3 F5)",
-        "(>= F3 F6)",
-        "(= F3 F7)",
-        "(=< (F7 * 1) (F8 + F9 + F10))"
-        "(=< (F8 + F9 + F10) (F7 * 2))",
-        "(=< (F11 + F12) F4)",
-        "(if (= F9 1) (not (or (and (= F5 1) (= F6 1) ) (= F11 1) ) ) )",
+        "(and (bool UUID_f1000000_0000_0000_0000_000000000000) (= UUID_f1000000_0000_0000_0000_000000000000 1))",
+        "(bool UUID_f2000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f3000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f4000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f5000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f6000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f7000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f8000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f9000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f1000000_0000_0000_0000_000000000000)",
+        "(bool UUID_f1100000_0000_0000_0000_000000000000)",
+        "(bool UUID_f1200000_0000_0000_0000_000000000000)",
+        "(= UUID_f1000000_0000_0000_0000_000000000000 UUID_f2000000_0000_0000_0000_000000000000)",
+        "(= UUID_f1000000_0000_0000_0000_000000000000 UUID_f3000000_0000_0000_0000_000000000000)",
+        "(= UUID_f1000000_0000_0000_0000_000000000000 UUID_f4000000_0000_0000_0000_000000000000)",
+        "(=< (UUID_f2000000_0000_0000_0000_000000000000 + UUID_f8000000_0000_0000_0000_000000000000) 1)",
+        "(>= UUID_f3000000_0000_0000_0000_000000000000 UUID_f5000000_0000_0000_0000_000000000000)",
+        "(>= UUID_f3000000_0000_0000_0000_000000000000 UUID_f6000000_0000_0000_0000_000000000000)",
+        "(= UUID_f3000000_0000_0000_0000_000000000000 UUID_f7000000_0000_0000_0000_000000000000)",
+        "(=< (UUID_f7000000_0000_0000_0000_000000000000 * 1) (UUID_f8000000_0000_0000_0000_000000000000 + UUID_f9000000_0000_0000_0000_000000000000 + UUID_f1000000_0000_0000_0000_000000000000))"
+        "(=< (UUID_f8000000_0000_0000_0000_000000000000 + UUID_f9000000_0000_0000_0000_000000000000 + UUID_f1000000_0000_0000_0000_000000000000) (UUID_f7000000_0000_0000_0000_000000000000 * 2))",
+        "(=< (UUID_f1100000_0000_0000_0000_000000000000 + UUID_f1200000_0000_0000_0000_000000000000) UUID_f4000000_0000_0000_0000_000000000000)",
+        "(if (= UUID_f9000000_0000_0000_0000_000000000000 1) (not (or (and (= UUID_f5000000_0000_0000_0000_000000000000 1) (= UUID_f6000000_0000_0000_0000_000000000000 1) ) (= UUID_f1100000_0000_0000_0000_000000000000 1) ) ) )",
         ")",
     ]
     string = "\n".join(test_model)
@@ -288,4 +294,19 @@ def test_real_model2(meta: TextXMetaModel):
     assert mod.constructions is not None
     generic_csp = SolverModel.from_clif_text(mod)
     constraint_model = SWIModel.from_gen_csp(generic_csp)
+    b = SWIBridge()
+    r = Result.from_swi_output
+    o = r(b.solve(constraint_model))
+    assert o.status == "satisfied"
+    cm1 = MZNModel.from_gen_csp(generic_csp)
+    b1 = MiniZincBridge()
+    r1 = Result.from_minizinc_output
+    o1 = r1(b1.solve(cm1))
+    assert o1.status == "satisfied"
+    cm2 = Z3Model.from_gen_csp(generic_csp)
+    b2 = Z3Bridge()
+    r2 = Result.from_z3_output
+    o2 = r2(b2.solve(cm2))
+    assert o2.status == "satisfied"
+    
 
