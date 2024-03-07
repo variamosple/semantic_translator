@@ -7,31 +7,51 @@ from utils import enums, uuid_utils
 from utils import exceptions
 from solvers import solver_control
 from grammars import clif
-from generator import clif_generator
-
+from generators import uvl_clif_generator, vmos_clif_generator
 
 class QueryHandler:
     query_obj: query.Query
     controller: solver_control.SolverController
     clif_model: clif.Text
     clif_str: str
-    translation_rules: rules.Rules
+    translation_rules: rules.Rules | None
 
     def __init__(
         self,
         # model_obj: model.Model,
-        nx_graph: nx.DiGraph,
         query_obj: query.Query,
+        input: enums.InputEnum,
+        nx_graph: nx.DiGraph | None = None,
         # clif_model: clif.Text,
-        translation_rules: rules.Rules,
+        translation_rules: rules.Rules | None = None,
+        model_str: str | None = None,
     ) -> None:
-        self.nx_graph = nx_graph
+        # the query object is always the same
         self.query_obj = query_obj
-        self.translation_rules = translation_rules
-        # Construct the AST from the graph and the translation rules
-        clif_model = self.create_clif_ast(
-            rules=translation_rules, graph=nx_graph
-        )
+        ### Init should depend on the input type
+        match input:
+            case enums.InputEnum.vmos:
+                self.nx_graph = nx_graph
+                self.translation_rules = translation_rules
+                # Construct the AST from the graph and the translation rules
+                clif_gen = vmos_clif_generator.VMosCLIFGenerator(
+                    rule_set=translation_rules,
+                    variamos_graph=nx_graph,
+                )
+                self.clif_str = clif_gen.generate_logic_model()
+                clif_model = self.create_clif_ast(
+                    # rules=translation_rules, graph=nx_graph
+                )
+            case enums.InputEnum.uvl:
+                self.model_str = model_str
+                # Construct the AST from the UVL model
+                clif_gen = uvl_clif_generator.UvlCLIFGenerator(
+                    model_str=model_str
+                )
+                self.clif_str = f"(model {clif_gen.generate_logic_model()} )"
+                clif_model = self.create_clif_ast()
+            case _:
+                raise exceptions.QueryException("Unknown input type")
         # build the controller
         if self.query_obj.operation != query.OperationEnum.get_model:
             self.controller = solver_control.SolverController(
@@ -42,13 +62,15 @@ class QueryHandler:
                 translation_rules=translation_rules,
             )
 
-    def create_clif_ast(self, rules: rules.Rules, graph: nx.DiGraph):
-        clif_gen = clif_generator.CLIFGenerator(
-            rule_set=rules,
-            # variamos_model=vmos_model,
-            variamos_graph=graph,
-        )
-        self.clif_str = clif_gen.generate_logic_model()
+    def create_clif_ast(self, 
+        #rules: rules.Rules, graph: nx.DiGraph
+    ):
+        # clif_gen = vmos_clif_generator.VMosCLIFGenerator(
+        #     rule_set=rules,
+        #     # variamos_model=vmos_model,
+        #     variamos_graph=graph,
+        # )
+        # self.clif_str = clif_gen.generate_logic_model()
         print(self.clif_str)
         clif_mm = clif.clif_meta_model()
         clif_model: clif.Text = clif_mm.model_from_str(self.clif_str)
@@ -61,7 +83,8 @@ class QueryHandler:
             or self.query_obj.operation == query.OperationEnum.get_code
         )
 
-    def run_query(self, project_json, idx, feature_model):
+    def run_query(self):
+    # def run_query(self, project_json, idx, feature_model):
         # there can either be iteration or not
         if (i_spec := self.query_obj.iterate_over) is not None:
             # This branch implies that we need to handle the iterative

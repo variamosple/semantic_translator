@@ -10,7 +10,7 @@ from grammars import clif
 
 
 @dataclasses.dataclass(init=False)
-class CLIFGenerator:
+class VMosCLIFGenerator:
     rule_set: rules.Rules
     # variamos_model: model.Model
     variamos_graph: nx.DiGraph
@@ -39,23 +39,24 @@ class CLIFGenerator:
         # we will gather all the ids and names in a data structure.
         names_ids = []
         for element_id, element in self.variamos_graph.nodes.data("element"):  # type: ignore
-            # Frist make the sentece for the element itself
-            e_sentence = self.generate_element_sentence(
-                element_id=element_id, element=element  # type: ignore
-            )
-            if e_sentence is not None:
-                sentence_strings.append(e_sentence)
-            # Next make the sentence for the element's attributes
-            attr_sentences = list(
-                s
-                for s in self.generate_attribute_senteces(element=element)
-                if s is not None
-            )
-            if len(attr_sentences) > 0:
-                sentence_strings.extend(attr_sentences)
-            # HACK: add the name property into the above data structure
-            # HACK: turn off checks
-            names_ids.append((element.name, element_id))  # pyright: ignore
+            if element.type in self.rule_set.element_types or element.type in self.rule_set.relation_reification_types or element.type in self.rule_set.hierarchy_types: 
+                # Frist make the sentece for the element itself
+                e_sentence = self.generate_element_sentence(
+                    element_id=element_id, element=element  # type: ignore
+                )
+                if e_sentence is not None:
+                    sentence_strings.append(e_sentence)
+                # Next make the sentence for the element's attributes
+                attr_sentences = list(
+                    s
+                    for s in self.generate_attribute_senteces(element=element)
+                    if s is not None
+                )
+                if len(attr_sentences) > 0:
+                    sentence_strings.extend(attr_sentences)
+                # HACK: add the name property into the above data structure
+                # HACK: turn off checks
+                names_ids.append((element.name, element_id))  # pyright: ignore
         # Handle relationship generation
         for rel_id_in, rel_id_out, relationship in self.variamos_graph.edges.data("relation"):  # type: ignore
             if (

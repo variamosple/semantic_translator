@@ -3,7 +3,7 @@ import time
 import pytest
 pytest.skip(allow_module_level=True)
 from variamos import model, rules
-from generator import clif_generator
+from generators import vmos_clif_generator
 from grammars import clif
 from targets.minzinc import minizinc_model
 from solvers import solver_control
@@ -34,7 +34,7 @@ def vmos_model_obj(variamos_data):
 )
 def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
     t0 = time.perf_counter()
-    clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)
+    clif_gen = vmos_clif_generator.VMosCLIFGenerator(rules_data, vmos_model_obj)
     clif_str = clif_gen.generate_logic_model()
     t1 = time.perf_counter()
     clif_ast: clif.Text = clif.clif_meta_model(False).model_from_str(clif_str)
@@ -58,7 +58,7 @@ def test_model_generation(vmos_model_obj: model.Model, rules_data: rules.Rules):
 )
 def test_model_roundtrip(vmos_model_obj: model.Model, rules_data: rules.Rules):
     t0 = time.perf_counter()
-    clif_gen = clif_generator.CLIFGenerator(rules_data, vmos_model_obj)
+    clif_gen = vmos_clif_generator.VMosCLIFGenerator(rules_data, vmos_model_obj)
     clif_str = clif_gen.generate_logic_model()
     t1 = time.perf_counter()
     clif_ast: clif.Text = clif.clif_meta_model(False).model_from_str(clif_str)

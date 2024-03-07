@@ -12,9 +12,13 @@ from solvers.results import StatusEnum
 from variamos import model, transform
 from solvers import query_handler
 from utils.exceptions import SolverException
+from werkzeug.middleware.proxy_fix import ProxyFix
+from utils import enums
 
 app = Flask(__name__)
-
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 
 # POST /sat
 # POST /sol
@@ -34,25 +38,46 @@ def translate():
         content = request.json
         # print(content['data']['project'])
         # print(content['data']["rules"])
-        selectedModel = content["data"]["modelSelectedId"]  # pyright: ignore
-        # dry = request.headers.get("dry") == "true"
-        (
-            model,
-            graph,
-            rules,
-            query,
-            model_idx,
-        ) = transform.transform_request_to_python(
-            project_json=content["data"]["project"],  # pyright: ignore
-            rules_json=content["data"]["rules"],  # pyright: ignore
-            query_json=content["data"]["query"],  # pyright: ignore
-            selectedModelId=selectedModel,
-        )
-        qh = query_handler.QueryHandler(
-            nx_graph=graph,
-            query_obj=query,
-            translation_rules=rules,
-        )
+        ## Now we need to handle queries that may come from other clients than just vmos
+        match (input := content["data"]["input"]):
+            # Case where the request comes from VariaMos
+            case enums.InputEnum.vmos:
+                selectedModel = content["data"]["modelSelectedId"]  # pyright: ignore
+                # dry = request.headers.get("dry") == "true"
+                (
+                    model,
+                    graph,
+                    rules,
+                    query,
+                    model_idx,
+                ) = transform.transform_vmos_request_to_python(
+                    project_json=content["data"]["project"],  # pyright: ignore
+                    rules_json=content["data"]["rules"],  # pyright: ignore
+                    query_json=content["data"]["query"],  # pyright: ignore
+                    selectedModelId=selectedModel,
+                )
+                qh = query_handler.QueryHandler(
+                    nx_graph=graph,
+                    query_obj=query,
+                    translation_rules=rules,
+                    input=input,
+                )
+            case enums.InputEnum.uvl:
+                (query, model_str) = transform.transform_uvl_request_to_python(content)
+                # Case where the request comes from UVL
+                # We need to make a large refactor on the i/o side
+                # to handle the different types of input languages
+                qh = query_handler.QueryHandler(
+                    query_obj=query,
+                    model_str=model_str,
+                    input=input,
+                )
+                model_idx = None
+                model = None
+            case _:
+                return _corsify_actual_response(
+                jsonify({"data": {"error": "Unknown input type"}})
+            )
         try:
             return construct_response(qh, content, model_idx, model)
         except SolverException as err:
@@ -83,9 +108,9 @@ def construct_response(
     # TODO: handle the different types of queries in the responses to avoid
     # always updating the model and updating the project JSON
     query_result = qh.run_query(
-        project_json=content["data"]["project"],
-        idx=model_idx,
-        feature_model=model,
+        # project_json=content["data"]["project"],
+        # idx=model_idx,
+        # feature_model=model,
     )
     if qh.is_dry() or query_result is False:
         # In this case we know the response is a boolean

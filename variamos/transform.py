@@ -2,17 +2,17 @@ from variamos import model, rules, query
 import networkx as nx
 
 
-def transform_request_to_python(
+def transform_uvl_request_to_python(content: dict):
+    return query.Query(**content["data"]["query"]), content["data"]["model"]
+
+
+def transform_vmos_request_to_python(
     project_json, rules_json, query_json, selectedModelId
 ) -> tuple[model.Model, nx.DiGraph, rules.Rules, query.Query, int]:
     # Get the feature model @ /productLines[0]/domainEngineering/models[0]
     dom_models = project_json["productLines"][0]["domainEngineering"]["models"]
     if (
-        len(
-            project_json["productLines"][0]["applicationEngineering"][
-                "applications"
-            ]
-        )
+        len(project_json["productLines"][0]["applicationEngineering"]["applications"])
         != 0
     ):
         app_models = project_json["productLines"][0]["applicationEngineering"][
