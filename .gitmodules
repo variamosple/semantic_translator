@@ -1,0 +1,3 @@
+[submodule "generators/uvl_generator"]
+	path = generators/uvl_generator
+	url = git@pro:ccr185/uvl-prolog.git
