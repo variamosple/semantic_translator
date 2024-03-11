@@ -39,7 +39,11 @@ def translate():
         # print(content['data']['project'])
         # print(content['data']["rules"])
         ## Now we need to handle queries that may come from other clients than just vmos
-        match (input := content["data"]["input"]):
+        if 'input' in content["data"]:
+            input = content["data"]["input"]
+        else:
+            input = enums.InputEnum.vmos
+        match (input):
             # Case where the request comes from VariaMos
             case enums.InputEnum.vmos:
                 selectedModel = content["data"]["modelSelectedId"]  # pyright: ignore

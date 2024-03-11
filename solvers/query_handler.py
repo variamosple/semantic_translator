@@ -48,7 +48,7 @@ class QueryHandler:
                 clif_gen = uvl_clif_generator.UvlCLIFGenerator(
                     model_str=model_str
                 )
-                self.clif_str = f"(model {clif_gen.generate_logic_model()} )"
+                self.clif_str = f"(model {clif_gen.generate_logic_model()[0]} )"
                 clif_model = self.create_clif_ast()
             case _:
                 raise exceptions.QueryException("Unknown input type")

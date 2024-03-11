@@ -6,6 +6,8 @@ from swiplserver import (
     create_posix_path,
 )
 import tempfile
+import re
+import uuid
 
 
 @dataclass
@@ -22,6 +24,25 @@ class UvlCLIFGenerator:
             with PrologMQI() as mqi:
                 with PrologThread(mqi) as prolog_thread:
                     prolog_thread.query(f"consult('{path}')")
-                    return prolog_thread.query(
+                    # Now we have the CLIF String coming from the model
+                    # However, our parser will not like quoted strings
+                    # So we need to remove the quotes
+                    parse_result = prolog_thread.query(
                         f"print_clif_from_ast('{uvl_path}', CLIFS)", 100
-                    )[0]["CLIFS"]
+                    )
+            if parse_result is False:
+                raise PrologResultNotAvailableError()
+            raw_clif_string = parse_result[0]["CLIFS"]
+            regex = re.compile(r'(\"\w+\")')
+            expr_match_dict = {
+                occ: f"UUID_{str(uuid.uuid4()).replace('-','_')}" 
+                for occ in set(regex.findall(raw_clif_string))
+            }
+            clif_str = raw_clif_string
+            for expr, replacement in expr_match_dict.items():
+                clif_str = clif_str.replace(expr, replacement)
+            return clif_str, expr_match_dict
+
+
+
+            
