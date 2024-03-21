@@ -1,6 +1,7 @@
 import re
 import uuid
 import networkx as nx
+import time
 import json
 from variamos import query, model, rules
 from utils import enums, uuid_utils
@@ -28,6 +29,7 @@ class QueryHandler:
     ) -> None:
         # the query object is always the same
         self.query_obj = query_obj
+        thread_time0 = time.thread_time_ns()
         ### Init should depend on the input type
         match input:
             case enums.InputEnum.vmos:
@@ -39,9 +41,11 @@ class QueryHandler:
                     variamos_graph=nx_graph,
                 )
                 self.clif_str = clif_gen.generate_logic_model()
+                thread_time1 = time.thread_time_ns()
                 clif_model = self.create_clif_ast(
                     # rules=translation_rules, graph=nx_graph
                 )
+                thread_time2 = time.thread_time_ns()
             case enums.InputEnum.uvl:
                 self.model_str = model_str
                 # Construct the AST from the UVL model
@@ -49,9 +53,14 @@ class QueryHandler:
                     model_str=model_str
                 )
                 self.clif_str = f"(model {clif_gen.generate_logic_model()[0]} )"
+                thread_time1 = time.thread_time_ns()
                 clif_model = self.create_clif_ast()
+                thread_time2 = time.thread_time_ns()
             case _:
                 raise exceptions.QueryException("Unknown input type")
+        # take the time to build the model
+        self.clif_gen_time = thread_time1 - thread_time0
+        self.clif_ast_time = thread_time2 - thread_time1
         # build the controller
         if self.query_obj.operation != query.OperationEnum.get_model:
             self.controller = solver_control.SolverController(
@@ -170,3 +179,17 @@ class QueryHandler:
                                 )
         print(result_str)
         return result_str
+    
+    def get_statistics(self):
+        stats = {
+            "clif_gen_time": self.clif_gen_time,
+            "clif_ast_time": self.clif_ast_time,
+            "bridge_solve_time": self.controller.bridge_solve_time,
+            "code_gen_time": self.controller.code_gen_time,
+            "generic_csp_model_time": self.controller.generic_csp_time,
+            "concrete_csp_model_time": self.controller.constraint_model_time,
+            "n_constraints": self.controller.n_constraints,
+            "n_features": self.controller.n_features,
+        }
+        print(json.dumps(stats, indent=4))
+        return stats

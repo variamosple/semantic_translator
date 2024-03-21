@@ -13,9 +13,15 @@ class Z3Bridge:
         raise NotImplementedError("Z3 does not generate a program to return")
 
     def solve(self, model: Z3Model, n_sols: int = 1):
+        thread_time0 = time.thread_time_ns()
         s = z3.Solver()
         s.add(model.constraints)
-        return run_iterative_solve(s, model, n_sols)
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
+        sols = run_iterative_solve(s, model, n_sols)
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
+        return sols
 
     def optimize(
         self,
@@ -24,16 +30,22 @@ class Z3Bridge:
         direction: query.OptimizationDirectionEnum,
         n_sols=1,
     ):
+        thread_time0 = time.thread_time_ns()
         if objective not in model.var_decls:
             raise Exception("Objective not in model")
         obj_var = model.var_decls[objective]
         o = z3.Optimize()
         o.add(model.constraints)
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         if direction == query.OptimizationDirectionEnum.min:
             o.minimize(obj_var)
         else:
             o.maximize(obj_var)
-        return run_iterative_solve(o, model, n_sols)
+        sols = run_iterative_solve(o, model, n_sols)
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
+        return sols
 
 
 def run_iterative_solve(s: z3.Solver | z3.Optimize, model: Z3Model, n_sols):

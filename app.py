@@ -15,10 +15,9 @@ from utils.exceptions import SolverException
 from werkzeug.middleware.proxy_fix import ProxyFix
 from utils import enums
 
+
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # POST /sat
 # POST /sol
@@ -39,7 +38,7 @@ def translate():
         # print(content['data']['project'])
         # print(content['data']["rules"])
         ## Now we need to handle queries that may come from other clients than just vmos
-        if 'input' in content["data"]:
+        if "input" in content["data"]:
             input = content["data"]["input"]
         else:
             input = enums.InputEnum.vmos
@@ -80,15 +79,13 @@ def translate():
                 model = None
             case _:
                 return _corsify_actual_response(
-                jsonify({"data": {"error": "Unknown input type"}})
-            )
+                    jsonify({"data": {"error": "Unknown input type"}})
+                )
         try:
             return construct_response(qh, content, model_idx, model)
         except SolverException as err:
             print(err)
-            return _corsify_actual_response(
-                jsonify({"data": {"error": str(err)}})
-            )
+            return _corsify_actual_response(jsonify({"data": {"error": str(err)}}))
         # except BaseException as err:
         #     print(err)
         #     return _corsify_actual_response(
@@ -100,9 +97,7 @@ def translate():
         # )
         # Return a 500 error, indicating that the server doesn't support this
         # method
-        err_response = make_response(
-            jsonify({"error": "Method not supported"}), 500
-        )
+        err_response = make_response(jsonify({"error": "Method not supported"}), 500)
         return _corsify_actual_response(err_response)
 
 
@@ -119,7 +114,9 @@ def construct_response(
     if qh.is_dry() or query_result is False:
         # In this case we know the response is a boolean
         return _corsify_actual_response(
-            jsonify({"data": {"content": query_result}})
+            jsonify(
+                {"data": {"content": query_result}, "statistics": qh.get_statistics()}
+            )
         )
     elif (
         not isinstance(query_result, list)
@@ -127,7 +124,7 @@ def construct_response(
     ):
         # In this case we know that no solution was foundx
         return _corsify_actual_response(
-            jsonify({"data": {"content": False}})
+            jsonify({"data": {"content": False}, "statistics": qh.get_statistics()})
         )
     elif not query_result.solution.single_solution:
         # In this case we know the response is a list of configurations
@@ -135,9 +132,7 @@ def construct_response(
         # of project with the different configurations
         # This needs to be better handled in the future
         dom_length = len(
-            content["data"]["project"]["productLines"][0]["domainEngineering"][
-                "models"
-            ]
+            content["data"]["project"]["productLines"][0]["domainEngineering"]["models"]
         )
         model_copies = []
         project_copies = []
@@ -147,15 +142,17 @@ def construct_response(
             model_copies.append(m_c)
             p_c = copy.deepcopy(content["data"]["project"])
             p_c["productLines"][0][
-                "domainEngineering"
-                if model_idx < dom_length
-                else "applicationEngineering"
-            ]["models"][model_idx % dom_length] = json.loads(
-                m_c.json(by_alias=True)
-            )
+                (
+                    "domainEngineering"
+                    if model_idx < dom_length
+                    else "applicationEngineering"
+                )
+            ]["models"][model_idx % dom_length] = json.loads(m_c.json(by_alias=True))
             project_copies.append(p_c)
         return _corsify_actual_response(
-            jsonify({"data": {"content": project_copies}})
+            jsonify(
+                {"data": {"content": project_copies}, "statistics": qh.get_statistics()}
+            )
         )
     elif query_result.solution.single_solution:
         # update the model with the new values
@@ -163,9 +160,7 @@ def construct_response(
         # fix the project JSON content
         # get the lenght of the models
         dom_length = len(
-            content["data"]["project"]["productLines"][0]["domainEngineering"][
-                "models"
-            ]
+            content["data"]["project"]["productLines"][0]["domainEngineering"]["models"]
         )
         model = json.loads(model.json(by_alias=True))
         if model_idx < dom_length:
@@ -173,11 +168,11 @@ def construct_response(
                 "models"
             ][model_idx] = model
         else:
-            content["data"]["project"]["productLines"][0][
-                "applicationEngineering"
-            ]["applications"][0]["models"][model_idx - dom_length] = model
+            content["data"]["project"]["productLines"][0]["applicationEngineering"][
+                "applications"
+            ][0]["models"][model_idx - dom_length] = model
         return _corsify_actual_response(
-            jsonify({"data": {"content": content["data"]["project"]}})
+            jsonify({"data": {"content": content["data"]["project"]}, "statistics": qh.get_statistics()})
         )
     else:
         raise RuntimeError("Unknown query result")

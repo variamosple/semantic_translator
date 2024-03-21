@@ -2,6 +2,8 @@ FROM minizinc/minizinc
 
 WORKDIR /usr/src/app
 
+RUN apt-get -y upgrade
+
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install software-properties-common python3 python3-pip nginx -y
@@ -19,4 +21,4 @@ RUN pip install gunicorn
 COPY . .
 
 EXPOSE 5001
-CMD ["gunicorn", "--bind=0.0.0.0:5001", "app:app"]
+CMD ["gunicorn", "--bind=0.0.0.0:5001", "--workers=33", "app:app" , "--timeout 600" ]

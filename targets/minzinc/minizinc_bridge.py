@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import time
 from minizinc import Instance, Model, Solver
 from targets.minzinc.minizinc_model import MZNModel
 from targets.solver_model import SolverModel
@@ -18,13 +19,19 @@ class MiniZincBridge:
     """
 
     def translate(self, model: MZNModel):
+        thread_time0 = time.thread_time_ns()
         constraints = model.generate_program()
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         return "\n".join(constraints)
 
     def solve(self, model: SolverModel, n_sols: int = 1):
+        thread_time0 = time.thread_time_ns()
         if not isinstance(model, MZNModel):
             raise TypeError("Must be a mzn model")
         constraints = model.generate_program()
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         # print(constraints)
         gecode = Solver.lookup("gecode")
         mzn_model = Model()
@@ -34,6 +41,8 @@ class MiniZincBridge:
         result = instance.solve(nr_solutions=n_sols)
         # if not result.status.has_solution():
         #     raise SolverException("CLIF/MZN - Model is UNSAT")
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
         return result
 
     def optimize(
@@ -43,9 +52,12 @@ class MiniZincBridge:
         direction: query.OptimizationDirectionEnum,
         n_sols: int = 1,
     ):
+        thread_time0 = time.thread_time_ns()
         if not isinstance(model, MZNModel):
             raise TypeError("Must be a mzn model")
         constraints = model.generate_program()
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         gecode = Solver.lookup("gecode")
         mzn_model = Model()
         direction_str = (
@@ -72,6 +84,8 @@ class MiniZincBridge:
         # We won't except out if there solution is not found
         # if not result.status.has_solution():
         #     raise SolverException("CLIF/MZN - Model is UNSAT")
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
         return result
 
     def update_model(self, model: mdl.Model, rules: rls.Rules, result):

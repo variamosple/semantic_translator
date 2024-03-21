@@ -33,7 +33,7 @@ class UvlCLIFGenerator:
             if parse_result is False:
                 raise PrologResultNotAvailableError()
             raw_clif_string = parse_result[0]["CLIFS"]
-            regex = re.compile(r'(\"\w+\")')
+            regex = re.compile(r'(\"[^\r\n\".]+\")')
             expr_match_dict = {
                 occ: f"UUID_{str(uuid.uuid4()).replace('-','_')}" 
                 for occ in set(regex.findall(raw_clif_string))

@@ -1,4 +1,5 @@
 import typing
+import time
 import networkx as nx
 from grammars.clif import Text
 from targets.solver_model import SolverModel
@@ -37,23 +38,37 @@ class SolverController:
         self.vmos_graph = vmos_graph
         self.translation_rules = translation_rules
         self.target_lang = target_lang
+        thread_time0 = time.thread_time_ns()
         generic_csp = SolverModel.from_clif_text(clif_model)
+        thread_time1 = time.thread_time_ns()
+        self.generic_csp_time = thread_time1 - thread_time0
         match target_lang:
             case TargetLang.minizinc:
+                thread_time2 = time.thread_time_ns()
                 self.constraint_model = MZNModel.from_gen_csp(generic_csp)
+                thread_time3 = time.thread_time_ns()
+                self.constraint_model_time = thread_time3 - thread_time2
                 self.bridge = MiniZincBridge()
                 self.result_function = results.Result.from_minizinc_output
             case TargetLang.swi:
+                thread_time2 = time.thread_time_ns()
                 self.constraint_model = SWIModel.from_gen_csp(generic_csp)
+                thread_time3 = time.thread_time_ns()
+                self.constraint_model_time = thread_time3 - thread_time2
                 self.bridge = SWIBridge()
                 self.result_function = results.Result.from_swi_output
             case TargetLang.z3:
+                thread_time2 = time.thread_time_ns()
                 # generic_csp = SolverModel.from_clif_text(clif_model)
                 self.constraint_model = Z3Model.from_gen_csp(generic_csp)
+                thread_time3 = time.thread_time_ns()
+                self.constraint_model_time = thread_time3 - thread_time2
                 self.bridge = Z3Bridge()
                 self.result_function = results.Result.from_z3_output
             case _:
                 raise TypeError("Language unsupported")
+        self.n_features = len(generic_csp.var_decls.keys())
+        self.n_constraints = len(generic_csp.constraints)
 
     def _run_fixed_sat(
         self, elem_sel: query.ModelSelectorSpec, iter_results: list, var_id: str
@@ -85,22 +100,16 @@ class SolverController:
             #     # self.vmos_model.elements
             #     (self.vmos_graph.nodes.data("element")),
             # ):
-            var_id = "UUID_" + uuid_utils.to_underscore_from_uuid(
-                selected_element.id
-            )
+            var_id = "UUID_" + uuid_utils.to_underscore_from_uuid(selected_element.id)
             self._run_fixed_sat(elem_sel, iter_results, var_id)
         return iter_results
 
     # TODO: Refactor to avoid duplication of code
-    def _run_relationship_element_iteration(
-        self, elem_sel: query.ModelSelectorSpec
-    ):
+    def _run_relationship_element_iteration(self, elem_sel: query.ModelSelectorSpec):
         iter_results = []
         # If there is a lookup rule for the type
         # use it
-        if "type" in (
-            schema := self.translation_rules.relation_property_schema
-        ):
+        if "type" in (schema := self.translation_rules.relation_property_schema):
             # use the lookup schema to determine how to access it from the
             # properties
             type_schema = schema["type"]
@@ -129,9 +138,7 @@ class SolverController:
                             if elem_sel.relationship_element == "target"
                             else rel.source_id  # pyright: ignore
                         )
-                        self._run_fixed_sat(
-                            elem_sel, iter_results, var_id=element_id
-                        )
+                        self._run_fixed_sat(elem_sel, iter_results, var_id=element_id)
             # FIXME: Make sure we handle these cases correctly
             except IndexError:
                 raise IndexError
@@ -154,9 +161,7 @@ class SolverController:
                         if elem_sel.relationship_element == "target"
                         else rel.source_id  # pyright: ignore
                     )
-                    self._run_fixed_sat(
-                        elem_sel, iter_results, var_id=element_id
-                    )
+                    self._run_fixed_sat(elem_sel, iter_results, var_id=element_id)
         return iter_results
 
     def _run_reified_element_iteration(self, elem_sel: query.ModelSelectorSpec):
@@ -177,8 +182,7 @@ class SolverController:
                 for reif in (
                     typing.cast(model.Element, e[1])
                     for e in self.vmos_graph.nodes("element")
-                    if e[1].type
-                    in self.translation_rules.relation_reification_types
+                    if e[1].type in self.translation_rules.relation_reification_types
                     and e[1].properties[idx][key] in elem_sel.object_type
                 ):
                     # for reif in filter(
@@ -195,9 +199,7 @@ class SolverController:
                         if elem_sel.relationship_element == "target"
                         else self.vmos_graph.in_edges(reif.id)
                     )
-                    tuple_idx = (
-                        1 if elem_sel.relationship_element == "target" else 0
-                    )
+                    tuple_idx = 1 if elem_sel.relationship_element == "target" else 0
                     node_uuids: list[str] = [
                         "UUID_"
                         + uuid_utils.to_underscore_from_uuid(
@@ -220,8 +222,7 @@ class SolverController:
             for reif in (
                 typing.cast(model.Element, e[1])
                 for e in self.vmos_graph.nodes.data("element")
-                if e[1].type
-                in self.translation_rules.relation_reification_types
+                if e[1].type in self.translation_rules.relation_reification_types
                 and e[1].type in elem_sel.object_type
             ):
                 # for reif in filter(
@@ -238,9 +239,7 @@ class SolverController:
                     if elem_sel.relationship_element == "target"
                     else self.vmos_graph.in_edges(reif.id)
                 )
-                tuple_idx = (
-                    1 if elem_sel.relationship_element == "target" else 0
-                )
+                tuple_idx = 1 if elem_sel.relationship_element == "target" else 0
                 node_uuids: list[str] = [
                     "UUID_"
                     + uuid_utils.to_underscore_from_uuid(edge_tuple[tuple_idx])  # type: ignore
@@ -257,9 +256,7 @@ class SolverController:
                 raise exceptions.QueryException("Missing iteration value")
             match elem_sel.model_object:
                 case query.ModelObjectEnum.element:
-                    iteration_result.extend(
-                        self._run_element_iteration(elem_sel)
-                    )
+                    iteration_result.extend(self._run_element_iteration(elem_sel))
                 case query.ModelObjectEnum.relationship:
                     # TODO: Implement this
                     raise NotImplementedError
@@ -294,17 +291,17 @@ class SolverController:
 
     def solve_n(self, n_sols):
         # Maybe improve the api to make the typecheck pass
-        return self.result_function(
-            self.bridge.solve(self.constraint_model, n_sols)
-        )
+        solution = self.bridge.solve(self.constraint_model, n_sols)
+        self.code_gen_time = self.bridge.code_gen_time
+        self.bridge_solve_time = self.bridge.bridge_solve_time
+        return self.result_function(solution)
 
-    def optimize(
-        self, objective: str, direction: query.OptimizationDirectionEnum
-    ):
+    def optimize(self, objective: str, direction: query.OptimizationDirectionEnum):
         # transform the result
-        result = self.result_function(
-            self.bridge.optimize(self.constraint_model, objective, direction)
-        )
+        solution = self.bridge.optimize(self.constraint_model, objective, direction)
+        self.code_gen_time = self.bridge.code_gen_time
+        self.bridge_solve_time = self.bridge.bridge_solve_time
+        result = self.result_function(solution)
         return result
 
     def update_model(self, fm, rules, result):

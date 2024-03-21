@@ -30,6 +30,7 @@ class SWIBridge:
 
         @model: The model to be translated
         """
+        thread_time0 = time.thread_time_ns()
         constraints = model.generate_program()
         regex = re.compile(r"(UUID(?:_[a-f0-9]+){5})")
         program = """:- use_module(library(clpfd)).
@@ -40,6 +41,8 @@ program([!!!]) :-
         occs = set(regex.findall(program))
         print(occs)
         program = program.replace("!!!", ",".join(occs))
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         return program
 
     # TODO: Handle N solutions
@@ -57,9 +60,12 @@ program([!!!]) :-
         @model: The model to be solved
         @n_sols: The number of solutions to find
         """
+        thread_time0 = time.thread_time_ns()
         if not isinstance(model, SWIModel):
             raise TypeError("the model must be a swi model")
         constraints = model.generate_program()
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         # print(constraints)
         regex = re.compile(r"(UUID(?:_[a-f0-9]+){5})")
         with tempfile.NamedTemporaryFile(dir="/tmp", delete=True) as tmp:
@@ -81,10 +87,13 @@ program([!!!]) :-
             query_str = "program([!!!]), labeling([ff],[!!!]).".replace(
                 "!!!", ",".join(occs)
             )
-            return self.query(
+            result = self.query(
                 temp_file_name=tmp.name, query_str=query_str, n_sols=n_sols
             )
-
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
+        return result
+    
     # TODO: Merge with solve to avoid code duplication
     def optimize(
         self,
@@ -108,12 +117,15 @@ program([!!!]) :-
         @direction: The direction to optimize the objective
         @n_sols: The number of solutions to find
         """
+        thread_time0 = time.thread_time_ns()
         if not isinstance(model, SWIModel):
             raise TypeError("the model must be a swi model")
         # get all the variables in the model and join them with commas
         # as a string
         model_vars = ",".join(model.var_decls.keys())
         constraints = model.generate_program()
+        thread_time1 = time.thread_time_ns()
+        self.code_gen_time = thread_time1 - thread_time0
         with tempfile.NamedTemporaryFile(dir="/tmp", delete=True) as tmp:
             program = f""":- use_module(library(clpfd)).
 
@@ -139,9 +151,12 @@ program([!!!]) :-
                 )
             else:
                 raise ValueError("invalid optimization direction")
-            return self.query(
+            result = self.query(
                 temp_file_name=tmp.name, query_str=query_str, n_sols=n_sols
             )
+        thread_time2 = time.thread_time_ns()
+        self.bridge_solve_time = thread_time2 - thread_time1
+        return result
 
     # function to handle prolog queries
     def query(
@@ -166,7 +181,7 @@ program([!!!]) :-
         @query_str: A string representing the query to be run
         @n_sols: The number of solutions to find
         """
-        time_limit = 60.0
+        time_limit = 180.0
         sols = []
         with PrologMQI() as mqi:
             with PrologThread(mqi) as prolog_thread:
