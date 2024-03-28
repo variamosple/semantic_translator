@@ -251,9 +251,9 @@ def handle_bool_sentence(
             exprs: list[CSPExpression] = []
             for s in sentence.sentences:
                 if isinstance(s, clif.AtomSentence):
-                    exprs.append(handle_atom_sentence(s, top_level))
+                    exprs.append(handle_atom_sentence(s, top_level=False))
                 elif isinstance(s, clif.BoolSentence):
-                    exprs.append(handle_bool_sentence(s, top_level))
+                    exprs.append(handle_bool_sentence(s, top_level=False))
                 elif isinstance(s, clif.QuantSentence):
                     raise NotImplementedError(
                         "No handling for quantification as inner constraint yet"

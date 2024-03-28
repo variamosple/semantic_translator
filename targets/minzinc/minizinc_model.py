@@ -131,7 +131,8 @@ class MZNModel:
 
     @render_expression.register(CSPConjunctionConstraint)
     def _(self, expr: CSPConjunctionConstraint) -> str:
-        return " /\\ ".join(
+        top_level_str = "constraint " if expr.top_level else ""
+        return top_level_str + " /\\ ".join(
             (
                 self.render_expression(c)
                 for c in expr.sub_constraints
@@ -140,7 +141,8 @@ class MZNModel:
 
     @render_expression.register(CSPDisjunctionConstraint)
     def _(self, expr: CSPDisjunctionConstraint) -> str:
-        return " \\/ ".join(
+        top_level_str = "constraint " if expr.top_level else ""
+        return top_level_str + "\\/ ".join(
             (
                 self.render_expression(c)
                 for c in expr.sub_constraints
@@ -149,7 +151,8 @@ class MZNModel:
 
     @render_expression.register(CSPNegationConstraint)
     def _(self, expr: CSPNegationConstraint) -> str:
-        return f"not ({self.render_expression(expr.sub_constraint)})"
+        top_level_str = "constraint " if expr.top_level else ""
+        return f"{top_level_str}not ({self.render_expression(expr.sub_constraint)})"
 
     def generate_program(self) -> list[str]:
         strs: list[str] = []

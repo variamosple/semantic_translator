@@ -16,9 +16,12 @@ RUN apt-get install swi-prolog -y
 
 RUN pip install flask minizinc swiplserver pydantic==1.10.2 networkx pyhumps textx z3-solver
 
+RUN echo $(pip show textx)
+
 RUN pip install gunicorn
 
 COPY . .
 
 EXPOSE 5001
-CMD ["gunicorn", "--bind=0.0.0.0:5001", "--workers=33", "app:app" , "--timeout 600" ]
+#CMD ["gunicorn", "--bind=0.0.0.0:5001", "--workers=4", "app:app" , "--timeout 0" ]
+CMD ["flask", "run", "--port=5001", "--host=0.0.0.0"]

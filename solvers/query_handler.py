@@ -2,7 +2,9 @@ import re
 import uuid
 import networkx as nx
 import time
+import sys
 import json
+from utils.recursion_context import recursionlimit
 from variamos import query, model, rules
 from utils import enums, uuid_utils
 from utils import exceptions
@@ -40,7 +42,9 @@ class QueryHandler:
                     rule_set=translation_rules,
                     variamos_graph=nx_graph,
                 )
-                self.clif_str = clif_gen.generate_logic_model()
+                with recursionlimit(1000000):
+                    sys.setrecursionlimit(10000000)
+                    self.clif_str = clif_gen.generate_logic_model()
                 thread_time1 = time.thread_time_ns()
                 clif_model = self.create_clif_ast(
                     # rules=translation_rules, graph=nx_graph
@@ -52,7 +56,9 @@ class QueryHandler:
                 clif_gen = uvl_clif_generator.UvlCLIFGenerator(
                     model_str=model_str
                 )
-                self.clif_str = f"(model {clif_gen.generate_logic_model()[0]} )"
+                with recursionlimit(10000000):
+                    sys.setrecursionlimit(100000000)
+                    self.clif_str = f"(model {clif_gen.generate_logic_model()[0]} )"
                 thread_time1 = time.thread_time_ns()
                 clif_model = self.create_clif_ast()
                 thread_time2 = time.thread_time_ns()
@@ -81,7 +87,10 @@ class QueryHandler:
         # )
         # self.clif_str = clif_gen.generate_logic_model()
         print(self.clif_str)
-        clif_mm = clif.clif_meta_model()
+        clif_mm = clif.clif_meta_model(debug=False)
+        print(sys.getrecursionlimit())
+        sys.setrecursionlimit(10000000)
+        print(sys.getrecursionlimit())
         clif_model: clif.Text = clif_mm.model_from_str(self.clif_str)
         return clif_model
 

@@ -309,4 +309,10 @@ def test_real_model2(meta: TextXMetaModel):
     o2 = r2(b2.solve(cm2))
     assert o2.status == "satisfied"
     
+def test_real_model2(meta: TextXMetaModel):
+    test_model = [
 
+    ]
+    string = "\n".join(test_model)
+    mod: clif.Text = meta.model_from_str(string, debug=True)
+    
