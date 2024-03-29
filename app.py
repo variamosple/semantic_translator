@@ -7,6 +7,7 @@ By:
 
 import json
 import copy
+import time
 from flask import Flask, request, jsonify, make_response, Response
 from solvers.results import StatusEnum
 from variamos import model, transform
@@ -34,6 +35,7 @@ def translate():
         return _build_cors_preflight_response()
     elif request.method == "POST":
         """Handle a translation request for a given <language>."""
+        t0 = time.thread_time_ns()
         content = request.json
         # print(content['data']['project'])
         # print(content['data']["rules"])
@@ -82,10 +84,19 @@ def translate():
                     jsonify({"data": {"error": "Unknown input type"}})
                 )
         try:
-            return construct_response(qh, content, model_idx, model)
+            return construct_response(qh, content, model_idx, model, t0)
         except SolverException as err:
             print(err)
-            return _corsify_actual_response(jsonify({"data": {"error": str(err)}}))
+            t1 = time.thread_time_ns()
+            total_time = t1 - t0
+            return _corsify_actual_response(
+                jsonify(
+                    {
+                        "data": {"error": str(err)},
+                        "statistics": {"total_time": total_time},
+                    }
+                )
+            )
         # except BaseException as err:
         #     print(err)
         #     return _corsify_actual_response(
@@ -102,7 +113,7 @@ def translate():
 
 
 def construct_response(
-    qh: query_handler.QueryHandler, content, model_idx: int, model: model.Model
+    qh: query_handler.QueryHandler, content, model_idx: int, model: model.Model, t0: int
 ):
     # TODO: handle the different types of queries in the responses to avoid
     # always updating the model and updating the project JSON
@@ -113,9 +124,14 @@ def construct_response(
     )
     if qh.is_dry() or query_result is False:
         # In this case we know the response is a boolean
+        t1 = time.thread_time_ns()
+        total_time = t1 - t0
         return _corsify_actual_response(
             jsonify(
-                {"data": {"content": query_result}, "statistics": qh.get_statistics()}
+                {
+                    "data": {"content": query_result},
+                    "statistics": {**qh.get_statistics(), "total_time": total_time},
+                }
             )
         )
     elif (
@@ -172,7 +188,12 @@ def construct_response(
                 "applications"
             ][0]["models"][model_idx - dom_length] = model
         return _corsify_actual_response(
-            jsonify({"data": {"content": content["data"]["project"]}, "statistics": qh.get_statistics()})
+            jsonify(
+                {
+                    "data": {"content": content["data"]["project"]},
+                    "statistics": qh.get_statistics(),
+                }
+            )
         )
     else:
         raise RuntimeError("Unknown query result")

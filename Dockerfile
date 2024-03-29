@@ -23,5 +23,5 @@ RUN pip install gunicorn
 COPY . .
 
 EXPOSE 5001
-#CMD ["gunicorn", "--bind=0.0.0.0:5001", "--workers=4", "app:app" , "--timeout 0" ]
-CMD ["flask", "run", "--port=5001", "--host=0.0.0.0"]
+CMD ["gunicorn", "--bind=0.0.0.0:5001", "--workers=16", "app:app" , "--timeout 0" ]
+#CMD ["flask", "run", "--port=5001", "--host=0.0.0.0"]
