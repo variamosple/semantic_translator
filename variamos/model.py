@@ -100,10 +100,8 @@ class Model(pydantic.BaseModel):
                     sel_prop["value"] = "UnselectedForced"
             # Now check if something happened to the properties
             # and determine if a value has been set
-            if (
-                sel_prop := next(
-                    (p for p in elem.properties if p["id"] in solution),
-                    None,
-                )
-            ) is not None:
-                sel_prop["value"] = solution[str(sel_prop["id"])]
+            # NOTE: Updated the algorithm since the sel_prop value assigned inside
+            # the if statement was being cached, providing duplicated variations.
+            for p in elem.properties:
+                if p["id"] in solution:
+                    p["value"] = solution[str(p["id"])]
