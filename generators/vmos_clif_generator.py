@@ -299,8 +299,8 @@ class VMosCLIFGenerator:
         sentences = []
         # FIXME: Add better handling for feature models so attributes are only
         # added for the types declared.
-        # This only handles custom attributes
-        for property in (p for p in element.properties if p["custom"]):
+        # This handles all the element attributes except for attributes with the 'selected' name.
+        for property in (p for p in element.properties if p["name"].lower() != 'selected'):
             if (
                 element.type not in self.rule_set.attribute_types
                 or (p_t := property["type"])
