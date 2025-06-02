@@ -28,7 +28,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{vars.ACR_DOKCERHUB}}/${{secrets.ACRUSERNAME_DOKCERHUB}}/semantictranslator:main
+        tags: ${{vars.ACR_DOKCERHUB}}/${{secrets.ACRUSERNAME_DOKCERHUB}}/variamos_semantictranslator:main
         file: ./Dockerfile
 
     - name: Deploy changes into the server
