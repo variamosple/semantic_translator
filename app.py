@@ -46,6 +46,24 @@ def cleanup_execution_saver():
 
 atexit.register(cleanup_execution_saver)
 
+def save_execution_to_db(response: Response, content: dict, remote_addr: str) -> None:
+    """Helper function to save execution data to database."""
+    saver = get_execution_saver()
+    if saver is not None:
+        try:
+            response_data = response.get_json()
+            execution = Execution(
+                remote_addr=remote_addr,
+                timestamp=datetime.now(),
+                query=json.dumps(content),
+                result=json.dumps(response_data.get("data", {})),
+                statistics=json.dumps(response_data.get("statistics", {})),
+            )
+            saver.save_execution(execution)
+            print("Execution saved to database")
+        except Exception as e:
+            print(f"Failed to save execution: {e}")
+
 # POST /sat
 # POST /sol
 # POST /nsol/
@@ -114,20 +132,7 @@ def translate():
                 )
         try:
             response = construct_response(qh, content, model_idx, model, t0)
-            saver = get_execution_saver()
-            if saver is not None:
-                try:
-                    response_data = response.get_json()
-                    execution = Execution(
-                        remote_addr=request.remote_addr,
-                        timestamp=datetime.now(),
-                        query=json.dumps(content),
-                        result=json.dumps(response_data.get("data", {})),
-                        statistics=json.dumps(response_data.get("statistics", {})),
-                    )
-                    saver.save_execution(execution)
-                except Exception as e:
-                    print(f"Failed to save execution: {e}")
+            save_execution_to_db(response, content, request.remote_addr)
             return response
         except SolverException as err:
             print(err)
@@ -141,20 +146,7 @@ def translate():
                     }
                 )
             )
-            saver = get_execution_saver()
-            if saver is not None:
-                try:
-                    response_data = error_response.get_json()
-                    execution = Execution(
-                        remote_addr=request.remote_addr,
-                        timestamp=datetime.now(),
-                        query=json.dumps(content),
-                        result=json.dumps(response_data.get("data", {})),
-                        statistics=json.dumps(response_data.get("statistics", {})),
-                    )
-                    saver.save_execution(execution)
-                except Exception as e:
-                    print(f"Failed to save execution: {e}")
+            save_execution_to_db(error_response, content, request.remote_addr)
             return error_response
         # except BaseException as err:
         #     print(err)
