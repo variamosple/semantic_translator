@@ -8,6 +8,7 @@ By:
 import json
 import copy
 import time
+import atexit
 from datetime import datetime
 from flask import Flask, request, jsonify, make_response, Response
 from solvers.results import StatusEnum
@@ -28,6 +29,14 @@ try:
 except (ValueError, RuntimeError) as e:
     execution_saver = None
     print(f"ExecutionSaver not initialized: {e}")
+
+def cleanup_execution_saver():
+    """Close the database connection on shutdown."""
+    if execution_saver is not None:
+        execution_saver.close()
+        print("ExecutionSaver connection closed")
+
+atexit.register(cleanup_execution_saver)
 
 # POST /sat
 # POST /sol
