@@ -120,7 +120,12 @@ class ExecutionSaver:
     
     def _check_connection(self) -> None:
         """Check if connection is alive, reconnect if needed."""
-        if self.conn is None or self.conn.closed:
+        if self.conn is None:
+            self._connect()
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute("SELECT 1")
+        except psycopg.Error:
             self._connect()
     
     def _ensure_schema_exists(self) -> None:
