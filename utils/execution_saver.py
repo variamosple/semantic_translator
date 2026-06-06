@@ -3,7 +3,7 @@ import os
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-import psycopg2
+import psycopg
 
 load_dotenv()
 
@@ -101,12 +101,12 @@ class ExecutionSaver:
         self.db_config: dict[str, str | int] = {
             "host": os.environ["DB_HOST"],
             "port": int(os.environ["DB_PORT"]),
-            "database": os.environ["DB_NAME"],
+            "dbname": os.environ["DB_NAME"],
             "user": os.environ["DB_USER"],
             "password": os.environ["DB_PASSWORD"],
         }
         self.schema: str = os.environ["DB_SCHEMA"]
-        self.conn: Optional[psycopg2.extensions.connection] = None
+        self.conn: Optional[psycopg.Connection] = None
         self._connect()
         self._ensure_schema_exists()
         self._ensure_table_exists()
@@ -114,8 +114,8 @@ class ExecutionSaver:
     def _connect(self) -> None:
         """Establish database connection."""
         try:
-            self.conn = psycopg2.connect(**self.db_config)
-        except psycopg2.Error as e:
+            self.conn = psycopg.connect(**self.db_config)
+        except psycopg.Error as e:
             raise RuntimeError(f"Failed to connect to database: {e}")
     
     def _check_connection(self) -> None:
@@ -124,14 +124,19 @@ class ExecutionSaver:
             self._connect()
     
     def _ensure_schema_exists(self) -> None:
-        """Ensure the schema exists in the database."""
+        """Ensure the schema exists in the database (check only, don't create)."""
         try:
             with self.conn.cursor() as cursor:
-                cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {self.schema}")
-            self.conn.commit()
-        except psycopg2.Error as e:
+                cursor.execute(
+                    "SELECT schema_name FROM information_schema.schemata WHERE schema_name = %s",
+                    (self.schema,)
+                )
+                result = cursor.fetchone()
+                if not result:
+                    raise RuntimeError(f"Schema '{self.schema}' does not exist in database. Please create it manually.")
+        except psycopg.Error as e:
             self.conn.rollback()
-            raise RuntimeError(f"Failed to create schema: {e}")
+            raise RuntimeError(f"Failed to check schema existence: {e}")
     
     def __enter__(self) -> "ExecutionSaver":
         """Context manager entry."""
@@ -156,7 +161,7 @@ class ExecutionSaver:
             with self.conn.cursor() as cursor:
                 cursor.execute(Execution.table_schema(self.schema))
             self.conn.commit()
-        except psycopg2.Error as e:
+        except psycopg.Error as e:
             self.conn.rollback()
             raise RuntimeError(f"Failed to create table: {e}")
     
@@ -173,6 +178,6 @@ class ExecutionSaver:
             with self.conn.cursor() as cursor:
                 cursor.execute(Execution.insert_query(self.schema), execution.to_insert_params())
             self.conn.commit()
-        except psycopg2.Error as e:
+        except psycopg.Error as e:
             self.conn.rollback()
             raise RuntimeError(f"Failed to save execution: {e}")

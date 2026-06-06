@@ -21,11 +21,10 @@ RUN python3 -m venv venv
 
 ENV PATH="./venv/bin:$PATH"
 
-RUN pip install flask minizinc swiplserver pydantic==1.10.2 networkx pyhumps textx z3-solver
+COPY requirements.txt .
+COPY .env .
 
-RUN echo $(pip show textx)
-
-RUN pip install gunicorn
+RUN pip install --default-timeout=1000 -r requirements.txt
 
 COPY . .
 

@@ -11,6 +11,7 @@ networkx==3.4.2
 packaging==25.0
 pydantic==1.10.2
 pyhumps==3.8.0
+psycopg[binary]==3.3.4
 python-dotenv==1.0.0
 swiplserver==1.0.2
 textX==4.2.2
