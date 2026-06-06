@@ -22,18 +22,26 @@ from utils.execution_saver import Execution, ExecutionSaver
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
-# Initialize ExecutionSaver if database environment variables are set
-try:
-    execution_saver = ExecutionSaver()
-    print("ExecutionSaver initialized successfully")
-except (ValueError, RuntimeError) as e:
-    execution_saver = None
-    print(f"ExecutionSaver not initialized: {e}")
+# Lazy initialization of ExecutionSaver
+execution_saver: Optional[ExecutionSaver] = None
+
+def get_execution_saver() -> Optional[ExecutionSaver]:
+    """Get or initialize the ExecutionSaver instance."""
+    global execution_saver
+    if execution_saver is None:
+        try:
+            execution_saver = ExecutionSaver()
+            print("ExecutionSaver initialized successfully")
+        except (ValueError, RuntimeError) as e:
+            print(f"ExecutionSaver not initialized: {e}")
+    return execution_saver
 
 def cleanup_execution_saver():
     """Close the database connection on shutdown."""
+    global execution_saver
     if execution_saver is not None:
         execution_saver.close()
+        execution_saver = None
         print("ExecutionSaver connection closed")
 
 atexit.register(cleanup_execution_saver)
@@ -106,7 +114,8 @@ def translate():
                 )
         try:
             response = construct_response(qh, content, model_idx, model, t0)
-            if execution_saver is not None:
+            saver = get_execution_saver()
+            if saver is not None:
                 try:
                     response_data = response.get_json()
                     execution = Execution(
@@ -116,7 +125,7 @@ def translate():
                         result=json.dumps(response_data.get("data", {})),
                         statistics=json.dumps(response_data.get("statistics", {})),
                     )
-                    execution_saver.save_execution(execution)
+                    saver.save_execution(execution)
                 except Exception as e:
                     print(f"Failed to save execution: {e}")
             return response
@@ -132,7 +141,8 @@ def translate():
                     }
                 )
             )
-            if execution_saver is not None:
+            saver = get_execution_saver()
+            if saver is not None:
                 try:
                     response_data = error_response.get_json()
                     execution = Execution(
@@ -142,7 +152,7 @@ def translate():
                         result=json.dumps(response_data.get("data", {})),
                         statistics=json.dumps(response_data.get("statistics", {})),
                     )
-                    execution_saver.save_execution(execution)
+                    saver.save_execution(execution)
                 except Exception as e:
                     print(f"Failed to save execution: {e}")
             return error_response
