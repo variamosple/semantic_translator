@@ -8,6 +8,7 @@ By:
 import json
 import copy
 import time
+from datetime import datetime
 from flask import Flask, request, jsonify, make_response, Response
 from solvers.results import StatusEnum
 from variamos import model, transform
@@ -15,10 +16,18 @@ from solvers import query_handler
 from utils.exceptions import SolverException
 from werkzeug.middleware.proxy_fix import ProxyFix
 from utils import enums
-
+from utils.execution_saver import Execution, ExecutionSaver
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+# Initialize ExecutionSaver if database environment variables are set
+try:
+    execution_saver = ExecutionSaver()
+    print("ExecutionSaver initialized successfully")
+except (ValueError, RuntimeError) as e:
+    execution_saver = None
+    print(f"ExecutionSaver not initialized: {e}")
 
 # POST /sat
 # POST /sol
@@ -87,12 +96,26 @@ def translate():
                     jsonify({"data": {"error": "Unknown input type"}})
                 )
         try:
-            return construct_response(qh, content, model_idx, model, t0)
+            response = construct_response(qh, content, model_idx, model, t0)
+            if execution_saver is not None:
+                try:
+                    response_data = response.get_json()
+                    execution = Execution(
+                        remote_addr=request.remote_addr,
+                        timestamp=datetime.now(),
+                        query=json.dumps(content),
+                        result=json.dumps(response_data.get("data", {})),
+                        statistics=json.dumps(response_data.get("statistics", {})),
+                    )
+                    execution_saver.save_execution(execution)
+                except Exception as e:
+                    print(f"Failed to save execution: {e}")
+            return response
         except SolverException as err:
             print(err)
             t1 = time.thread_time_ns()
             total_time = t1 - t0
-            return _corsify_actual_response(
+            error_response = _corsify_actual_response(
                 jsonify(
                     {
                         "data": {"error": str(err)},
@@ -100,6 +123,20 @@ def translate():
                     }
                 )
             )
+            if execution_saver is not None:
+                try:
+                    response_data = error_response.get_json()
+                    execution = Execution(
+                        remote_addr=request.remote_addr,
+                        timestamp=datetime.now(),
+                        query=json.dumps(content),
+                        result=json.dumps(response_data.get("data", {})),
+                        statistics=json.dumps(response_data.get("statistics", {})),
+                    )
+                    execution_saver.save_execution(execution)
+                except Exception as e:
+                    print(f"Failed to save execution: {e}")
+            return error_response
         # except BaseException as err:
         #     print(err)
         #     return _corsify_actual_response(
