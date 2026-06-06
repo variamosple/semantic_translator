@@ -106,6 +106,8 @@ class ExecutionSaver:
             "password": os.environ["DB_PASSWORD"],
         }
         self.schema: str = os.environ["DB_SCHEMA"]
+        self.auto_create_schema: bool = os.environ.get("DB_AUTO_CREATE_SCHEMA", "false").lower() == "true"
+        self.auto_create_table: bool = os.environ.get("DB_AUTO_CREATE_TABLE", "false").lower() == "true"
         self.conn: Optional[psycopg.Connection] = None
         self._connect()
         self._ensure_schema_exists()
@@ -138,11 +140,37 @@ class ExecutionSaver:
                 )
                 result = cursor.fetchone()
                 if not result:
-                    raise RuntimeError(f"Schema '{self.schema}' does not exist in database. Please create it manually.")
+                    if self.auto_create_schema:
+                        cursor.execute(f"CREATE SCHEMA {self.schema}")
+                        self.conn.commit()
+                    else:
+                        raise RuntimeError(f"Schema '{self.schema}' does not exist in database. Please create it manually or set DB_AUTO_CREATE_SCHEMA=true.")
         except psycopg.Error as e:
             self.conn.rollback()
-            raise RuntimeError(f"Failed to check schema existence: {e}")
+            raise RuntimeError(f"Failed to check/create schema existence: {e}")
     
+    def _ensure_table_exists(self) -> None:
+        """
+        Ensure the executions table exists in the database.
+        """
+        self._check_connection()
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+                    (self.schema, "executions")
+                )
+                result = cursor.fetchone()
+                if not result:
+                    if self.auto_create_table:
+                        cursor.execute(Execution.table_schema(self.schema))
+                    else:
+                        raise RuntimeError(f"Table 'executions' does not exist in schema '{self.schema}'. Please create it manually or set DB_AUTO_CREATE_TABLE=true.")
+            self.conn.commit()
+        except psycopg.Error as e:
+            self.conn.rollback()
+            raise RuntimeError(f"Failed to check/create table: {e}")
+
     def __enter__(self) -> "ExecutionSaver":
         """Context manager entry."""
         return self
@@ -156,19 +184,6 @@ class ExecutionSaver:
         if self.conn:
             self.conn.close()
             self.conn = None
-    
-    def _ensure_table_exists(self) -> None:
-        """
-        Ensure the executions table exists in the database.
-        """
-        self._check_connection()
-        try:
-            with self.conn.cursor() as cursor:
-                cursor.execute(Execution.table_schema(self.schema))
-            self.conn.commit()
-        except psycopg.Error as e:
-            self.conn.rollback()
-            raise RuntimeError(f"Failed to create table: {e}")
     
     def save_execution(self, execution: Execution) -> None:
         """
