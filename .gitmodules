@@ -1,3 +1,3 @@
-[submodule "generators/uvl_generator"]
-	path = generators/uvl_generator
+[submodule "old_request_handler/generators/uvl_generator"]
+	path = old_request_handler/generators/uvl_generator
 	url = git@pro:ccr185/uvl-prolog.git
