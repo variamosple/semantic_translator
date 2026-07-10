@@ -1,4 +1,0 @@
-{
-  "solver": "minizinc",
-  "operation": "sat"
-}
