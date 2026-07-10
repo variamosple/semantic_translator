@@ -12,8 +12,13 @@ class SATResult(Result, frozen=True):
 class SolveResult(Result, frozen=True):
     solutions: list[dict[str, object]] = Field(default_factory=list)    
     
+
+class Iteration(BaseModel, frozen=True):
+    values: dict[str, object]
+    result: SATResult
+    
     
 class IterateResult(Result, frozen=True):
-    # example: [({"feature1": True, "feature2": False}, SATResult(satisfiable=True)), ...]
-    iterations: list[tuple[dict[str, object], Result]]
+    # example: [{"values": {"feature1": True, "feature2": False}, "result": SATResult(satisfiable=True)}, ...]
+    iterations: list[Iteration]
     
