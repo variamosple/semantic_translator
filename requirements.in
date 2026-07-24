@@ -1,0 +1,9 @@
+Flask
+flask-cors
+gunicorn
+minizinc
+networkx
+pydantic
+swiplserver
+textX
+z3-solver

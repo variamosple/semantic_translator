@@ -70,24 +70,14 @@ class MinizincCompiler:
                 return f"(not {self._compile_formula(operand)})"
             case Disjunction(operands=operands):
                 return (
-                    "("
-                    + " \\/ ".join(
-                        self._compile_formula(operand) for operand in operands
-                    )
-                    + ")"
+                    "(" + " \\/ ".join(self._compile_formula(operand) for operand in operands) + ")"
                 )
             case Conjunction(operands=operands):
                 return (
-                    "("
-                    + " /\\ ".join(
-                        self._compile_formula(operand) for operand in operands
-                    )
-                    + ")"
+                    "(" + " /\\ ".join(self._compile_formula(operand) for operand in operands) + ")"
                 )
             case Implication(left=left, right=right):
-                return (
-                    f"({self._compile_formula(left)} -> {self._compile_formula(right)})"
-                )
+                return f"({self._compile_formula(left)} -> {self._compile_formula(right)})"
             case Biconditional(left=left, right=right):
                 return f"({self._compile_formula(left)} <-> {self._compile_formula(right)})"
             case Equality(left=left, right=right):
@@ -110,21 +100,13 @@ class MinizincCompiler:
             case Addition(operands=operands):
                 if len(operands) == 0:
                     return "0"
-                return (
-                    "("
-                    + " + ".join(self._compile_term(operand) for operand in operands)
-                    + ")"
-                )
+                return "(" + " + ".join(self._compile_term(operand) for operand in operands) + ")"
             case Subtraction(left=left, right=right):
                 return f"({self._compile_term(left)} - {self._compile_term(right)})"
             case Multiplication(operands=operands):
                 if len(operands) == 0:
                     return "1"
-                return (
-                    "("
-                    + " * ".join(self._compile_term(operand) for operand in operands)
-                    + ")"
-                )
+                return "(" + " * ".join(self._compile_term(operand) for operand in operands) + ")"
             case Division(left=left, right=right):
                 return f"({self._compile_term(left)} / {self._compile_term(right)})"
             case _:

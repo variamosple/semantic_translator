@@ -43,7 +43,7 @@ def get_solvers() -> Response:
                     "description": solver.description,
                 }
                 for solver in SOLVERS
-            ]   
+            ]
         }
     )
 

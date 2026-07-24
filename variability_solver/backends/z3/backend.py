@@ -31,6 +31,4 @@ class Z3Backend(Backend):
                 limit = query.limit or 1
                 return Z3Executor().solve(solver, limit, variable_names)
             case _:
-                raise NotImplementedError(
-                    f"The operation {query.operation} is not supported"
-                )
+                raise NotImplementedError(f"The operation {query.operation} is not supported")

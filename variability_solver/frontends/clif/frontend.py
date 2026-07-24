@@ -5,14 +5,16 @@ from variability_solver.ir.model import Model
 
 
 class CLIFFrontend(Frontend):
-
     @property
     def name(self) -> str:
         return "CLIF"
 
     @property
     def description(self) -> str:
-        return "Common Logic Interchange Format as defined in the ISO/IEC 24707 standard for Common Logic"
+        return (
+            "Common Logic Interchange Format"
+            " (as defined in the ISO/IEC 24707 standard for Common Logic)"
+        )
 
     @property
     def file_extensions(self) -> tuple[str, ...]:

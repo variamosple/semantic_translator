@@ -22,7 +22,9 @@ class Z3Executor:
             return SolveResult(solutions=[solution])
         return SolveResult(solutions=[])
 
-    def _solution_from_model(self, model: z3.ModelRef, variable_names: dict[str, str]) -> dict[str, object]:
+    def _solution_from_model(
+        self, model: z3.ModelRef, variable_names: dict[str, str]
+    ) -> dict[str, object]:
         solution = {}
         for d in model.decls():
             value = model[d]

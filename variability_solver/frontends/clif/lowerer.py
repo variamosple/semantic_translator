@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 from variability_solver.ir.constraints import (
@@ -83,7 +84,9 @@ def lower_clif(theory: clif.Theory) -> Model:
             raise LoweringError(f"Variable {var.name} has no sort")
         if var.domain is None:
             var.domain = FullDomain()
-        variables.append(Variable(var_id=var.var_id, name=var.name, sort=var.sort, domain=var.domain))
+        variables.append(
+            Variable(var_id=var.var_id, name=var.name, sort=var.sort, domain=var.domain)
+        )
     return Model(
         variables=variables,
         constraints=constraints,
@@ -124,16 +127,20 @@ def _lower_formula(node: clif.Formula, ctx: _Context) -> Formula:
 
         case _:
             raise LoweringError(f"Unsupported formula: {node!r}")
- 
-       
+
+
 BINARY_PREDICATES = {
     # predicate: (constructor, swap_operands)
     "<": (LessThan, False),
     "<=": (LessEqual, False),
     ">": (LessThan, True),
     ">=": (LessEqual, True),
-    "!=": (lambda left, right: Negation(operand=Equality(left=left, right=right)), False),
+    "!=": (
+        lambda left, right: Negation(operand=Equality(left=left, right=right)),
+        False,
+    ),
 }
+
 
 def _lower_atom(node: clif.Atom, ctx: _Context) -> Formula:
     if not isinstance(node.predicate, clif.Name):
@@ -197,9 +204,7 @@ def _lower_term(node: clif.Term, ctx: _Context) -> Term:
 
 def _lower_function(node: clif.Function, ctx: _Context) -> Term:
     if not isinstance(node.operator, clif.Name):
-        raise LoweringError(
-            "Higher-order function operators are not directly translatable."
-        )
+        raise LoweringError("Higher-order function operators are not directly translatable.")
 
     args = _lower_term_sequence(node.arguments, ctx)
 
@@ -221,9 +226,7 @@ def _lower_function(node: clif.Function, ctx: _Context) -> Term:
             return Division(left=args[0], right=args[1])
 
         case _:
-            raise LoweringError(
-                f"Function '{node.operator.name}' is not directly translatable."
-            )
+            raise LoweringError(f"Function '{node.operator.name}' is not directly translatable.")
 
 
 def _lower_term_sequence(seq: clif.TermSequence, ctx: _Context) -> tuple[Term, ...]:

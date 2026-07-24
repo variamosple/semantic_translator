@@ -41,9 +41,7 @@ class SExprParser:
         """Expect the current token to be of the given type."""
         token = self._current
         if token.type != typ:
-            raise SExprParseError(
-                f"Expected {typ.name}, got {token.type.name} at {token.location}"
-            )
+            raise SExprParseError(f"Expected {typ.name}, got {token.type.name} at {token.location}")
 
     def _parse_expr(self) -> SExpr:
         """Parse a single S-expression."""
@@ -61,8 +59,7 @@ class SExprParser:
                 return self._parse_list()
 
             case _:
-                raise SExprParseError(
-                    f"Unexpected token {token.type.name} at {token.location}")
+                raise SExprParseError(f"Unexpected token {token.type.name} at {token.location}")
 
     def _parse_list(self) -> List:
         """Parse a list S-expression."""

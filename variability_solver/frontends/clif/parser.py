@@ -57,8 +57,8 @@ class Parser:
                 items=[Symbol(value="="), *args],
             ):
                 raise SyntacticError(
-                    f"Equality must have exactly 2 arguments,"
-                    f"got {len(args)} at {loc}")
+                    f"Equality must have exactly 2 arguments,got {len(args)} at {loc}"
+                )
 
             # Negation
             case List(
@@ -74,8 +74,7 @@ class Parser:
                 location=_,
                 items=[Symbol(value="not"), *args],
             ):
-                raise SyntacticError(
-                    f"Negation must have exactly 1 argument, got {len(args)}")
+                raise SyntacticError(f"Negation must have exactly 1 argument, got {len(args)}")
 
             # Conjunction
             case List(
@@ -111,8 +110,8 @@ class Parser:
                 items=[Symbol(value="if"), *args],
             ):
                 raise SyntacticError(
-                    f"Implication must have exactly 2 arguments, "
-                    f"got {len(args)} at {expr.location}")
+                    f"Implication must have exactly 2 arguments, got {len(args)} at {expr.location}"
+                )
 
             # Biconditional
             case List(
@@ -131,7 +130,8 @@ class Parser:
             ):
                 raise SyntacticError(
                     f"Biconditional must have exactly 2 arguments, "
-                    f"got {len(args)} at {expr.location}")
+                    f"got {len(args)} at {expr.location}"
+                )
 
             # Universal quantification
             case List(
@@ -139,8 +139,7 @@ class Parser:
                 items=[Symbol(value="forall"), List(items=bindings), body],
             ):
                 return clif.ForAll(
-                    bindings=[self._parse_binding(binding)
-                              for binding in bindings],
+                    bindings=[self._parse_binding(binding) for binding in bindings],
                     body=self._parse_formula(body),
                 )
 
@@ -151,7 +150,8 @@ class Parser:
             ):
                 raise SyntacticError(
                     f"Universal quantification must have exactly 2 arguments, "
-                    f"got {len(args)} at {expr.location}")
+                    f"got {len(args)} at {expr.location}"
+                )
 
             # Existential quantification
             case List(
@@ -159,8 +159,7 @@ class Parser:
                 items=[Symbol(value="exists"), List(items=bindings), body],
             ):
                 return clif.Exists(
-                    bindings=[self._parse_binding(binding)
-                              for binding in bindings],
+                    bindings=[self._parse_binding(binding) for binding in bindings],
                     body=self._parse_formula(body),
                 )
 
@@ -171,7 +170,8 @@ class Parser:
             ):
                 raise SyntacticError(
                     f"Existential quantification must have exactly 2 arguments, "
-                    f"got {len(args)} at {expr.location}")
+                    f"got {len(args)} at {expr.location}"
+                )
 
             # Atomic sentence
             case List(
@@ -208,7 +208,8 @@ class Parser:
                     raise SemanticError(
                         f"Sequence marker '@{term.name}' "
                         f"cannot appear as a standalone term "
-                        f"at {expr.location}")
+                        f"at {expr.location}"
+                    )
 
                 return term
 
@@ -217,7 +218,8 @@ class Parser:
                 raise SyntacticError(
                     "Empty list cannot be used as a term. "
                     "Expected a valid term expression (e.g., '(predicate arg1 arg2)'). "
-                    f"at {loc}")
+                    f"at {loc}"
+                )
 
             case List(
                 location=_,
@@ -238,8 +240,7 @@ class Parser:
     def _parse_term_sequence(self, exprs: list[SExpr]) -> clif.TermSequence:
         """Parse a sequence of terms from S-expressions."""
         return clif.TermSequence(
-            elements=[self._parse_term_sequence_element(
-                expr) for expr in exprs],
+            elements=[self._parse_term_sequence_element(expr) for expr in exprs],
         )
 
     def _parse_term_sequence_element(self, expr: SExpr) -> clif.Term | clif.SequenceMarker:
@@ -279,4 +280,5 @@ class Parser:
 
             case _:
                 raise SyntacticError(
-                    f"Expected name or sequence marker as binding at {expr.location}")
+                    f"Expected name or sequence marker as binding at {expr.location}"
+                )

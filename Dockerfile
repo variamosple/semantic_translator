@@ -1,22 +1,39 @@
-FROM minizinc/minizinc
+# Use the official slim Python image
+FROM python:3.12-slim
 
-WORKDIR /usr/src/app
+# Prevent Python from writing .pyc files and buffer logs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install software-properties-common python3 python3-pip nginx -y && \
-    apt-add-repository ppa:swi-prolog/stable && \
-    apt-get update && \
-    apt-get install swi-prolog python3.12-venv -y && \
-    python3 -m venv venv
+# Install required packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    wget \
+    unzip \
+    ca-certificates \
+    minizinc \
+    swi-prolog \
+    # Clean up
+    && rm -rf /var/lib/apt/lists/*
 
-ENV PATH="./venv/bin:$PATH"
+# Set the working directory
+WORKDIR /app
 
+# Create a non-root user
+RUN useradd --create-home --shell /bin/bash appuser
+
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the application (excluding ignored files in .dockerignore)
 COPY . .
 
+# Give ownership to the non-root user
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
 EXPOSE 5000
-CMD ["./venv/bin/gunicorn", "--bind=0.0.0.0:5000", "--workers=4", "--timeout=0", "app:app"]
+CMD ["gunicorn", "--bind=0.0.0.0:5000", "--workers=4", "--timeout=0", "app:app"]

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-
 # ======================================================================
 # Base classes
 # ======================================================================
+
 
 class Node(BaseModel, frozen=True):
     pass
@@ -27,11 +27,13 @@ class Term(Node, frozen=True):
 # Atomic Formulas
 # ----------------------------------------------------------------------
 
+
 class AtomicFormula(Formula, frozen=True):
     pass
 
 
 # Comparisons
+
 
 class Comparison(AtomicFormula, frozen=True):
     left: Term
@@ -79,11 +81,12 @@ class Implication(CompositeFormula, frozen=True):
 class Biconditional(CompositeFormula, frozen=True):
     left: Formula
     right: Formula
-    
+
 
 # ======================================================================
 # Terms
 # ======================================================================
+
 
 class VariableRef(Term, frozen=True):
     var_id: int
@@ -93,8 +96,10 @@ class VariableRef(Term, frozen=True):
 # Constants
 # ---------------------------------------------------------------------
 
+
 class Constant(Term, frozen=True):
     """Represents a constant value in the constraint (ex: 5, True)."""
+
     value: object
 
 

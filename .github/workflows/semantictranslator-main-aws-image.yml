@@ -1,43 +1,65 @@
 name: semantictranslator-main-aws-image
 
 on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: 'ubuntu-latest'
+  ruff:
+    name: Ruff Check
+    runs-on: "ubuntu-latest"
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Install Ruff
+        uses: astral-sh/ruff-action@v3
 
-    - name: Log in to registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{vars.ACR_DOKCERHUB}}
-        username: ${{secrets.ACRUSERNAME_DOKCERHUB}}
-        password: ${{secrets.ACRUSERPASSWORD_DOKCERHUB}}
+      - name: Run Ruff check
+        run: ruff check .
 
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        push: true
-        tags: ${{vars.ACR_DOKCERHUB}}/${{secrets.ACRUSERNAME_DOKCERHUB}}/variamos_semantictranslator:main
-        file: ./Dockerfile
+      - name: Run Ruff format
+        run: ruff format --check .
 
-    - name: Deploy changes into the server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.AWS_HOST }}
-        username: ${{ secrets.AWS_USERNAME }}
-        key: ${{ secrets.VARIAMOS_AWS_PEM }}
-        script: |
-          echo "Executing command on remote server..."
-          sudo docker compose --env-file .env.aws.develop -f docker-compose-aws-develop-nginx.yml pull
-          sudo docker compose --env-file .env.aws.develop -f docker-compose-aws-develop-nginx.yml up -d
+  build:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: ruff
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{vars.ACR_DOKCERHUB}}
+          username: ${{secrets.ACRUSERNAME_DOKCERHUB}}
+          password: ${{secrets.ACRUSERPASSWORD_DOKCERHUB}}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{vars.ACR_DOKCERHUB}}/${{secrets.ACRUSERNAME_DOKCERHUB}}/variamos_semantictranslator:main
+          file: ./Dockerfile
+
+      - name: Deploy changes into the server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.VARIAMOS_AWS_PEM }}
+          script: |
+            echo "Executing command on remote server..."
+            sudo docker compose --env-file .env.aws.develop -f docker-compose-aws-develop-nginx.yml pull
+            sudo docker compose --env-file .env.aws.develop -f docker-compose-aws-develop-nginx.yml up -d

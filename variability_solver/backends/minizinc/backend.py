@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import StrEnum
 
 from variability_solver.backends.minizinc.executor import MinizincExecutor
 
@@ -11,7 +11,7 @@ from ..backend import Backend
 from .compiler import MinizincCompiler
 
 
-class _Solver(str, Enum):
+class _Solver(StrEnum):
     GECODE = "gecode"
 
 
@@ -34,9 +34,7 @@ class MinizincBackend(Backend, ABC):
         variable_names = MinizincCompiler().get_variable_names(model)
         match query.operation:
             case Operation.CHECK_SATISFIABILITY:
-                return MinizincExecutor().check_satisfiability(
-                    self._solver, solver_model
-                )
+                return MinizincExecutor().check_satisfiability(self._solver, solver_model)
             case Operation.SOLVE:
                 return MinizincExecutor().solve(
                     self._solver, solver_model, query.limit or 1, variable_names
