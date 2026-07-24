@@ -1,6 +1,7 @@
 Flask
 flask-cors
 gunicorn
+humps
 minizinc
 networkx
 pydantic
