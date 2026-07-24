@@ -27,8 +27,6 @@ flask-cors==5.0.0
     # via -r requirements.txt
 gunicorn==23.0.0
     # via -r requirements.txt
-humps==0.2.2
-    # via -r requirements.txt
 itsdangerous==2.2.0
     # via
     #   -r requirements.txt
@@ -56,6 +54,8 @@ packaging==25.0
 pip-tools==7.6.0
     # via -r requirements-dev.in
 pydantic==1.10.2
+    # via -r requirements.txt
+pyhumps==3.8.0
     # via -r requirements.txt
 pyproject-hooks==1.2.0
     # via
