@@ -28,6 +28,7 @@ jobs:
         run: ruff format --check .
 
   build:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: ruff
     runs-on: "ubuntu-latest"
 
