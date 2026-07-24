@@ -27,6 +27,8 @@ flask-cors==5.0.0
     # via -r requirements.txt
 gunicorn==23.0.0
     # via -r requirements.txt
+humps==0.2.2
+    # via -r requirements.txt
 itsdangerous==2.2.0
     # via
     #   -r requirements.txt

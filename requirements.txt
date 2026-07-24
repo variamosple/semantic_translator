@@ -18,6 +18,8 @@ flask-cors==5.0.0
     # via -r requirements.in
 gunicorn==23.0.0
     # via -r requirements.in
+humps==0.2.2
+    # via -r requirements.in
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
