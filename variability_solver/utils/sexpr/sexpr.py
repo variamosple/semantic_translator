@@ -14,16 +14,19 @@ from variability_solver.utils.location import Location
 @dataclass(frozen=True)
 class SExpr:
     """Base class for all S-expression nodes."""
+
     location: Location
 
 
 @dataclass(frozen=True)
 class Symbol(SExpr):
     """Represents a symbolic identifier in an S-expression."""
+
     value: str
 
 
 @dataclass(frozen=True)
 class List(SExpr):
     """Represents a nested list structure in an S-expression."""
+
     items: list[SExpr]

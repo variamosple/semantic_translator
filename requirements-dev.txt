@@ -59,6 +59,8 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
+ruff==0.16.0
+    # via -r requirements-dev.in
 swiplserver==1.0.2
     # via -r requirements.txt
 textx==4.2.2

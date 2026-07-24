@@ -1,15 +1,15 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class Operation(str, Enum):
+class Operation(StrEnum):
     CHECK_SATISFIABILITY = "sat"
     SOLVE = "solve"
     OPTIMIZE = "optimize"
 
 
-class Direction(str, Enum):
+class Direction(StrEnum):
     MAXIMIZE = "maximize"
     MINIMIZE = "minimize"
 

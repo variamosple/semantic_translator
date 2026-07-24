@@ -12,7 +12,6 @@ from .tokens import Token, TokenType
 
 
 class Lexer:
-
     def __init__(self, text: str):
         self.text: str = text
         self.pos: int = 0
@@ -60,7 +59,7 @@ class Lexer:
         return self._skip_whitespace() or self._skip_comment()
 
     def _read_symbol(self) -> Token:
-        """Read a symbol token, which is a sequence of non-whitespace, non-parenthesis characters."""
+        """Read a symbol token"""
         location = Location(self.line, self.column)
 
         chars = []
@@ -68,11 +67,7 @@ class Lexer:
             chars.append(ch)
             self._advance()
 
-        return Token(
-            TokenType.SYMBOL,
-            "".join(chars),
-            location
-        )
+        return Token(TokenType.SYMBOL, "".join(chars), location)
 
     def _read_string(self) -> Token:
         """Read a string token, which is a sequence of characters enclosed in double quotes."""
@@ -87,16 +82,13 @@ class Lexer:
 
         if self._current() is None:
             raise LexicalError(
-                f"Unterminated string at line {location.line}, column {location.column}")
+                f"Unterminated string at line {location.line}, column {location.column}"
+            )
 
         self._advance()  # consume closing quote
 
         # Strings are treated as symbols
-        return Token(
-            TokenType.SYMBOL,
-            '"' + "".join(chars) + '"',
-            location
-        )
+        return Token(TokenType.SYMBOL, '"' + "".join(chars) + '"', location)
 
     def _next_token(self) -> Token:
         """Return the next token from the input stream."""

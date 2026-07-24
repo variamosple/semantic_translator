@@ -26,7 +26,7 @@ from variability_solver.ir.variables import BoolSort, IntSort, Sort, Variable
 class Z3Compiler:
     def __init__(self) -> None:
         self.variables: dict[int, z3.ExprRef] = {}
-        
+
     def get_variable_names(self, model: Model) -> dict[str, str]:
         return {f"var_{variable.var_id}": variable.name for variable in model.variables}
 
@@ -83,9 +83,7 @@ class Z3Compiler:
                 )
                 result = compiled_left - compiled_right
             case Multiplication(operands=operands):
-                result = z3.Product(
-                    *[self._compile_term(operand) for operand in operands]
-                )
+                result = z3.Product(*[self._compile_term(operand) for operand in operands])
             case Division(left=left, right=right):
                 compiled_left = self._compile_term(left)
                 compiled_right = self._compile_term(right)
@@ -108,17 +106,11 @@ class Z3Compiler:
             case Negation(operand=operand):
                 result = z3.Not(self._compile_formula(operand))
             case Disjunction(operands=operands):
-                result = z3.Or(
-                    *[self._compile_formula(operand) for operand in operands]
-                )
+                result = z3.Or(*[self._compile_formula(operand) for operand in operands])
             case Conjunction(operands=operands):
-                result = z3.And(
-                    *[self._compile_formula(operand) for operand in operands]
-                )
+                result = z3.And(*[self._compile_formula(operand) for operand in operands])
             case Implication(left=left, right=right):
-                result = z3.Implies(
-                    self._compile_formula(left), self._compile_formula(right)
-                )
+                result = z3.Implies(self._compile_formula(left), self._compile_formula(right))
             case Biconditional(left=left, right=right):
                 result = self._compile_formula(left) == self._compile_formula(right)
             case Equality(left=left, right=right):
