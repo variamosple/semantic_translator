@@ -33,16 +33,26 @@ networkx==3.4.2
     # via -r requirements.in
 packaging==25.0
     # via gunicorn
+psycopg[binary]==3.3.4
+    # via -r requirements.in
+psycopg-binary==3.3.4
+    # via psycopg
+psycopg-pool==3.3.1
+    # via -r requirements.in
 pydantic==1.10.2
     # via -r requirements.in
 pyhumps==3.8.0
+    # via -r requirements.in
+python-dotenv==1.2.2
     # via -r requirements.in
 swiplserver==1.0.2
     # via -r requirements.in
 textx==4.2.2
     # via -r requirements.in
 typing-extensions==4.14.0
-    # via pydantic
+    # via
+    #   psycopg-pool
+    #   pydantic
 werkzeug==3.1.3
     # via flask
 z3-solver==4.15.1.0
