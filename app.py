@@ -7,7 +7,7 @@ from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from database import db
-from execution_recorder.history_recorder import init_history_recorder
+from execution_history.history_recorder import init_history_recorder
 from old_request_handler.request_handler import request_handler as old_request_handler
 from variability_solver.backends.minizinc.backend import GecodeBackend
 from variability_solver.backends.z3.backend import Z3Backend

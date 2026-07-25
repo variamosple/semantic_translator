@@ -4,8 +4,9 @@ from datetime import UTC, datetime
 from flask import g, request
 
 from database import db
-from execution_recorder.history_item import HistoryItem
-from execution_recorder.history_repository import HistoryRepository
+
+from .history_item import HistoryItem
+from .history_repository import HistoryRepository
 
 
 def init_history_recorder(app):
