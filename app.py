@@ -6,6 +6,8 @@ from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from database import db
+from execution_recorder.history_recorder import init_history_recorder
 from old_request_handler.request_handler import request_handler as old_request_handler
 from variability_solver.backends.minizinc.backend import GecodeBackend
 from variability_solver.backends.z3.backend import Z3Backend
@@ -16,6 +18,8 @@ app = Flask(__name__)
 CORS(app)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
+db.open()
+init_history_recorder(app)
 
 MODEL_LANGUAGES = {CLIFFrontend()}
 SOLVERS = {Z3Backend(), GecodeBackend()}

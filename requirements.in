@@ -1,10 +1,13 @@
 Flask
 flask-cors
 gunicorn
-pyhumps
 minizinc
 networkx
+psycopg[binary]
+psycopg-pool
 pydantic
+pyhumps
+python-dotenv
 swiplserver
 textX
 z3-solver
