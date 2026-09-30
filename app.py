@@ -25,11 +25,20 @@ MODEL_LANGUAGES = {CLIFFrontend()}
 SOLVERS = {Z3Backend(), GecodeBackend()}
 
 
+from health import get_health_status
+
+
 # Legacy endpoint for backward compatibility
 @app.route("/query", methods=["POST", "OPTIONS"])
 def old_query() -> Response:
     response = old_request_handler()
     return response
+
+
+@app.route("/health", methods=["GET"])
+def health() -> Response:
+    payload, status_code = get_health_status()
+    return jsonify(payload), status_code
 
 
 @app.route("/status", methods=["GET"])
