@@ -8,6 +8,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from database import db
 from execution_history.history_recorder import init_history_recorder
+from health import get_health_status
 from old_request_handler.request_handler import request_handler as old_request_handler
 from variability_solver.backends.minizinc.backend import GecodeBackend
 from variability_solver.backends.z3.backend import Z3Backend
@@ -30,6 +31,12 @@ SOLVERS = {Z3Backend(), GecodeBackend()}
 def old_query() -> Response:
     response = old_request_handler()
     return response
+
+
+@app.route("/health", methods=["GET"])
+def health() -> Response:
+    payload, status_code = get_health_status()
+    return jsonify(payload), status_code
 
 
 @app.route("/status", methods=["GET"])
