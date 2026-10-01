@@ -1,24 +1,28 @@
 import os
-import time
 import resource
-from datetime import datetime, timezone
-from typing import Literal, Optional, TypedDict, Tuple, Any
+import time
+from datetime import UTC, datetime
+from typing import Literal, TypedDict
 
 HealthStatus = Literal["UP", "DEGRADED", "DOWN"]
+
 
 class SystemMemoryInfo(TypedDict):
     usedMb: float
     totalMb: float
     percentage: float
 
+
 class DependencyCheck(TypedDict, total=False):
     status: HealthStatus
     latencyMs: float
-    message: Optional[str]
+    message: str | None
+
 
 class HealthChecks(TypedDict):
     database: DependencyCheck
     memory: SystemMemoryInfo
+
 
 class HealthPayload(TypedDict):
     status: HealthStatus
@@ -29,12 +33,15 @@ class HealthPayload(TypedDict):
     responseTimeMs: float
     checks: HealthChecks
 
+
 _SERVICE_START_TIME = time.time()
+
 
 def check_database() -> DependencyCheck:
     t0 = time.time()
     try:
         from database import db
+
         with db.cursor() as cur:
             cur.execute("SELECT 1")
             cur.fetchone()
@@ -44,6 +51,7 @@ def check_database() -> DependencyCheck:
         latency_ms = round((time.time() - t0) * 1000, 2)
         return {"status": "DOWN", "latencyMs": latency_ms, "message": str(exc)}
 
+
 def get_system_memory() -> SystemMemoryInfo:
     try:
         usage = resource.getrusage(resource.RUSAGE_SELF)
@@ -51,7 +59,7 @@ def get_system_memory() -> SystemMemoryInfo:
 
         total_mb = 0.0
         if os.path.exists("/proc/meminfo"):
-            with open("/proc/meminfo", "r") as f:
+            with open("/proc/meminfo") as f:
                 for line in f:
                     if line.startswith("MemTotal:"):
                         total_kb = float(line.split()[1])
@@ -68,7 +76,8 @@ def get_system_memory() -> SystemMemoryInfo:
         "percentage": percent,
     }
 
-def get_health_status() -> Tuple[HealthPayload, int]:
+
+def get_health_status() -> tuple[HealthPayload, int]:
     req_start = time.time()
     db_check = check_database()
     mem_info = get_system_memory()
@@ -81,7 +90,7 @@ def get_health_status() -> Tuple[HealthPayload, int]:
         "serviceName": "semantic_translator",
         "version": os.getenv("APP_VERSION", "1.0.0"),
         "uptimeSeconds": int(time.time() - _SERVICE_START_TIME),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "responseTimeMs": round((time.time() - req_start) * 1000, 2),
         "checks": {
             "database": db_check,

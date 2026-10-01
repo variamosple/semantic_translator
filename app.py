@@ -8,6 +8,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from database import db
 from execution_history.history_recorder import init_history_recorder
+from health import get_health_status
 from old_request_handler.request_handler import request_handler as old_request_handler
 from variability_solver.backends.minizinc.backend import GecodeBackend
 from variability_solver.backends.z3.backend import Z3Backend
@@ -23,9 +24,6 @@ init_history_recorder(app)
 
 MODEL_LANGUAGES = {CLIFFrontend()}
 SOLVERS = {Z3Backend(), GecodeBackend()}
-
-
-from health import get_health_status
 
 
 # Legacy endpoint for backward compatibility
