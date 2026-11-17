@@ -38,6 +38,10 @@ class SolverController:
         self.vmos_graph = vmos_graph
         self.translation_rules = translation_rules
         self.target_lang = target_lang
+        # Set by the bridge once it generates or runs a program. An operation
+        # that never reaches the solver (get_code) reports them as None.
+        self.code_gen_time = None
+        self.bridge_solve_time = None
         thread_time0 = time.thread_time_ns()
         generic_csp = SolverModel.from_clif_text(clif_model)
         thread_time1 = time.thread_time_ns()
@@ -310,7 +314,9 @@ class SolverController:
     def get_code(self):
         """Performs a translation to the target but does not actually do the
         solving"""
-        return self.bridge.translate(self.constraint_model)
+        code = self.bridge.translate(self.constraint_model)
+        self.code_gen_time = getattr(self.bridge, "code_gen_time", None)
+        return code
 
     # def do_query(self, query: Query):
     #     if query.n_sols > 0:
