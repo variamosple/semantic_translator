@@ -14,7 +14,7 @@ from old_request_handler.generators import uvl_clif_generator, vmos_clif_generat
 
 class QueryHandler:
     query_obj: query.Query
-    controller: solver_control.SolverController
+    controller: solver_control.SolverController | None
     clif_model: clif.Text
     clif_str: str
     translation_rules: rules.Rules | None
@@ -67,7 +67,8 @@ class QueryHandler:
         # take the time to build the model
         self.clif_gen_time = thread_time1 - thread_time0
         self.clif_ast_time = thread_time2 - thread_time1
-        # build the controller
+        # build the controller (get_model only needs the CLIF text)
+        self.controller = None
         if self.query_obj.operation != query.OperationEnum.get_model:
             self.controller = solver_control.SolverController(
                 target_lang=query_obj.solver,
@@ -191,15 +192,18 @@ class QueryHandler:
         return result_str
     
     def get_statistics(self):
+        # Measures that the operation did not produce are None: get_model has
+        # no controller, get_code never runs the solver.
+        controller = self.controller
         stats = {
             "clif_gen_time": self.clif_gen_time,
             "clif_ast_time": self.clif_ast_time,
-            "bridge_solve_time": self.controller.bridge_solve_time,
-            "code_gen_time": self.controller.code_gen_time,
-            "generic_csp_model_time": self.controller.generic_csp_time,
-            "concrete_csp_model_time": self.controller.constraint_model_time,
-            "n_constraints": self.controller.n_constraints,
-            "n_features": self.controller.n_features,
+            "bridge_solve_time": getattr(controller, "bridge_solve_time", None),
+            "code_gen_time": getattr(controller, "code_gen_time", None),
+            "generic_csp_model_time": getattr(controller, "generic_csp_time", None),
+            "concrete_csp_model_time": getattr(controller, "constraint_model_time", None),
+            "n_constraints": getattr(controller, "n_constraints", None),
+            "n_features": getattr(controller, "n_features", None),
         }
         print(json.dumps(stats, indent=4))
         return stats
