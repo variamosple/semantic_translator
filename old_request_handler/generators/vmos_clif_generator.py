@@ -329,8 +329,11 @@ class VMosCLIFGenerator:
                     possible_values_list = possible_values.split(",")
                     constraint = constraint.replace("Xs", " ".join(possible_values_list))
                 else:
-                    # handle the case where the prop is None
-                    if property["value"] is None:
+                    # Handle the case where the prop is None. A free-text
+                    # value (a String with no possible values) is handled the
+                    # same way: its rule builds an enumeration from the
+                    # possible values and has no placeholder for one value.
+                    if property["value"] is None or rule.value is None:
                         if rule.unset_constraint is None:
                             constraint = None
                         else:
