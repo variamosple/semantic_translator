@@ -6,6 +6,7 @@ from old_request_handler.variamos import model, rules, attributes
 from old_request_handler.utils import uuid_utils
 from old_request_handler.utils import exceptions
 from textx import metamodel_from_file, get_children_of_type
+from textx.exceptions import TextXSyntaxError
 from old_request_handler.grammars import clif
 
 
@@ -71,9 +72,32 @@ class VMosCLIFGenerator:
             arb_constraints = self.generate_arbitrary_constraint_sentences(
                 arb_constraints=arb_constraints, names_ids=names_ids
             )
+            self.check_arbitrary_constraints(arb_constraints)
         return "\n".join(
             [model_header, *sentence_strings, arb_constraints, model_footer]
         )
+
+    @staticmethod
+    def check_arbitrary_constraints(arb_constraints: str) -> None:
+        """Reject constraints written by the user that the grammar cannot read.
+
+        Without this check the whole model fails to parse later, and the user
+        only sees a server error.
+        """
+        if not arb_constraints.strip():
+            return
+        try:
+            clif.clif_meta_model(debug=False).model_from_str(
+                f"(model\n{arb_constraints}\n)"
+            )
+        except TextXSyntaxError as err:
+            # The constraints start on the second line of the checked text.
+            line = max((err.line or 2) - 1, 1)
+            raise exceptions.InvalidModelException(
+                "The constraints written in this model are not valid "
+                f"(line {line}, column {err.col}). Check the parentheses "
+                "and the names of the features and attributes."
+            ) from err
 
     # TODO: We should have it return and not be a side-effect on arb_constraints
     def generate_arbitrary_constraint_sentences(
@@ -296,6 +320,30 @@ class VMosCLIFGenerator:
             ),
         )
 
+    def generate_range_attribute_sentence(
+        self, element: model.Element, property: dict, value_range: tuple[int, int]
+    ) -> str:
+        """Bounded integer for an attribute whose possible values are a range.
+
+        A value set in the model is kept if it is a number inside the range.
+        Otherwise the attribute is 0 when its element is not selected and
+        takes a value of the range when it is, like the unset value of the
+        Integer rule.
+        """
+        lower, upper = value_range
+        attribute = self._var_prefix + uuid_utils.to_underscore_from_uuid(property["id"])
+        parent = self._var_prefix + uuid_utils.to_underscore_from_uuid(element.id)
+        value = property.get("value")
+        if isinstance(value, (int, float, str)) and re.fullmatch(
+            r"\s*-?\d+\s*", str(value)
+        ) and lower <= int(value) <= upper:
+            return f"(and (int ({lower} {upper}) {attribute}) (= {attribute} {int(value)}))"
+        return (
+            f"(and (int ({min(lower, 0)} {max(upper, 0)}) {attribute}) "
+            f"(if (= {parent} 0) (= {attribute} 0)) "
+            f"(if (>= {parent} 1) (and (>= {attribute} {lower}) (=< {attribute} {upper}))))"
+        )
+
     def generate_attribute_senteces(self, element: model.Element) -> list[str]:
         sentences = []
         # FIXME: Add better handling for feature models so attributes are only
@@ -307,6 +355,16 @@ class VMosCLIFGenerator:
 
             property_type = property["type"]
             possible_values = property["possibleValues"]
+
+            # A range of values ("[0..100]") gives a bounded integer, whatever
+            # the declared type of the attribute.
+            if (value_range := attributes.parse_range(possible_values)) is not None:
+                sentences.append(
+                    self.generate_range_attribute_sentence(
+                        element, property, value_range
+                    )
+                )
+                continue
 
             if possible_values:
                 property_type = attributes.ATTRIBUTE_PROPERTY_TYPE
@@ -325,9 +383,10 @@ class VMosCLIFGenerator:
             # HACK: Handle this special case for feature models
             if rule.value or rule.values:
                 # HACK: Handle the case of string attributes in feature models
-                if property["type"] in ("String", "Integer", "Boolean") and possible_values:
-                    possible_values_list = possible_values.split(",")
-                    constraint = constraint.replace("Xs", " ".join(possible_values_list))
+                values = attributes.split_possible_values(possible_values)
+                if property["type"] in ("String", "Integer", "Boolean") and values:
+                    tokens = [attributes.enum_token(value) for value in values]
+                    constraint = constraint.replace("Xs", " ".join(tokens))
                 else:
                     # Handle the case where the prop is None. A free-text
                     # value (a String with no possible values) is handled the

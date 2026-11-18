@@ -5,10 +5,20 @@ from flask import request, jsonify, make_response, Response
 from old_request_handler.solvers.results import StatusEnum
 from old_request_handler.variamos import model, transform
 from old_request_handler.solvers import query_handler
-from old_request_handler.utils.exceptions import SolverException
+from old_request_handler.utils.exceptions import InvalidModelException, SolverException
 from old_request_handler.utils import enums
 
 def request_handler():
+    try:
+        return _request_handler()
+    except InvalidModelException as err:
+        # A mistake in the model itself: tell the user what to fix.
+        return _corsify_actual_response(
+            make_response(jsonify({"data": {"error": str(err)}}), 400)
+        )
+
+
+def _request_handler():
     if request.method == "OPTIONS":
         return _build_cors_preflight_response()
     elif request.method == "POST":
