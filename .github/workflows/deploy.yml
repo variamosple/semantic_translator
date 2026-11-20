@@ -1,0 +1,42 @@
+# Checks the code with Ruff on every pull request; on main, builds, checks and
+# deploys the service with the shared workflow of the organization:
+# https://github.com/variamosple/.github
+name: deploy
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ruff:
+    name: Ruff Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ruff
+        uses: astral-sh/ruff-action@v3
+
+      - name: Run Ruff check
+        run: ruff check .
+
+      - name: Run Ruff format
+        run: ruff format --check .
+
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: ruff
+    uses: variamosple/.github/.github/workflows/deploy.yml@v1
+    with:
+      image: variamos_semantictranslator
+      service: semantic_translator
+      health-url: https://app.variamos.com/semantic_translator/health
+      health-name: semantic_translator
+    secrets: inherit
